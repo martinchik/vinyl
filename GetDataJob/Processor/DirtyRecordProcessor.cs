@@ -15,12 +15,43 @@ namespace GetDataJob.Processor
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
-        List<DirtyRecord> data = new List<DirtyRecord>();
-        public void AddRecord(DirtyRecord record)
+
+        private Dictionary<string, List<DirtyRecord>> _data = new Dictionary<string, List<DirtyRecord>>();
+
+        public void AddRecord(string strategyName, DirtyRecord record)
         {
             if (record == null) throw new ArgumentNullException(nameof(record));
 
-            data.Add(record);
+            List<DirtyRecord> list;
+            if (!_data.TryGetValue(strategyName, out list))
+            {
+                list = new List<DirtyRecord>();
+                _data.Add(strategyName, list);
+            }
+            list.Add(record);
         }
+
+        public IEnumerable<string> GetCsvLines()
+        {
+            foreach (var pair in _data)
+            {
+                foreach (var rec in pair.Value)
+                {
+                    yield return string.Concat(
+                        pair.Key.ToCsvValue(),
+                        rec.Album.ToCsvValue(),
+                        rec.Artist.ToCsvValue(),
+                        rec.Title.ToCsvValue(),
+                        rec.Year.ToCsvValue(),
+                        rec.State.ToCsvValue(),
+                        rec.Price.ToCsvValue(),
+                        rec.Info.ToCsvValue(),
+                        rec.Url.ToCsvValue()
+                        );
+
+                }
+            }
+        }
+
     }
 }

@@ -4,6 +4,6 @@ namespace GetDataJob.Processor
 {
     public interface IDirtyRecordProcessor
     {
-        void AddRecord(DirtyRecord record);
+        void AddRecord(string strategyName, DirtyRecord record);
     }
 }

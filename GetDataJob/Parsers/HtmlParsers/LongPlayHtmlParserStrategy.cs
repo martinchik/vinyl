@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace GetDataJob.Parsers.HtmlParsers
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Run(CancellationToken token = default(CancellationToken))
+        public async Task Run(CancellationToken token)
         {
             try
             {
@@ -48,10 +49,12 @@ namespace GetDataJob.Parsers.HtmlParsers
                         .WithDegreeOfParallelism(_degreeOfParalellism)
                         .ForAll(recordNode =>
                     {
+                        token.ThrowIfCancellationRequested();
+
                         try
                         {
-                            var dirtyRecord = GetDataFromRecordNode(recordNode);
-                            _recordProcessor.AddRecord(dirtyRecord);
+                            var dirtyRecord = GetDataFromRecordNode(recordNode, token).GetAwaiter().GetResult();
+                            _recordProcessor.AddRecord("LongPlayHtml", dirtyRecord);
                             readedPageCount++;
                         }
                         catch (Exception parseExc)
@@ -75,14 +78,13 @@ namespace GetDataJob.Parsers.HtmlParsers
         {
             var doc = new HtmlDocument();
             doc.LoadHtml(htmlPageData);
-            var mainNode = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'block_all')]");
-            foreach (var node in mainNode.SelectNodes("//div[contains(@class, 'shs-descr')]"))
+            foreach (var node in doc.DocumentNode.SelectNodes("//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]"))
             {
                 yield return node;
             }
         }
 
-        private DirtyRecord GetDataFromRecordNode(HtmlNode node)
+        private async Task<DirtyRecord> GetDataFromRecordNode(HtmlNode node, CancellationToken token)
         {
             DirtyRecord record = new DirtyRecord();
             foreach (var subNode in node.ChildNodes)
@@ -96,17 +98,63 @@ namespace GetDataJob.Parsers.HtmlParsers
                     record.Artist = ParseNodeValue(subNode.ChildNodes[1]);
                     record.Title = record.Album = ParseNodeValue(subNode.ChildNodes[3]);
                     record.Info = string.Concat("Style:", ParseNodeValue(subNode.ChildNodes[5]));
-                    record.Price = ParseNodeValue(subNode.ChildNodes[7]).Trim();
+                    record.Price = ParseNodeValue(subNode.ChildNodes[7]);
                 }
             }
 
+            await ParseAdditionalData(record, token);
             return record;
         }
 
         private string ParseNodeValue(HtmlNode node)
         {
             var items = node.InnerText.Split(':');
-            return items.Length > 0 ? items[1] : node.InnerText;
+            return (items.Length > 0 ? items[1] : node.InnerText).ToNormalValue();
+        }
+
+        private async Task ParseAdditionalData(DirtyRecord record, CancellationToken token)
+        {
+            if (string.IsNullOrEmpty(record?.Url))
+                return;
+
+            try
+            {
+                var subPage = await _htmlDataGetter.GetPage(record.Url, token);
+                var tableMap = ParseTable(subPage).Where(_=>_.Item1.Length >0).ToDictionary(_=>_.Item1.ToLower(), _=>_.Item2);
+                if (tableMap?.Count > 7)
+                {
+                    record.Artist = tableMap.GetSafeValue("исполнитель");
+                    record.Album = tableMap.GetSafeValue("альбом");
+                    StringBuilder sb = new StringBuilder();
+                    sb.AppendLine(string.Concat("Country:", tableMap.GetSafeValue("страна")));
+                    sb.AppendLine(string.Concat("Label:", tableMap.GetSafeValue("лейбл")));
+                    sb.AppendLine(string.Concat("YearRecorded:", tableMap.GetSafeValue("год записи")));
+                    sb.AppendLine(string.Concat("Style:", tableMap.GetSafeValue("стиль")));
+                    record.Year = tableMap.GetSafeValue("год издания");
+                    record.State = tableMap.GetSafeValue("состояние");
+                    record.Info = sb.ToString();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogWarning(exc, "Parsing personal record page has errors");
+            }
+        }
+        
+        private IEnumerable<(string, string)> ParseTable(string html)
+        {
+            var doc = new HtmlDocument();
+            doc.LoadHtml(html);
+            foreach (var tableLine in doc.DocumentNode.SelectNodes("//table[contains(@class, 'zebra')]//tr"))
+            {                
+                yield return (ParseNodeTableValue(tableLine.ChildNodes[1]), ParseNodeTableValue(tableLine.ChildNodes[3]));
+            }
+        }
+
+        private string ParseNodeTableValue(HtmlNode node)
+        {
+            return node.InnerText.ToNormalValue()
+                .Replace(":", string.Empty);
         }
     }
 }
