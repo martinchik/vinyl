@@ -5,3 +5,5 @@
 /GetDataJob/bin/
 /GetDataJob/obj/
 /.vs
+/GetDataJob.Tests/bin/
+/GetDataJob.Tests/obj/
