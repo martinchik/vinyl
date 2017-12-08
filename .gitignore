@@ -2,4 +2,6 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/.vs/Vinyl/v15/Server/sqlite3
+/GetDataJob/bin/
+/GetDataJob/obj/
+/.vs
