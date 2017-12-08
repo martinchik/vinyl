@@ -11,68 +11,49 @@ using System.Threading.Tasks;
 
 namespace GetDataJob.Parsers.HtmlParsers
 {
-    public class LongPlayHtmlParserStrategy : IParserStrategy
+    public class LongPlayHtmlParserStrategy : BaseParserStrategy
     {
-        private readonly IHtmlDataGetter _htmlDataGetter;
-        private readonly IDirtyRecordProcessor _recordProcessor;
-        private readonly ILogger _logger;
         private readonly int _pageSize = 96;
         private readonly int _degreeOfParalellism = 10;
-        private readonly string _urlTemplate;
+        private string _urlTemplate;
 
-        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor,
-            string urlTemplate = "http://longplay.by/vse-stili.html?ditto_111_display=96&ditto_111_sortBy=pagetitle&ditto_111_sortDir=ASC&111_start={0}&111_start={1}"
-            )
+        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor) 
+            : base(logger, htmlDataGetter, recordProcessor)
         {
-            _urlTemplate = urlTemplate;
-            _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
-            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Run(CancellationToken token)
+        public void Initialize(string urlTemplate = "http://longplay.by/vse-stili.html?ditto_111_display=96&ditto_111_sortBy=pagetitle&ditto_111_sortDir=ASC&111_start={0}&111_start={1}")
         {
-            try
-            {
-                int readedAllCount = 0;
-                int readedPageCount = 0;
-                int pageIndex = 1;
+            _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
+        }
 
-                do
+        protected override string Name => "LongPlayHtml";
+
+        protected override string GetNextPageUrl(int pageIndex)
+        {
+            return string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
+        }
+
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token) =>  
+            GetRecordNodes(pageData)
+                .AsParallel()
+                .WithCancellation(token)
+                .WithDegreeOfParallelism(_degreeOfParalellism)
+                .Select(recordNode =>
+            {
+                token.ThrowIfCancellationRequested();
+
+                try
                 {
-                    readedPageCount = 0;
-                    var pageData = await _htmlDataGetter.GetPage(string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize), token);
-
-                    GetRecordNodes(pageData)
-                        .AsParallel()
-                        .WithCancellation(token)
-                        .WithDegreeOfParallelism(_degreeOfParalellism)
-                        .ForAll(recordNode =>
-                    {
-                        token.ThrowIfCancellationRequested();
-
-                        try
-                        {
-                            var dirtyRecord = GetDataFromRecordNode(recordNode, token).GetAwaiter().GetResult();
-                            _recordProcessor.AddRecord("LongPlayHtml", dirtyRecord);
-                            readedPageCount++;
-                        }
-                        catch (Exception parseExc)
-                        {
-                            _logger.LogWarning(parseExc, "Parsing record from page has errors");
-                        }
-                    });
-
-                    pageIndex++;
-                    readedAllCount += readedPageCount;
+                    return GetDataFromRecordNode(recordNode, token).GetAwaiter().GetResult();                    
                 }
-                while (readedPageCount > 0);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, "LongPlay html page error");
-            }
-        }
+                catch (Exception parseExc)
+                {
+                    _logger.LogWarning(parseExc, "Parsing record from page has errors");
+                }
+                return null;
+            });
+        
 
         private IEnumerable<HtmlNode> GetRecordNodes(string htmlPageData)
         {
@@ -84,7 +65,7 @@ namespace GetDataJob.Parsers.HtmlParsers
             }
         }
 
-        private async Task<DirtyRecord> GetDataFromRecordNode(HtmlNode node, CancellationToken token)
+        private Task<DirtyRecord> GetDataFromRecordNode(HtmlNode node, CancellationToken token)
         {
             DirtyRecord record = new DirtyRecord();
             foreach (var subNode in node.ChildNodes)
@@ -102,8 +83,7 @@ namespace GetDataJob.Parsers.HtmlParsers
                 }
             }
 
-            await ParseAdditionalData(record, token);
-            return record;
+            return ParseAdditionalData(record, token);
         }
 
         private string ParseNodeValue(HtmlNode node)
@@ -112,10 +92,10 @@ namespace GetDataJob.Parsers.HtmlParsers
             return (items.Length > 0 ? items[1] : node.InnerText).ToNormalValue();
         }
 
-        private async Task ParseAdditionalData(DirtyRecord record, CancellationToken token)
+        private async Task<DirtyRecord> ParseAdditionalData(DirtyRecord record, CancellationToken token)
         {
             if (string.IsNullOrEmpty(record?.Url))
-                return;
+                return record;
 
             try
             {
@@ -139,6 +119,8 @@ namespace GetDataJob.Parsers.HtmlParsers
             {
                 _logger.LogWarning(exc, "Parsing personal record page has errors");
             }
+
+            return record;
         }
         
         private IEnumerable<(string, string)> ParseTable(string html)

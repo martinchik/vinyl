@@ -25,19 +25,22 @@ namespace GetDataJob.Tests
             try
             {
                 await new LongPlayHtmlParserStrategy(logger, htmlGetter, recordProcessor).Run(CancellationToken.None);
-                await new VinylShopHtmlParserStrategy(logger, htmlGetter, recordProcessor).Run(CancellationToken.None);
+                await new VinylShopExcelParserStrategy(logger, htmlGetter, recordProcessor).Run(CancellationToken.None);
             }
             finally
             {
-                string fileName = @"C:\test\allData.csv";
-                string[] header = new[] { "Parser;Album;Artist;Title;Year;State;Price;Info;Url" };
-                if (File.Exists(fileName))
-                    File.Delete(fileName);
-
-                File.WriteAllLines(@"C:\test\allData.csv", header.Concat(recordProcessor.GetCsvLines()));
+                SaveResultsTo(@"C:\test\allData.csv", recordProcessor);
             }
         }
 
+        private void SaveResultsTo(string fileName, IDirtyRecordProcessor recordProcessor)
+        {
+            string[] header = new[] { "Parser;Album;Artist;Title;Year;State;Price;Info;Url" };
+            if (File.Exists(fileName))
+                File.Delete(fileName);
+
+            File.WriteAllLines(fileName, header.Concat(recordProcessor.GetCsvLines()));
+        }
         [TestMethod]
         [Ignore("Original")]
         public void LongPlay_HtmlParser_Strategy_Original_Test()
@@ -47,7 +50,7 @@ namespace GetDataJob.Tests
             var recordProcessor = new DirtyRecordProcessor(logger);
 
             LongPlayHtmlParserStrategy strategy = new LongPlayHtmlParserStrategy(logger, htmlGetter, recordProcessor);
-
+            strategy.Initialize();
             strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
         }
 
@@ -60,8 +63,48 @@ namespace GetDataJob.Tests
             var recordProcessor = new DirtyRecordProcessor(logger);
 
             VinylShopHtmlParserStrategy strategy = new VinylShopHtmlParserStrategy(logger, htmlGetter, recordProcessor);
-
+            strategy.Initialize();
             strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
+        }
+
+        [TestMethod]
+        [Ignore("Original")]
+        public void VinylShop_Excel_Parser_Strategy_Original_Test()
+        {
+            var logger = Substitute.For<ILogger>();
+            var htmlGetter = new HtmlDataGetter(logger);
+            var recordProcessor = new DirtyRecordProcessor(logger);
+
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            VinylShopExcelParserStrategy strategy = new VinylShopExcelParserStrategy(logger, htmlGetter, recordProcessor);
+            strategy.Initialize("http://www.vinylshop.by/2015/10/%D1%81%D0%BE%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%BA%D0%B8-%D1%80%D0%BE%D1%81%D1%81%D0%B8%D0%B9%D1%81%D0%BA%D0%B8%D0%B5-%D0%B8%D1%81/");
+            strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
+
+            SaveResultsTo(@"C:\test\allData_2.csv", recordProcessor);
+
+            strategy.Initialize("http://www.vinylshop.by/2015/10/%D1%81%D0%BE%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%BA%D0%B8-%D0%B7%D0%B0%D0%BF%D0%B0%D0%B4/");
+            strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
+
+            SaveResultsTo(@"C:\test\allData_3.csv", recordProcessor);
+        }
+
+        [TestMethod]
+        [Ignore("Original")]
+        public void VinylShopMM_Excel_Parser_Strategy_Original_Test()
+        {
+            var logger = Substitute.For<ILogger>();
+            var htmlGetter = new HtmlDataGetter(logger);
+            var recordProcessor = new DirtyRecordProcessor(logger);
+
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
+            VinylShopMMExcelParserStrategy strategy = new VinylShopMMExcelParserStrategy(logger, htmlGetter, recordProcessor);
+            strategy.Initialize("http://www.vinylshop.by/2015/07/%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%BA%D0%B8-%D0%BC%D0%B8%D1%80%D1%83%D0%BC%D0%B8%D1%80/",
+                refLinkText:"Скачать каталог");
+            strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
+
+            SaveResultsTo(@"C:\test\allData_4.csv", recordProcessor);
         }
     }
 }

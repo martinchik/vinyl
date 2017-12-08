@@ -11,57 +11,35 @@ using System.Threading.Tasks;
 
 namespace GetDataJob.Parsers.HtmlParsers
 {
-    public class VinylShopHtmlParserStrategy : IParserStrategy
+    public class VinylShopHtmlParserStrategy : BaseParserStrategy
     {
-        private readonly IHtmlDataGetter _htmlDataGetter;
-        private readonly IDirtyRecordProcessor _recordProcessor;
-        private readonly ILogger _logger;
-        private readonly string _urlTemplate;
+        private string _urlTemplate;
 
-        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor,
-            string urlTemplate = "http://www.vinylshop.by/products/page/{0}/"
-            )
+        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor) 
+            : base(logger, htmlDataGetter, recordProcessor)
         {
-            _urlTemplate = urlTemplate;
-            _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
-            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public async Task Run(CancellationToken token)
+        public void Initialize(string urlTemplate = "http://www.vinylshop.by/products/page/{0}/")
         {
-            try
-            {
-                int readedAllCount = 0;
-                int readedPageCount = 0;
-                int pageIndex = 1;
+            _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
+        }
 
-                do
-                {
-                    readedPageCount = 0;
-                    var pageData = await _htmlDataGetter.GetPage(string.Format(_urlTemplate, pageIndex), token);
+        protected override string Name => "VinylShopHtml";
 
-                    var doc = new HtmlDocument();
-                    doc.LoadHtml(pageData);
+        protected override string GetNextPageUrl(int pageIndex)
+        {
+            return string.Format(_urlTemplate, pageIndex);
+        }
 
-                    List<DirtyRecord> records = new List<DirtyRecord>();
-                    GetRecordNodes(doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'archive-listing list')]"), records);
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        {            
+            var doc = new HtmlDocument();
+            doc.LoadHtml(pageData);
 
-                    foreach (var record in records)
-                    {                        
-                        _recordProcessor.AddRecord("VinylShopHtml", record);
-                        readedPageCount++;
-                    }
-
-                    pageIndex++;
-                    readedAllCount += readedPageCount;
-                }
-                while (readedPageCount > 0);
-            }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, "LongPlay html page error");
-            }
+            List<DirtyRecord> records = new List<DirtyRecord>();
+            GetRecordNodes(doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'archive-listing list')]"), records);
+            return records;
         }
 
         private void GetRecordNodes(HtmlNode node, List<DirtyRecord> records)

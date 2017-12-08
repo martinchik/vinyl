@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -34,6 +35,9 @@ namespace GetDataJob.Parsers
 
         public async Task<string> GetPage(string url, CancellationToken token = default(CancellationToken))
         {
+            if (string.IsNullOrWhiteSpace(url))
+                return string.Empty;
+
             HttpResponseMessage response = null;
 
             try
@@ -62,5 +66,47 @@ namespace GetDataJob.Parsers
                 response?.Dispose();
             }
         }
+
+        public async Task<string> DownloadFileToLocal(string fileUrl, CancellationToken token = default(CancellationToken))
+        {
+            if (string.IsNullOrWhiteSpace(fileUrl))
+                return string.Empty;
+
+            HttpResponseMessage response = null;
+
+            try
+            {
+                _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Getting file from url:{fileUrl}");
+
+                response = await _httpClient.GetAsync(fileUrl, token);
+
+                var fileName = Path.GetTempFileName();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var fileStream = await response.Content.ReadAsStreamAsync();
+                    
+                    using (var newFile = File.Create(fileName))
+                    {
+                        await fileStream.CopyToAsync(newFile, 81920, token);
+                    }
+                }
+                else
+                { 
+                    var responseContent = await response.Content.ReadAsStringAsync();
+                    
+                    throw new HttpRequestException($"Response exception: {(int)response.StatusCode} ({response.ReasonPhrase}) Content:({responseContent})");
+                }
+
+                _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). File was got from {fileUrl}.");
+
+                return fileName;
+            }
+            finally
+            {
+                response?.Dispose();
+            }
+        }
+
     }
 }

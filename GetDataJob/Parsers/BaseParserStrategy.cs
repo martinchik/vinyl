@@ -1,0 +1,68 @@
+﻿using GetDataJob.Model;
+using GetDataJob.Processor;
+using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace GetDataJob.Parsers.HtmlParsers
+{
+    public abstract class BaseParserStrategy : IParserStrategy
+    {
+        protected readonly IHtmlDataGetter _htmlDataGetter;
+        protected readonly IDirtyRecordProcessor _recordProcessor;
+        protected readonly ILogger _logger;
+
+        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
+        {
+            _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
+            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        protected virtual bool IsFileType { get => false; }
+
+        protected abstract string Name { get; }
+
+        protected abstract string GetNextPageUrl(int pageIndex);
+
+        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);
+
+        public async Task Run(CancellationToken token)
+        {
+            try
+            {
+                int readedAllCount = 0;
+                int readedPageCount = 0;
+                int pageIndex = 1;
+
+                do
+                {
+                    readedPageCount = 0;
+                    var pageData = await _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token);
+
+                    if (!string.IsNullOrEmpty(pageData))
+                    {
+                        foreach (var record in ParseRecordsFromPage(pageData, token))
+                        {
+                            _recordProcessor.AddRecord(Name, record);
+                            readedPageCount++;
+                        }
+                    }
+
+                    pageIndex++;
+                    readedAllCount += readedPageCount;
+                }
+                while (readedPageCount > 0);
+            }
+            catch (Exception exc)
+            {
+                _logger.LogError(exc, Name + ": Parsing page error");
+            }
+        }        
+    }
+}

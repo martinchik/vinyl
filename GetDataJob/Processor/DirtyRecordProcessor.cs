@@ -20,7 +20,10 @@ namespace GetDataJob.Processor
 
         public void AddRecord(string strategyName, DirtyRecord record)
         {
-            if (record == null) throw new ArgumentNullException(nameof(record));
+            if (record == null ||
+                string.IsNullOrEmpty(record.Title) ||
+                string.IsNullOrEmpty(record.Artist))
+                return;
 
             List<DirtyRecord> list;
             if (!_data.TryGetValue(strategyName, out list))
