@@ -24,7 +24,7 @@ namespace GetDataJob
         public void ConfigureServices(IServiceCollection services)
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
+            
             services.AddMvc();
         }
 

@@ -20,9 +20,10 @@ namespace GetDataJob.Parsers.HtmlParsers
         {
         }
 
-        public void Initialize(string urlTemplate = "http://www.vinylshop.by/products/page/{0}/")
+        public IParserStrategy Initialize(string urlTemplate = "http://www.vinylshop.by/products/page/{0}/")
         {
             _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
+            return this;
         }
 
         protected override string Name => "VinylShopHtml";

@@ -22,9 +22,10 @@ namespace GetDataJob.Parsers.HtmlParsers
         {
         }
 
-        public void Initialize(string urlTemplate = "http://longplay.by/vse-stili.html?ditto_111_display=96&ditto_111_sortBy=pagetitle&ditto_111_sortDir=ASC&111_start={0}&111_start={1}")
+        public IParserStrategy Initialize(string urlTemplate = "http://longplay.by/vse-stili.html?ditto_111_display=96&ditto_111_sortBy=pagetitle&ditto_111_sortDir=ASC&111_start={0}&111_start={1}")
         {
             _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
+            return this;
         }
 
         protected override string Name => "LongPlayHtml";

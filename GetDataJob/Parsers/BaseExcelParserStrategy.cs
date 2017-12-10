@@ -25,11 +25,12 @@ namespace GetDataJob.Parsers.HtmlParsers
         {
         }
 
-        public virtual void Initialize(string urlTemplate, string className = "post-content", string refLinkText = "СКАЧАТЬ")
+        public virtual IParserStrategy Initialize(string urlTemplate, string className = "post-content", string refLinkText = "СКАЧАТЬ")
         {
             _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
             _htmlTagClassName = className ?? throw new ArgumentNullException(nameof(className));
             _htmlTagLinkPartOfText = refLinkText ?? throw new ArgumentNullException(nameof(refLinkText));
+            return this;
         }
         protected override string GetNextPageUrl(int pageIndex)
         {
