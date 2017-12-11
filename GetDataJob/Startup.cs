@@ -8,8 +8,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Vinyl.GetDataJob.Job;
 
-namespace GetDataJob
+namespace Vinyl.GetDataJob
 {
     public class Startup
     {
@@ -37,6 +38,9 @@ namespace GetDataJob
             }
 
             app.UseMvc();
+
+
+            //new ParsingJob().Start();
         }
     }
 }

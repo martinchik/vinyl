@@ -1,0 +1,9 @@
+C:\workspace\vs\Vinyl\Vinyl.Metadata\bin\Debug\netcoreapp2.0\Vinyl.Metadata.deps.json
+C:\workspace\vs\Vinyl\Vinyl.Metadata\bin\Debug\netcoreapp2.0\Vinyl.Metadata.dll
+C:\workspace\vs\Vinyl\Vinyl.Metadata\bin\Debug\netcoreapp2.0\Vinyl.Metadata.pdb
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.csprojResolveAssemblyReference.cache
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.csproj.CoreCompileInputs.cache
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.AssemblyInfoInputs.cache
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.AssemblyInfo.cs
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.dll
+C:\workspace\vs\Vinyl\Vinyl.Metadata\obj\Debug\netcoreapp2.0\Vinyl.Metadata.pdb

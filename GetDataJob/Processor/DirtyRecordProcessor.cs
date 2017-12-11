@@ -1,11 +1,11 @@
-﻿using GetDataJob.Model;
+﻿using Vinyl.Metadata;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Processor
+namespace Vinyl.GetDataJob.Processor
 {
     public class DirtyRecordProcessor : IDirtyRecordProcessor
     {

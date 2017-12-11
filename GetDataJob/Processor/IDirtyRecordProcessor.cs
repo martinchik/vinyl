@@ -1,7 +1,7 @@
-﻿using GetDataJob.Model;
+﻿using Vinyl.Metadata;
 using System.Collections.Generic;
 
-namespace GetDataJob.Processor
+namespace Vinyl.GetDataJob.Processor
 {
     public interface IDirtyRecordProcessor
     {

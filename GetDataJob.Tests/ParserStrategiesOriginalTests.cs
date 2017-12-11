@@ -1,6 +1,3 @@
-using GetDataJob.Parsers;
-using GetDataJob.Parsers.HtmlParsers;
-using GetDataJob.Processor;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NSubstitute;
@@ -8,31 +5,16 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Vinyl.GetDataJob.Data;
+using Vinyl.GetDataJob.Parsers;
+using Vinyl.GetDataJob.Parsers.HtmlParsers;
+using Vinyl.GetDataJob.Processor;
 
-namespace GetDataJob.Tests
+namespace Vinyl.GetDataJob.Tests
 {
     [TestClass]
     public class ParserStrategiesOriginalTests
-    {
-        [TestMethod]
-        [Ignore("Original")]
-        public async Task All_Strategies_Original_Test()
-        {
-            var logger = Substitute.For<ILogger>();
-            var htmlGetter = new HtmlDataGetter(logger);
-            var recordProcessor = new DirtyRecordProcessor(logger);
-
-            try
-            {
-                await new LongPlayHtmlParserStrategy(logger, htmlGetter, recordProcessor).Run(CancellationToken.None);
-                await new VinylShopExcelParserStrategy(logger, htmlGetter, recordProcessor).Run(CancellationToken.None);
-            }
-            finally
-            {
-                SaveResultsTo(@"C:\test\allData.csv", recordProcessor);
-            }
-        }
-
+    {       
         private void SaveResultsTo(string fileName, IDirtyRecordProcessor recordProcessor)
         {
             string[] header = new[] { "Parser;Album;Artist;Title;Year;State;Price;Info;Url" };
@@ -49,8 +31,8 @@ namespace GetDataJob.Tests
             var htmlGetter = new HtmlDataGetter(logger);
             var recordProcessor = new DirtyRecordProcessor(logger);
 
-            LongPlayHtmlParserStrategy strategy = new LongPlayHtmlParserStrategy(logger, htmlGetter, recordProcessor);
-            strategy.Initialize();
+            var shops = new[] { Vinyl.Metadata.Test.TestShops.GetLongPlayShop() };
+            IParserStrategy strategy = (new ShopStrategiesService(logger, htmlGetter, recordProcessor)).GetStrategiesForRun(shops).FirstOrDefault();
             strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
         }
 
@@ -63,7 +45,7 @@ namespace GetDataJob.Tests
             var recordProcessor = new DirtyRecordProcessor(logger);
 
             VinylShopHtmlParserStrategy strategy = new VinylShopHtmlParserStrategy(logger, htmlGetter, recordProcessor);
-            strategy.Initialize();
+            //strategy.Initialize();
             strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
         }
 

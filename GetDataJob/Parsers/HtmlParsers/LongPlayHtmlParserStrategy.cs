@@ -1,5 +1,5 @@
-﻿using GetDataJob.Model;
-using GetDataJob.Processor;
+﻿using Vinyl.Metadata;
+using Vinyl.GetDataJob.Processor;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Parsers.HtmlParsers
+namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
     public class LongPlayHtmlParserStrategy : BaseParserStrategy
     {
@@ -17,12 +17,12 @@ namespace GetDataJob.Parsers.HtmlParsers
         private readonly int _degreeOfParalellism = 10;
         private string _urlTemplate;
 
-        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor) 
-            : base(logger, htmlDataGetter, recordProcessor)
+        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null) 
+            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
         {
         }
 
-        public IParserStrategy Initialize(string urlTemplate = "http://longplay.by/vse-stili.html?ditto_111_display=96&ditto_111_sortBy=pagetitle&ditto_111_sortDir=ASC&111_start={0}&111_start={1}")
+        public IParserStrategy Initialize(string urlTemplate)
         {
             _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
             return this;

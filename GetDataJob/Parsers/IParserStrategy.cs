@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Parsers
+namespace Vinyl.GetDataJob.Parsers
 {
     public interface IParserStrategy
     {

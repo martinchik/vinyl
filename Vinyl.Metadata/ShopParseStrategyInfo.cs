@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Model
+namespace Vinyl.Metadata
 {
     public class ShopParseStrategyInfo
     {
@@ -15,5 +15,7 @@ namespace GetDataJob.Model
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime ProcessedAt { get; set; }
+        public int? DataLimit { get; set; }
+        public int UpdatePeriodInHours { get; set; }
     }
 }

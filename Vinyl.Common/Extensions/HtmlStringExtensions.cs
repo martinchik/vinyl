@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace GetDataJob
+namespace Vinyl
 {
     public static class HtmlStringExtensions
     {

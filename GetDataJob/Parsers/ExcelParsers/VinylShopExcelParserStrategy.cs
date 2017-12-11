@@ -1,6 +1,5 @@
 ﻿using ExcelDataReader;
-using GetDataJob.Model;
-using GetDataJob.Processor;
+using Vinyl.GetDataJob.Processor;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,13 +10,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Vinyl.Metadata;
 
-namespace GetDataJob.Parsers.HtmlParsers
+namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
     public class VinylShopExcelParserStrategy : BaseExcelParserStrategy
     {
-        public VinylShopExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
-            : base(logger, htmlDataGetter, recordProcessor)
+        public VinylShopExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null)
+            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
         {
         }        
 

@@ -20,4 +20,9 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Vinyl.Common\Vinyl.Common.csproj" />
+    <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,6 +1,6 @@
 ﻿using ExcelDataReader;
-using GetDataJob.Model;
-using GetDataJob.Processor;
+using Vinyl.Metadata;
+using Vinyl.GetDataJob.Processor;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,7 +12,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Parsers.HtmlParsers
+namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
     public abstract class BaseExcelParserStrategy : BaseParserStrategy
     {
@@ -20,8 +20,8 @@ namespace GetDataJob.Parsers.HtmlParsers
         private string _htmlTagClassName;
         private string _htmlTagLinkPartOfText;
 
-        public BaseExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
-            : base(logger, htmlDataGetter, recordProcessor)
+        public BaseExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null)
+            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
         {
         }
 
@@ -33,9 +33,7 @@ namespace GetDataJob.Parsers.HtmlParsers
             return this;
         }
         protected override string GetNextPageUrl(int pageIndex)
-        {
-            return pageIndex == 1 ? _urlTemplate : string.Empty;
-        }
+            => pageIndex == 1 ? _urlTemplate : string.Empty;        
 
         protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
         {

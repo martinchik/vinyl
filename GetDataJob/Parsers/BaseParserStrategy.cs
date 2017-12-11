@@ -1,5 +1,5 @@
-﻿using GetDataJob.Model;
-using GetDataJob.Processor;
+﻿using Vinyl.Metadata;
+using Vinyl.GetDataJob.Processor;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,19 +9,22 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Parsers.HtmlParsers
+namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
     public abstract class BaseParserStrategy : IParserStrategy
     {
         protected readonly IHtmlDataGetter _htmlDataGetter;
         protected readonly IDirtyRecordProcessor _recordProcessor;
         protected readonly ILogger _logger;
+        protected readonly int? _dataLimit;
 
-        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
+        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null)
         {
             _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
             _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+            _dataLimit = dataLimit;
         }
 
         protected virtual bool IsFileType { get => false; }
@@ -49,6 +52,11 @@ namespace GetDataJob.Parsers.HtmlParsers
                     {
                         foreach (var record in ParseRecordsFromPage(pageData, token))
                         {
+                            if (_dataLimit <= (readedAllCount + readedPageCount))
+                            {
+                                readedPageCount = 0;
+                                break;
+                            }
                             _recordProcessor.AddRecord(Name, record);
                             readedPageCount++;
                         }

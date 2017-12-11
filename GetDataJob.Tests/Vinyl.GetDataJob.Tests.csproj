@@ -15,7 +15,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GetDataJob\GetDataJob.csproj" />
+    <ProjectReference Include="..\GetDataJob\Vinyl.GetDataJob.csproj" />
+    <ProjectReference Include="..\Vinyl.Common\Vinyl.Common.csproj" />
+    <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
   </ItemGroup>
 
 </Project>

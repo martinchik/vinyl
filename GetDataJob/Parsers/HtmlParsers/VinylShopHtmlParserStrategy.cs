@@ -1,5 +1,5 @@
-﻿using GetDataJob.Model;
-using GetDataJob.Processor;
+﻿using Vinyl.Metadata;
+using Vinyl.GetDataJob.Processor;
 using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,18 +9,18 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace GetDataJob.Parsers.HtmlParsers
+namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
     public class VinylShopHtmlParserStrategy : BaseParserStrategy
     {
         private string _urlTemplate;
 
-        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor) 
-            : base(logger, htmlDataGetter, recordProcessor)
+        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null) 
+            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
         {
         }
 
-        public IParserStrategy Initialize(string urlTemplate = "http://www.vinylshop.by/products/page/{0}/")
+        public IParserStrategy Initialize(string urlTemplate)
         {
             _urlTemplate = urlTemplate ?? throw new ArgumentNullException(nameof(urlTemplate));
             return this;
