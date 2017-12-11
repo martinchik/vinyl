@@ -2,15 +2,17 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/GetDataJob/bin/
-/GetDataJob/obj/
+/Vinyl.GetDataJob/bin/
+/Vinyl.GetDataJob/obj/
 /.vs
-/GetDataJob.Tests/bin/
-/GetDataJob.Tests/obj/
-/GetDataJob/Logs
-/GetDataJob/Properties/PublishProfiles
+/Vinyl.GetDataJob.Tests/bin/
+/Vinyl.GetDataJob.Tests/obj/
+/Vinyl.GetDataJob/Logs
+/Vinyl.GetDataJob/Properties/PublishProfiles
 /Vinyl.Common/bin/
 /Vinyl.Common/obj/
 /Vinyl.Metadata/bin/
 /Vinyl.Metadata/obj/
-/GetDataJob/Vinyl.GetDataJob.csproj.user
+/Vinyl.GetDataJob/Vinyl.GetDataJob.csproj.user
+/Vinyl.GetDataJob/bin
+/Vinyl.GetDataJob/Logs
