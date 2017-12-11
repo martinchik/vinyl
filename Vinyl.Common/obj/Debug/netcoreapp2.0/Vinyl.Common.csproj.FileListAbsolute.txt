@@ -1,9 +1,0 @@
-C:\workspace\vs\Vinyl\Vinyl.Common\bin\Debug\netcoreapp2.0\Vinyl.Common.deps.json
-C:\workspace\vs\Vinyl\Vinyl.Common\bin\Debug\netcoreapp2.0\Vinyl.Common.dll
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.csproj.CoreCompileInputs.cache
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.AssemblyInfoInputs.cache
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.AssemblyInfo.cs
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.csprojResolveAssemblyReference.cache
-C:\workspace\vs\Vinyl\Vinyl.Common\bin\Debug\netcoreapp2.0\Vinyl.Common.pdb
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.dll
-C:\workspace\vs\Vinyl\Vinyl.Common\obj\Debug\netcoreapp2.0\Vinyl.Common.pdb

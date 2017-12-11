@@ -38,15 +38,12 @@ namespace Vinyl.GetDataJob.Parsers.HtmlParsers
                     record.Barcode = row[4].ToString();
                     record.Year = row[7].ToString();
                     record.Price = row[9].ToString();
+                    record.Style = row[6].ToString();
+                    record.CountInPack = row[2].ToString();
+                    record.View = row[3].ToString();
+                    record.Label = row[5].ToString();
+                    record.Info = row[8].ToString();
 
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine(string.Concat("Count:", row[2].ToString()));
-                    sb.AppendLine(string.Concat("View:", row[3].ToString()));
-                    sb.AppendLine(string.Concat("Label:", row[5].ToString()));
-                    sb.AppendLine(string.Concat("Style:", row[6].ToString()));
-                    sb.AppendLine(string.Concat("Info:", row[8].ToString()));
-
-                    record.Info = sb.ToString();
                     yield return record;
                 }
             }

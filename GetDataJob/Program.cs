@@ -19,6 +19,11 @@ namespace Vinyl.GetDataJob
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .CaptureStartupErrors(true)
+                .ConfigureLogging((hostingContext, builder) =>
+                {
+                    builder.AddFile("Logs/get-data-job-{Date}.log");
+                })
                 .UseStartup<Startup>()
                 .Build();
     }

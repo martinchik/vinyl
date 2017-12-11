@@ -79,7 +79,7 @@ namespace Vinyl.GetDataJob.Parsers.HtmlParsers
                 {
                     record.Artist = ParseNodeValue(subNode.ChildNodes[1]);
                     record.Title = record.Album = ParseNodeValue(subNode.ChildNodes[3]);
-                    record.Info = string.Concat("Style:", ParseNodeValue(subNode.ChildNodes[5]));
+                    record.Style = ParseNodeValue(subNode.ChildNodes[5]);
                     record.Price = ParseNodeValue(subNode.ChildNodes[7]);
                 }
             }
@@ -106,14 +106,11 @@ namespace Vinyl.GetDataJob.Parsers.HtmlParsers
                 {
                     record.Artist = tableMap.GetSafeValue("исполнитель");
                     record.Album = tableMap.GetSafeValue("альбом");
-                    StringBuilder sb = new StringBuilder();
-                    sb.AppendLine(string.Concat("Country:", tableMap.GetSafeValue("страна")));
-                    sb.AppendLine(string.Concat("Label:", tableMap.GetSafeValue("лейбл")));
-                    sb.AppendLine(string.Concat("YearRecorded:", tableMap.GetSafeValue("год записи")));
-                    sb.AppendLine(string.Concat("Style:", tableMap.GetSafeValue("стиль")));
                     record.Year = tableMap.GetSafeValue("год издания");
                     record.State = tableMap.GetSafeValue("состояние");
-                    record.Info = sb.ToString();
+                    record.Country = tableMap.GetSafeValue("страна");
+                    record.Label = tableMap.GetSafeValue("лейбл");
+                    record.YearRecorded = tableMap.GetSafeValue("год записи");
                 }
             }
             catch (Exception exc)

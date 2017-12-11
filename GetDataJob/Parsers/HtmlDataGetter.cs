@@ -16,7 +16,7 @@ namespace Vinyl.GetDataJob.Parsers
         private readonly HttpClient _httpClient;
         private readonly ILogger _logger;
 
-        public HtmlDataGetter(ILogger logger, HttpClient httpClient = null)
+        public HtmlDataGetter(ILogger<HtmlDataGetter> logger, HttpClient httpClient = null)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -42,7 +42,7 @@ namespace Vinyl.GetDataJob.Parsers
 
             try
             {
-                _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Getting page from url:{url}");
+                _logger.LogDebug($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Getting page from url:{url}");
                 
                 response = await _httpClient.GetAsync(url, token);
 

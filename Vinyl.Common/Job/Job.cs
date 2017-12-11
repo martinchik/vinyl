@@ -26,6 +26,10 @@ namespace Vinyl.Common.Job
         }
 
         public string JobName { get; }
+        public bool IsRunning { get; private set; }
+        public DateTime? LastStart { get; private set; }
+        public DateTime? LastFinish { get; private set; }
+        public string Result { get; protected set; }
 
         public void Start()
         {
@@ -49,13 +53,23 @@ namespace Vinyl.Common.Job
 
         protected async Task TriggerExecution(CancellationToken token)
         {
-            if (!_executionTimeout.HasValue)
+            IsRunning = true;
+            LastStart = DateTime.UtcNow;
+            try
             {
-                await ExecuteAsync(token);
+                if (!_executionTimeout.HasValue)
+                {
+                    await ExecuteAsync(token);
+                }
+                else
+                {
+                    await ExecuteWithTimeoutAsync(_executionTimeout.Value, token);
+                }
             }
-            else
+            finally
             {
-                await ExecuteWithTimeoutAsync(_executionTimeout.Value, token);
+                IsRunning = false;
+                LastFinish = DateTime.UtcNow;
             }
         }
 

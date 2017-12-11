@@ -18,7 +18,7 @@ namespace Vinyl.GetDataJob.Data
         protected readonly IDirtyRecordProcessor _recordProcessor;
         protected readonly ILogger _logger;
 
-        public ShopStrategiesService(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
+        public ShopStrategiesService(ILogger<ShopStrategiesService> logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor)
         {
             _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
             _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
@@ -71,11 +71,9 @@ namespace Vinyl.GetDataJob.Data
                         .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
                 case "VinylShopMMExcelParserStrategy": return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, _recordProcessor, strategyInfo.DataLimit)
                         .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
-                case "LongPlayHtmlParserStrategy":
-                    return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, _recordProcessor, strategyInfo.DataLimit)
+                case "LongPlayHtmlParserStrategy": return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, _recordProcessor, strategyInfo.DataLimit)
                         .Initialize(strategyInfo.Url);
-                case "VinylShopHtmlParserStrategy":
-                    return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, _recordProcessor, strategyInfo.DataLimit)
+                case "VinylShopHtmlParserStrategy": return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, _recordProcessor, strategyInfo.DataLimit)
                         .Initialize(strategyInfo.Url);
                 default:
                     return null;

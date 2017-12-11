@@ -11,7 +11,7 @@ namespace Vinyl.GetDataJob.Processor
     {
         private readonly ILogger _logger;
 
-        public DirtyRecordProcessor(ILogger logger)
+        public DirtyRecordProcessor(ILogger<DirtyRecordProcessor> logger)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -51,7 +51,6 @@ namespace Vinyl.GetDataJob.Processor
                         rec.Info.ToCsvValue(),
                         rec.Url.ToCsvValue()
                         );
-
                 }
             }
         }

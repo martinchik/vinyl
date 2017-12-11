@@ -7,3 +7,10 @@
 /.vs
 /GetDataJob.Tests/bin/
 /GetDataJob.Tests/obj/
+/GetDataJob/Logs
+/GetDataJob/Properties/PublishProfiles
+/Vinyl.Common/bin/
+/Vinyl.Common/obj/
+/Vinyl.Metadata/bin/
+/Vinyl.Metadata/obj/
+/GetDataJob/Vinyl.GetDataJob.csproj.user

@@ -11,10 +11,16 @@
         public string Year { get; set; }
         public string State { get; set; }
         public string Barcode { get; set; }
+        public string Country { get; set; }
+        public string CountInPack { get; set; }
+        public string YearRecorded { get; set; }
+        public string Label { get; set; }
+        public string Style { get; set; }
+        public string View { get; set; } //LP, СLP
 
         public override string ToString()
         {
-            return string.Concat(Artist, "; ", Album, "; ", Year, "; ", Price, ";", Info);
+            return string.Concat(Artist, "; ", Album, "; ", Year, "; ", Price, ";", Info, ";");
         }
     }
 }

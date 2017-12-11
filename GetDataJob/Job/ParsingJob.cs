@@ -19,7 +19,7 @@ namespace Vinyl.GetDataJob.Job
 
         public const string Name = "parsing-job";
 
-        public ParsingJob(ILogger logger, IShopStrategiesService strategiesService, IShopInfoService shopInfoService) :
+        public ParsingJob(ILogger<ParsingJob> logger, IShopStrategiesService strategiesService, IShopInfoService shopInfoService) :
             base(logger, Name, Repeat.Immediately().Than(Repeat.Each.Hours(3)), TimeSpan.FromHours(1))
         {
             _strategiesService = strategiesService ?? throw new ArgumentNullException(nameof(strategiesService));
@@ -29,14 +29,22 @@ namespace Vinyl.GetDataJob.Job
         protected override async Task ExecuteAsync(CancellationToken token)
         {
             var shops = await _shopInfoService.GetShops(token);
+            long countRecords = 0;
 
-            foreach (var strategy in _strategiesService.GetStrategiesForRun(shops))
+            try
             {
-                await RunStrategy(strategy, token);
+                foreach (var strategy in _strategiesService.GetStrategiesForRun(shops))
+                {
+                    countRecords += await RunStrategy(strategy, token);
+                }
+            }
+            finally
+            {
+                Result = $"Parsed {countRecords} records";
             }
         }
 
-        private Task RunStrategy(IParserStrategy strategy, CancellationToken token)
+        private Task<int> RunStrategy(IParserStrategy strategy, CancellationToken token)
         {
             try
             {

@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 {
@@ -35,14 +36,15 @@ namespace Vinyl.GetDataJob.Parsers.HtmlParsers
 
         protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);
 
-        public async Task Run(CancellationToken token)
+        public async Task<int> Run(CancellationToken token)
         {
-            try
-            {
-                int readedAllCount = 0;
-                int readedPageCount = 0;
-                int pageIndex = 1;
+            int readedAllCount = 0;
+            int readedPageCount = 0;
+            int pageIndex = 1;
+            Stopwatch sw = Stopwatch.StartNew();
 
+            try
+            {                
                 do
                 {
                     readedPageCount = 0;
@@ -65,12 +67,19 @@ namespace Vinyl.GetDataJob.Parsers.HtmlParsers
                     pageIndex++;
                     readedAllCount += readedPageCount;
                 }
-                while (readedPageCount > 0);
+                while (readedPageCount > 0);                
             }
             catch (Exception exc)
             {
                 _logger.LogError(exc, Name + ": Parsing page error");
             }
+            finally
+            {
+                sw.Stop();
+                _logger.LogInformation(Name + $": Readed {readedAllCount} records from {pageIndex} pages. ElapsedTime: {sw.Elapsed}");
+            }
+
+            return readedAllCount;
         }        
     }
 }

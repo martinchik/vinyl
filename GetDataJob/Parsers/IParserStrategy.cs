@@ -5,6 +5,6 @@ namespace Vinyl.GetDataJob.Parsers
 {
     public interface IParserStrategy
     {
-        Task Run(CancellationToken token = default(CancellationToken));
+        Task<int> Run(CancellationToken token = default(CancellationToken));
     }
 }
