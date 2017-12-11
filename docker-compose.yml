@@ -3,6 +3,8 @@ version: '3'
 services:
   vinyl.getdatajob:
     image: vinyl.getdatajob
+    ports:
+      - "20081:20081"
     build:
       context: ./Vinyl.GetDataJob
       dockerfile: Dockerfile

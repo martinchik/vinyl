@@ -4,5 +4,3 @@ services:
   vinyl.getdatajob:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "20081"
