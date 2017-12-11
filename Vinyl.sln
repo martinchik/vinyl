@@ -7,15 +7,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.GetDataJob", "Vinyl.G
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.GetDataJob.Tests", "Vinyl.GetDataJob.Tests\Vinyl.GetDataJob.Tests.csproj", "{14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.Metadata", "Vinyl.Metadata\Vinyl.Metadata.csproj", "{09583928-5AF6-40F3-ACE0-4F6E0C1CBCE3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Metadata", "Vinyl.Metadata\Vinyl.Metadata.csproj", "{09583928-5AF6-40F3-ACE0-4F6E0C1CBCE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.Common", "Vinyl.Common\Vinyl.Common.csproj", "{40FC09CC-EB54-41E2-B938-BE4EF0E9F476}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Common", "Vinyl.Common\Vinyl.Common.csproj", "{40FC09CC-EB54-41E2-B938-BE4EF0E9F476}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{467CA0DC-4058-48B3-BB83-F238BB59B6CF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{FCE21F67-E0D7-4455-8A11-D34CB1FD6349}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{30E14712-D401-49D6-AE91-1072CE57ABBE}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{29FE3CA7-F885-4405-9E03-5038A05B7A4E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{40FC09CC-EB54-41E2-B938-BE4EF0E9F476}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{40FC09CC-EB54-41E2-B938-BE4EF0E9F476}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{40FC09CC-EB54-41E2-B938-BE4EF0E9F476}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
