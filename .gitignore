@@ -13,10 +13,12 @@
 /Vinyl.Common/obj/
 /Vinyl.Metadata/bin/
 /Vinyl.Metadata/obj/
-/Vinyl.GetDataJob/Vinyl.GetDataJob.csproj.user
-/Vinyl.GetDataJob/bin
-/Vinyl.GetDataJob/Logs
+/Vinyl.ParsingJob/Vinyl.ParsingJob.csproj.user
 /obj
 /Vinyl.Kafka.Lib/obj
 /Vinyl.Kafka.Lib/bin
 *.user
+/Vinyl.RecordProcessingJob/bin
+/Vinyl.RecordProcessingJob/obj
+/Vinyl.RecordProcessingJob.Tests/bin
+/Vinyl.RecordProcessingJob.Tests/obj

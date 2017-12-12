@@ -4,3 +4,7 @@ services:
   vinyl.parsingjob:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+
+  vinyl.recordprocessingjob:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development

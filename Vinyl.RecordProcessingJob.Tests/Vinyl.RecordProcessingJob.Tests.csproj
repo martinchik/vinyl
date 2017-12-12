@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="4.19.4" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.6.0-preview-20171211-02" />
     <PackageReference Include="MSTest.TestAdapter" Version="1.2.0" />
     <PackageReference Include="MSTest.TestFramework" Version="1.2.0" />
     <PackageReference Include="NSubstitute" Version="3.1.0" />
@@ -17,7 +17,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Vinyl.Common\Vinyl.Common.csproj" />
     <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
-    <ProjectReference Include="..\Vinyl.ParsingJob\Vinyl.ParsingJob.csproj" />
+    <ProjectReference Include="..\Vinyl.RecordProcessingJob\Vinyl.RecordProcessingJob.csproj" />
   </ItemGroup>
 
 </Project>

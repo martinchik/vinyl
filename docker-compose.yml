@@ -24,3 +24,11 @@ services:
     build:
       context: ./Vinyl.ParsingJob
       dockerfile: Dockerfile
+
+  vinyl.recordprocessingjob:
+    image: vinyl.recordprocessingjob
+    ports:
+      - "20082:20082"
+    build:
+      context: ./Vinyl.RecordProcessingJob
+      dockerfile: Dockerfile
