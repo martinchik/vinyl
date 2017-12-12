@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.GetDataJob", "Vinyl.GetDataJob\Vinyl.GetDataJob.csproj", "{E8C2EB06-0271-49B0-8BE0-637B679F87A3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.ParsingJob", "Vinyl.ParsingJob\Vinyl.ParsingJob.csproj", "{E8C2EB06-0271-49B0-8BE0-637B679F87A3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.GetDataJob.Tests", "Vinyl.GetDataJob.Tests\Vinyl.GetDataJob.Tests.csproj", "{14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.ParsingJob.Tests", "Vinyl.ParsingJob.Tests\Vinyl.ParsingJob.Tests.csproj", "{14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Metadata", "Vinyl.Metadata\Vinyl.Metadata.csproj", "{09583928-5AF6-40F3-ACE0-4F6E0C1CBCE3}"
 EndProject
@@ -18,6 +18,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Jobs", "Jobs", "{30E14712-D401-49D6-AE91-1072CE57ABBE}"
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{29FE3CA7-F885-4405-9E03-5038A05B7A4E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E8C2EB06-0271-49B0-8BE0-637B679F87A3} = {E8C2EB06-0271-49B0-8BE0-637B679F87A3}
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{C215A621-AFFA-470D-9B51-CB04A8DC0499}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Kafka.Lib", "Vinyl.Kafka.Lib\Vinyl.Kafka.Lib.csproj", "{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +52,10 @@ Global
 		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29FE3CA7-F885-4405-9E03-5038A05B7A4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,6 +65,7 @@ Global
 		{14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD} = {467CA0DC-4058-48B3-BB83-F238BB59B6CF}
 		{09583928-5AF6-40F3-ACE0-4F6E0C1CBCE3} = {FCE21F67-E0D7-4455-8A11-D34CB1FD6349}
 		{40FC09CC-EB54-41E2-B938-BE4EF0E9F476} = {FCE21F67-E0D7-4455-8A11-D34CB1FD6349}
+		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9} = {C215A621-AFFA-470D-9B51-CB04A8DC0499}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A72305D-7832-424D-9907-A5B57081762C}

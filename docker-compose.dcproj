@@ -6,7 +6,7 @@
     <ProjectGuid>29fe3ca7-f885-4405-9e03-5038a05b7a4e</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
     <DockerServiceUrl>http://localhost:{ServicePort}/status</DockerServiceUrl>
-    <DockerServiceName>vinyl.getdatajob</DockerServiceName>
+    <DockerServiceName>vinyl.parsingjob</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.ci.build.yml" />

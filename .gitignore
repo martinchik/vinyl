@@ -2,13 +2,13 @@
 # This .gitignore file was automatically created by Microsoft(R) Visual Studio.
 ################################################################################
 
-/Vinyl.GetDataJob/bin/
-/Vinyl.GetDataJob/obj/
+/Vinyl.ParsingJob/bin/
+/Vinyl.ParsingJob/obj/
 /.vs
-/Vinyl.GetDataJob.Tests/bin/
-/Vinyl.GetDataJob.Tests/obj/
-/Vinyl.GetDataJob/Logs
-/Vinyl.GetDataJob/Properties/PublishProfiles
+/Vinyl.ParsingJob.Tests/bin/
+/Vinyl.ParsingJob.Tests/obj/
+/Vinyl.ParsingJob/Logs
+/Vinyl.ParsingJob/Properties/PublishProfiles
 /Vinyl.Common/bin/
 /Vinyl.Common/obj/
 /Vinyl.Metadata/bin/
@@ -17,3 +17,6 @@
 /Vinyl.GetDataJob/bin
 /Vinyl.GetDataJob/Logs
 /obj
+/Vinyl.Kafka.Lib/obj
+/Vinyl.Kafka.Lib/bin
+*.user
