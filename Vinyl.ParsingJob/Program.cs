@@ -22,6 +22,7 @@ namespace Vinyl.ParsingJob
                 .CaptureStartupErrors(true)
                 .ConfigureLogging((hostingContext, builder) =>
                 {
+                    builder.AddConsole();
                     builder.AddFile("Logs/get-data-job-{Date}.log");
                 })
                 .UseStartup<Startup>()

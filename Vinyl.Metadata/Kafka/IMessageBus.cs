@@ -6,7 +6,7 @@ namespace Vinyl.Kafka
 {
     public interface IMessageBus : IDisposable
     {
-        Task SendMessage<T>(string topic, T @object) where T : class;
-        void SubscribeOnTopic<T>(string topic, Action<T> action, CancellationToken cancellationToken) where T : class;
+        Task SendMessage<T>(T @object) where T : class;
+        void SubscribeOnTopic<T>(Action<T> action, CancellationToken cancellationToken) where T : class;
     }
 }

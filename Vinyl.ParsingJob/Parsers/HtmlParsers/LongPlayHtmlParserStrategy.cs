@@ -17,8 +17,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         private readonly int _degreeOfParalellism = 10;
         private string _urlTemplate;
 
-        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null) 
-            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
+        public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null) 
+            : base(logger, htmlDataGetter, dataLimit)
         {
         }
 

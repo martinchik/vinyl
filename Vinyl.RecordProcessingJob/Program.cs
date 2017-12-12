@@ -19,6 +19,12 @@ namespace Vinyl.RecordProcessingJob
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .CaptureStartupErrors(true)
+                .ConfigureLogging((hostingContext, builder) =>
+                {
+                    builder.AddConsole();
+                    builder.AddFile("Logs/get-data-job-{Date}.log");
+                })
                 .UseStartup<Startup>()
                 .Build();
     }

@@ -18,47 +18,16 @@ namespace Vinyl.ParsingJob.Processor
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
         }
-
-        private Dictionary<string, List<DirtyRecord>> _data = new Dictionary<string, List<DirtyRecord>>();
-
-        public void AddRecord(string strategyName, DirtyRecord record)
+        
+        public bool AddRecord(ShopParseStrategyInfo strategy, DirtyRecord record)
         {
             if (record == null ||
                 string.IsNullOrEmpty(record.Title) ||
                 string.IsNullOrEmpty(record.Artist))
-                return;
+                return false;
 
-            _messageBus.SendMessage(KafkaConstants.DirtyRecordTopicNameCmd, record);
-
-            List<DirtyRecord> list;
-            if (!_data.TryGetValue(strategyName, out list))
-            {
-                list = new List<DirtyRecord>();
-                _data.Add(strategyName, list);
-            }
-            list.Add(record);
-        }
-
-        public IEnumerable<string> GetCsvLines()
-        {
-            foreach (var pair in _data)
-            {
-                foreach (var rec in pair.Value)
-                {
-                    yield return string.Concat(
-                        pair.Key.ToCsvValue(),
-                        rec.Album.ToCsvValue(),
-                        rec.Artist.ToCsvValue(),
-                        rec.Title.ToCsvValue(),
-                        rec.Year.ToCsvValue(),
-                        rec.State.ToCsvValue(),
-                        rec.Price.ToCsvValue(),
-                        rec.Info.ToCsvValue(),
-                        rec.Url.ToCsvValue()
-                        );
-                }
-            }
-        }
-
+            _messageBus.SendMessage(record);
+            return true;
+        }        
     }
 }

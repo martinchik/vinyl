@@ -5,7 +5,6 @@ namespace Vinyl.ParsingJob.Processor
 {
     public interface IDirtyRecordProcessor
     {
-        void AddRecord(string strategyName, DirtyRecord record);
-        IEnumerable<string> GetCsvLines();
+        bool AddRecord(ShopParseStrategyInfo strategy, DirtyRecord record);
     }
 }

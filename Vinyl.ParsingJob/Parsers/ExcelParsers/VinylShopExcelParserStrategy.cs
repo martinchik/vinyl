@@ -16,8 +16,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {
     public class VinylShopExcelParserStrategy : BaseExcelParserStrategy
     {
-        public VinylShopExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null)
-            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
+        public VinylShopExcelParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null)
+            : base(logger, htmlDataGetter, dataLimit)
         {
         }        
 

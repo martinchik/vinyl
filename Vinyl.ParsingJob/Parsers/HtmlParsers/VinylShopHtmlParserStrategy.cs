@@ -15,8 +15,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
     {
         private string _urlTemplate;
 
-        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null) 
-            : base(logger, htmlDataGetter, recordProcessor, dataLimit)
+        public VinylShopHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null) 
+            : base(logger, htmlDataGetter, dataLimit)
         {
         }
 

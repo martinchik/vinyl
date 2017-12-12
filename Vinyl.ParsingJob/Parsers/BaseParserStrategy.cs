@@ -15,14 +15,12 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
     public abstract class BaseParserStrategy : IParserStrategy
     {
         protected readonly IHtmlDataGetter _htmlDataGetter;
-        protected readonly IDirtyRecordProcessor _recordProcessor;
         protected readonly ILogger _logger;
         protected readonly int? _dataLimit;
 
-        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, IDirtyRecordProcessor recordProcessor, int? dataLimit = null)
+        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null)
         {
             _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
-            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _dataLimit = dataLimit;
@@ -34,9 +32,9 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 
         protected abstract string GetNextPageUrl(int pageIndex);
 
-        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);
+        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);        
 
-        public async Task<int> Run(CancellationToken token)
+        public IEnumerable<DirtyRecord> Parse(CancellationToken token)
         {
             int readedAllCount = 0;
             int readedPageCount = 0;
@@ -48,7 +46,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 do
                 {
                     readedPageCount = 0;
-                    var pageData = await _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token);
+                    var pageData = _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token).GetAwaiter().GetResult();
 
                     if (!string.IsNullOrEmpty(pageData))
                     {
@@ -59,7 +57,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                                 readedPageCount = 0;
                                 break;
                             }
-                            _recordProcessor.AddRecord(Name, record);
+
+                            yield return record;
                             readedPageCount++;
                         }
                     }
@@ -69,17 +68,11 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 }
                 while (readedPageCount > 0);                
             }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, Name + ": Parsing page error");
-            }
             finally
             {
                 sw.Stop();
                 _logger.LogInformation(Name + $": Readed {readedAllCount} records from {pageIndex} pages. ElapsedTime: {sw.Elapsed}");
             }
-
-            return readedAllCount;
         }        
     }
 }

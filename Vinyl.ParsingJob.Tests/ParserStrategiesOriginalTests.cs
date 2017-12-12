@@ -15,16 +15,7 @@ namespace Vinyl.ParsingJob.Tests
 {
     [TestClass]
     public class ParserStrategiesOriginalTests
-    {       
-        private void SaveResultsTo(string fileName, IDirtyRecordProcessor recordProcessor)
-        {
-            string[] header = new[] { "Parser;Album;Artist;Title;Year;State;Price;Info;Url" };
-            if (File.Exists(fileName))
-                File.Delete(fileName);
-
-            File.WriteAllLines(fileName, header.Concat(recordProcessor.GetCsvLines()));
-        }
-
+    {               
         [TestMethod]
         [Ignore("Original")]
         public void LongPlay_HtmlParser_Strategy_Original_Test()
@@ -32,11 +23,11 @@ namespace Vinyl.ParsingJob.Tests
             var htmlGetter = new HtmlDataGetter(Substitute.For<ILogger<HtmlDataGetter>>());
             var recordProcessor = new DirtyRecordProcessor(Substitute.For<ILogger<DirtyRecordProcessor>>(), Substitute.For<IMessageBus>());
 
-            var shops = new[] { Vinyl.Metadata.Test.TestShops.GetLongPlayShop() };
-            IParserStrategy strategy = (new ShopStrategiesService(Substitute.For<ILogger<ShopStrategiesService>>(), htmlGetter, recordProcessor)).GetStrategiesForRun(shops).FirstOrDefault();
-            strategy.Run(CancellationToken.None).GetAwaiter().GetResult();
+            //var shops = new[] { Vinyl.Metadata.Test.TestShops.GetLongPlayShop() };
+            //IParserStrategy strategy = (new ShopStrategiesService(Substitute.For<ILogger<ShopStrategiesService>>(), htmlGetter, recordProcessor)).GetStrategiesForRun(shops).FirstOrDefault();
+            //strategy.Parse(CancellationToken.None).GetAwaiter().GetResult();
 
-            SaveResultsTo(strategy.GetType().Name + ".csv", recordProcessor);
+            //SaveResultsTo(strategy.GetType().Name + ".csv", recordProcessor);
         }        
     }
 }

@@ -27,51 +27,68 @@ namespace Vinyl.ParsingJob.Job
         {
             _strategiesService = strategiesService ?? throw new ArgumentNullException(nameof(strategiesService));
             _shopInfoService = shopInfoService ?? throw new ArgumentNullException(nameof(shopInfoService));
-            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));
+            _recordProcessor = recordProcessor ?? throw new ArgumentNullException(nameof(recordProcessor));            
         }
 
         protected override async Task ExecuteAsync(CancellationToken token)
         {
+            //Task.Run(() =>
+            //        new Kafka.Lib.MessageBus(Kafka.KafkaConstants.DirtyRecordTopicNameCmd, "127.0.0.1:9092")
+            //        .SubscribeOnTopic<DirtyRecord>(msg => {
+            //            Logger.LogInformation($"Recieved msg:{msg.ToString()}");
+            //        }, token),
+            //    token);
+
             var shops = await _shopInfoService.GetShops(token);
+
+            Logger.LogInformation($"Get {shops?.Count} shops from storage");
+
             long countRecords = 0;
-
+            Result = "";
             try
             {
-                foreach (var strategy in _strategiesService.GetStrategiesForRun(shops))
-                {                   
-                    countRecords += await RunStrategy(strategy, token);
-                }
-            }
-            finally
-            {
-                Result = $"Parsed {countRecords} records";
-            }
-        }
-
-        private Task<int> RunStrategy(IParserStrategy strategy, CancellationToken token)
-        {
-            try
-            {
-                return strategy.Run(token);
+                await Task.WhenAll(_strategiesService
+                    .GetStrategiesForRun(shops)
+                    .Select(strategyInfo => Task.Run(() =>
+                    {
+                        var count = RunStrategy(strategyInfo, token); ;
+                        Interlocked.Add(ref countRecords, count);
+                    }))
+                    .ToArray());
             }
             catch (Exception exc)
             {
-                Logger.LogWarning(exc, $"Error while running {strategy.GetType().Name} parsing strategy ");
-                return Task.FromResult(0);
+                Result += "Error:"+ exc.Message + Environment.NewLine;
+                throw exc;
+            }
+            finally
+            {
+                Result += $"Parsed and sent {countRecords} records" + Environment.NewLine;
             }
         }
 
-        //private void GetMessages()
-        //{
-        //    var msgBus = new Kafka.Lib.MessageBus();
-            
-        //    Task.Run(() => 
-        //        msgBus.SubscribeOnTopic<DirtyRecord>(Kafka.Lib.KafkaConstants.DirtyRecordTopicNameCmd, ProcessKafkaMessage, CancellationToken.None));            
-        //}
+        private int RunStrategy((ShopParseStrategyInfo info, IParserStrategy strategy) strategyPair, CancellationToken token)
+        {
+            int count = 0;
+            try
+            {
+                Logger.LogInformation($"Run {strategyPair.Item1.ClassName} parsing strategy with id={strategyPair.Item1.Id}");
 
-        //private void ProcessKafkaMessage(DirtyRecord msg)
-        //{            
-        //    Console.WriteLine($"Recieved msg:{msg.ToString()}");
-        //}
+                foreach (var record in strategyPair.strategy.Parse(token))
+                {
+                    if (_recordProcessor.AddRecord(strategyPair.info, record))
+                        count++;
+                }
+            }
+            catch (Exception exc)
+            {
+                var txt = $"Error while running {strategyPair.Item1.ClassName} parsing strategy with id={strategyPair.Item1.Id}";
+
+                Result += txt + ". Error:" + exc.Message + Environment.NewLine;
+                Logger.LogWarning(exc, txt);
+            }
+
+            return count;
+        }
     }
 }
