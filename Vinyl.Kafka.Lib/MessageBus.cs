@@ -25,7 +25,7 @@ namespace Vinyl.Kafka.Lib
             };
             _consumerConfig = new Dictionary<string, object>
             {
-                { "group.id", "custom-group"},
+                { "group.id", "vinyl-group"},
                 { "bootstrap.servers", host }
             };
             _topic = topic;            
@@ -34,21 +34,51 @@ namespace Vinyl.Kafka.Lib
         public Task SendMessage<T>(T @object) where T : class
         {
             if (_producer == null)
+            {
                 _producer = new Producer<Null, string>(_producerConfig, null, new StringSerializer(Encoding.UTF8));
+                _producer.OnError += (sender, err) => 
+                {
+                    Console.WriteLine($"code:{err.Code}; reason:{err.Reason}");
+                };
+                _producer.OnLog += (sender, logMsg) =>
+                {
+                    Console.WriteLine($"{logMsg.Name}: {logMsg.Message}");
+                };
+                _producer.OnStatistics += (sender, stat) =>
+                {
+                    Console.WriteLine($"Statistics: {stat}");
+                };
+            }
 
             var msg = Newtonsoft.Json.JsonConvert.SerializeObject(@object);
 #if DEBUG
             Console.WriteLine($"Sent msg:{msg}");
-#endif
-            return _producer.ProduceAsync(_topic, null, msg);
-        }        
+#endif            
+            var result = _producer.ProduceAsync(_topic, null, msg).GetAwaiter().GetResult();
+
+            Console.WriteLine($"Event sent on Partition: {result.Partition} with Offset: {result.Offset}");
+
+            return Task.FromResult(0);
+        }
 
         public void SubscribeOnTopic<T>(Action<T> action, CancellationToken cancellationToken) where T : class
         {
             if (_consumer != null)
                 throw new Exception("Already subscribed on topic " + _topic);
 
-            _consumer = new Consumer<Null, string>(_consumerConfig, null, new StringDeserializer(Encoding.UTF8));            
+            _consumer = new Consumer<Null, string>(_consumerConfig, null, new StringDeserializer(Encoding.UTF8));
+            _consumer.OnError += (sender, err) =>
+            {
+                Console.WriteLine($"code:{err.Code}; reason:{err.Reason}");
+            };
+            _consumer.OnLog += (sender, logMsg) =>
+            {
+                Console.WriteLine($"{logMsg.Name}: {logMsg.Message}");
+            };
+            _consumer.OnStatistics += (sender, stat) =>
+            {
+                Console.WriteLine($"Statistics: {stat}");
+            };
             _consumer.Assign(new List<TopicPartitionOffset> { new TopicPartitionOffset(_topic, 0, -1) });
 
             while (!cancellationToken.IsCancellationRequested)

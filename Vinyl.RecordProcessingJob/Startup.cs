@@ -26,7 +26,7 @@ namespace Vinyl.RecordProcessingJob
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IMessageBus>(_ => new MessageBus(KafkaConstants.DirtyRecordTopicNameCmd, "127.0.0.1:9092"));
+            services.AddTransient<IMessageBus>(_ => new MessageBus(KafkaConstants.DirtyRecordTopicNameCmd, "172.16.225.164:9092"));
             services.AddSingleton<ProcessingJob>();
 
             services.AddMvc();

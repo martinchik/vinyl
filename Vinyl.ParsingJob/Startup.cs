@@ -33,7 +33,7 @@ namespace Vinyl.ParsingJob
 
             services.AddSingleton<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordProcessor, DirtyRecordProcessor>();
-            services.AddTransient<IMessageBus>(_ => new MessageBus(KafkaConstants.DirtyRecordTopicNameCmd, "127.0.0.1:9092"));
+            services.AddTransient<IMessageBus>(_ => new MessageBus(KafkaConstants.DirtyRecordTopicNameCmd, "172.16.225.164:9092"));
             services.AddSingleton<IShopInfoService, ShopInfoService>();
             services.AddSingleton<IShopStrategiesService, ShopStrategiesService>();
             services.AddSingleton<ParsingRepeatableJob>();
