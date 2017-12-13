@@ -4,9 +4,13 @@ using System.Threading.Tasks;
 
 namespace Vinyl.Kafka
 {
-    public interface IMessageBus : IDisposable
+    public interface IMessageConsumer : IDisposable
     {
-        Task SendMessage<T>(T @object) where T : class;
-        void SubscribeOnTopic<T>(Action<T> action, CancellationToken cancellationToken) where T : class;
+        void SubscribeOnTopic<T>(Action<T, string> action, CancellationToken cancellationToken) where T : class;
+    }
+
+    public interface IMessageProducer : IDisposable
+    {
+        Task<string> SendMessage<T>(T @object) where T : class;
     }
 }

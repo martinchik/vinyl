@@ -11,9 +11,9 @@ namespace Vinyl.ParsingJob.Processor
     public class DirtyRecordProcessor : IDirtyRecordProcessor
     {
         private readonly ILogger _logger;
-        private readonly IMessageBus _messageBus;
+        private readonly IMessageProducer _messageBus;
 
-        public DirtyRecordProcessor(ILogger<DirtyRecordProcessor> logger, IMessageBus messageBus)
+        public DirtyRecordProcessor(ILogger<DirtyRecordProcessor> logger, IMessageProducer messageBus)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
@@ -26,7 +26,13 @@ namespace Vinyl.ParsingJob.Processor
                 string.IsNullOrEmpty(record.Artist))
                 return false;
 
-            _messageBus.SendMessage(record);
+            _messageBus.SendMessage(record).ContinueWith(_ => 
+            {
+                if (_.IsCompletedSuccessfully)
+                    _logger.LogTrace("Kafka send msg:" + _.Result);
+                else
+                    _logger.LogError(_.Exception, "Error has occurred when message was sending to kafka");
+            });
             return true;
         }        
     }

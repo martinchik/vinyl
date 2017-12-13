@@ -13,13 +13,13 @@ namespace Vinyl.RecordProcessingJob.Job
 {
     public class ProcessingJob : Vinyl.Common.Job.Job
     {
-        private readonly IMessageBus _messageBus;
+        private readonly IMessageConsumer _messageBus;
 
         public const string Name = "processing-job";
 
         private long _recivedCount;
 
-        public ProcessingJob(ILogger<ProcessingJob> logger, IMessageBus messageBus) :
+        public ProcessingJob(ILogger<ProcessingJob> logger, IMessageConsumer messageBus) :
             base(logger, Name, null)
         {
             _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
@@ -32,13 +32,13 @@ namespace Vinyl.RecordProcessingJob.Job
                 token);
         }
 
-        private void ProcessKafkaMessage(DirtyRecord msg)
+        private void ProcessKafkaMessage(DirtyRecord msg, string message)
         {
             Interlocked.Increment(ref _recivedCount);
 
             Result = $"Recieved {_recivedCount} records";
 
-            Logger.LogInformation($"Recieved msg:{msg.ToString()}");
+            Logger.LogTrace("Kafka recieved msg:" + message);
         }
     }
 }
