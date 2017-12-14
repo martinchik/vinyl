@@ -16,8 +16,7 @@ services:
       - zookeeper
     ports:
       - "9092:9092"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: 172.16.225.164
+    environment:      
       KAFKA_CREATE_TOPICS: "dirty_records:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181    
       KAFKA_BROKER_ID: 0

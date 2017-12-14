@@ -14,6 +14,7 @@ using Vinyl.ParsingJob.Processor;
 using Vinyl.ParsingJob.Data;
 using Vinyl.Kafka.Lib;
 using Vinyl.Kafka;
+using System.Net;
 
 namespace Vinyl.ParsingJob
 {
@@ -31,9 +32,13 @@ namespace Vinyl.ParsingJob
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
 
+            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
+            string myIP = Dns.GetHostAddresses(hostName).FirstOrDefault().ToString();
+            string testHost = $"{myIP}:{KafkaConstants.KafkaHostPort}";
+
             services.AddSingleton<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordProcessor, DirtyRecordProcessor>();
-            services.AddTransient<IMessageProducer>(_ => new KafkaProducer(KafkaConstants.DirtyRecordTopicNameCmd, "172.16.225.164:9092"));
+            services.AddTransient<IMessageProducer>(_ => new KafkaProducer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
             services.AddSingleton<IShopInfoService, ShopInfoService>();
             services.AddSingleton<IShopStrategiesService, ShopStrategiesService>();
             services.AddSingleton<ParsingRepeatableJob>();

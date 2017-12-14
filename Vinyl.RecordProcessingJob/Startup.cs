@@ -26,7 +26,7 @@ namespace Vinyl.RecordProcessingJob
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, "172.16.225.164:9092"));
+            services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
             services.AddSingleton<ProcessingJob>();
 
             services.AddMvc();
