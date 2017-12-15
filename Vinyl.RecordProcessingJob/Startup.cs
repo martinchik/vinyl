@@ -11,6 +11,9 @@ using Microsoft.Extensions.Options;
 using Vinyl.RecordProcessingJob.Job;
 using Vinyl.Kafka;
 using Vinyl.Kafka.Lib;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.Extensions.PlatformAbstractions;
+using System.IO;
 
 namespace Vinyl.RecordProcessingJob
 {
@@ -30,6 +33,14 @@ namespace Vinyl.RecordProcessingJob
             services.AddSingleton<ProcessingJob>();
 
             services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Record Processing Job API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, $"{PlatformServices.Default.Application.ApplicationName}.xml");
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +59,9 @@ namespace Vinyl.RecordProcessingJob
             });
 
             job.Start();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Record Processing Job API"); });
         }
     }
 }

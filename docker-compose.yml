@@ -1,12 +1,30 @@
 version: '3'
 
 services:
+  postgresserver:
+     image: postgres
+     hostname: postgresdb
+     container_name: postgresdb
+     restart: always
+     ports:
+       - 5430:5432
+     environment:
+        POSTGRES_USER: "dbuser"
+        POSTGRES_PASSWORD: "dbpwd"
+        POSTGRES_DB: "vinylshop"
+     volumes:
+       - pgdata:/var/lib/postgresql/data
+     networks:
+      - vinylnetwork
+
   zookeeper:
     hostname: zookeeper
     container_name: zookeeper
     image: wurstmeister/zookeeper
     ports:
       - "2181:2181"
+    networks:
+      - vinylnetwork
 
   kafka:
     image: wurstmeister/kafka:1.0.0
@@ -22,18 +40,27 @@ services:
       KAFKA_BROKER_ID: 0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - vinylnetwork
 
   vinyl.parsingjob:
     image: vinyl.parsingjob
     hostname: parsingjob
     container_name: parsingjob
+    links:
+       - postgresserver
     depends_on:
       - kafka
+      - postgresserver
     ports:
       - "20081:20081"
     build:
       context: ./Vinyl.ParsingJob
       dockerfile: Dockerfile
+    environment:
+      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
+    networks:
+      - vinylnetwork
 
   vinyl.recordprocessingjob:
     image: vinyl.recordprocessingjob
@@ -46,3 +73,12 @@ services:
     build:
       context: ./Vinyl.RecordProcessingJob
       dockerfile: Dockerfile
+    networks:
+      - vinylnetwork
+
+volumes:
+  pgdata:
+
+networks:
+  vinylnetwork:
+     driver: bridge

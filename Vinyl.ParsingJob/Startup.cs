@@ -15,6 +15,9 @@ using Vinyl.ParsingJob.Data;
 using Vinyl.Kafka.Lib;
 using Vinyl.Kafka;
 using System.Net;
+using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
+using Microsoft.Extensions.PlatformAbstractions;
 
 namespace Vinyl.ParsingJob
 {
@@ -36,17 +39,26 @@ namespace Vinyl.ParsingJob
             string myIP = Dns.GetHostAddresses(hostName).FirstOrDefault().ToString();
             string testHost = $"{myIP}:{KafkaConstants.KafkaHostPort}";
 
-            services.AddSingleton<IHtmlDataGetter, HtmlDataGetter>();
+            services.AddMvc();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "Parsing Job API", Version = "v1" });
+                var basePath = PlatformServices.Default.Application.ApplicationBasePath;
+                var xmlPath = Path.Combine(basePath, $"{PlatformServices.Default.Application.ApplicationName}.xml");
+                c.IncludeXmlComments(xmlPath);
+            });
+
+            DbLayer.DatabaseServiceRegistrator.Register(services);
+
+            services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordProcessor, DirtyRecordProcessor>();
             services.AddTransient<IMessageProducer>(_ => new KafkaProducer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
-            services.AddSingleton<IShopInfoService, ShopInfoService>();
-            services.AddSingleton<IShopStrategiesService, ShopStrategiesService>();
+            services.AddTransient<IShopInfoService, ShopInfoService>();
+            services.AddTransient<IShopStrategiesService, ShopStrategiesService>();
             services.AddSingleton<ParsingRepeatableJob>();
-
-            services.AddMvc();            
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, ParsingRepeatableJob job)
         {
             if (env.IsDevelopment())
@@ -62,6 +74,9 @@ namespace Vinyl.ParsingJob
             });
 
             job.Start();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Parsing Job API"); });
         }
     }
 }

@@ -5,6 +5,11 @@
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DocumentationFile>bin\Debug\netcoreapp2.0\Vinyl.ParsingJob.xml</DocumentationFile>
+    <NoWarn>1701;1702;1705;1591</NoWarn>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Logs\**" />
     <Content Remove="Logs\**" />
@@ -22,6 +27,7 @@
     <PackageReference Include="HtmlAgilityPack" Version="1.6.6" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.5.0-preview1-25914-04" />
   </ItemGroup>
 
@@ -31,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Vinyl.Common\Vinyl.Common.csproj" />
+    <ProjectReference Include="..\Vinyl.DbLayer\Vinyl.DbLayer.csproj" />
     <ProjectReference Include="..\Vinyl.Kafka.Lib\Vinyl.Kafka.Lib.csproj" />
     <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
   </ItemGroup>
