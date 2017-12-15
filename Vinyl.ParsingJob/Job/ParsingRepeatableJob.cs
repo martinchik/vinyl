@@ -31,14 +31,7 @@ namespace Vinyl.ParsingJob.Job
         }
 
         protected override async Task ExecuteAsync(CancellationToken token)
-        {
-            //Task.Run(() =>
-            //        new Kafka.Lib.MessageBus(Kafka.KafkaConstants.DirtyRecordTopicNameCmd, "127.0.0.1:9092")
-            //        .SubscribeOnTopic<DirtyRecord>(msg => {
-            //            Logger.LogInformation($"Recieved msg:{msg.ToString()}");
-            //        }, token),
-            //    token);
-
+        {            
             var shops = await _shopInfoService.GetShops(token);
 
             Logger.LogInformation($"Get {shops?.Count} shops from storage");
@@ -51,8 +44,10 @@ namespace Vinyl.ParsingJob.Job
                     .GetStrategiesForRun(shops)
                     .Select(strategyInfo => Task.Run(() =>
                     {
-                        var count = RunStrategy(strategyInfo, token); ;
+                        var count = RunStrategy(strategyInfo, token);
                         Interlocked.Add(ref countRecords, count);
+
+                        _strategiesService.UpdateStartegyStatus(strategyInfo.info, count);
                     }))
                     .ToArray());
             }

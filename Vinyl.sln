@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2010
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.ParsingJob", "Vinyl.ParsingJob\Vinyl.ParsingJob.csproj", "{E8C2EB06-0271-49B0-8BE0-637B679F87A3}"
 EndProject
@@ -29,12 +29,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kafka", "Kafka", "{C215A621
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Kafka.Lib", "Vinyl.Kafka.Lib\Vinyl.Kafka.Lib.csproj", "{153E60FB-40DE-44C3-B7CA-272DEC56B0B9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.RecordProcessingJob", "Vinyl.RecordProcessingJob\Vinyl.RecordProcessingJob.csproj", "{189E535D-274D-4343-9CF3-DCB0C23FA432}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.RecordProcessingJob", "Vinyl.RecordProcessingJob\Vinyl.RecordProcessingJob.csproj", "{189E535D-274D-4343-9CF3-DCB0C23FA432}"
 	ProjectSection(ProjectDependencies) = postProject
 		{E8C2EB06-0271-49B0-8BE0-637B679F87A3} = {E8C2EB06-0271-49B0-8BE0-637B679F87A3}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.RecordProcessingJob.Tests", "Vinyl.RecordProcessingJob.Tests\Vinyl.RecordProcessingJob.Tests.csproj", "{B0511807-26FE-47B9-958F-114AFFDD8755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.RecordProcessingJob.Tests", "Vinyl.RecordProcessingJob.Tests\Vinyl.RecordProcessingJob.Tests.csproj", "{B0511807-26FE-47B9-958F-114AFFDD8755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.DbLayer", "Vinyl.DbLayer\Vinyl.DbLayer.csproj", "{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,6 +76,10 @@ Global
 		{B0511807-26FE-47B9-958F-114AFFDD8755}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B0511807-26FE-47B9-958F-114AFFDD8755}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B0511807-26FE-47B9-958F-114AFFDD8755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,6 +92,7 @@ Global
 		{153E60FB-40DE-44C3-B7CA-272DEC56B0B9} = {C215A621-AFFA-470D-9B51-CB04A8DC0499}
 		{189E535D-274D-4343-9CF3-DCB0C23FA432} = {30E14712-D401-49D6-AE91-1072CE57ABBE}
 		{B0511807-26FE-47B9-958F-114AFFDD8755} = {467CA0DC-4058-48B3-BB83-F238BB59B6CF}
+		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55} = {FCE21F67-E0D7-4455-8A11-D34CB1FD6349}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A72305D-7832-424D-9907-A5B57081762C}

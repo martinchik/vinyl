@@ -23,3 +23,5 @@
 /Vinyl.RecordProcessingJob.Tests/bin
 /Vinyl.RecordProcessingJob.Tests/obj
 /Vinyl.RecordProcessingJob/Logs
+/Vinyl.DbLayer/bin/Debug/netcoreapp2.0
+/Vinyl.DbLayer/obj

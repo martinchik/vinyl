@@ -115,6 +115,11 @@ namespace Vinyl.ParsingJob.Data
             _logger.LogWarning($"Strategy parser {strategyInfo.Id} in shop {strategyInfo.ShopId} has wrong setup and can't be run. Error={text}");
             return false;
         }
-        
+
+        public void UpdateStartegyStatus(ShopParseStrategyInfo strategyInfo, int count)
+        {
+            strategyInfo.ProcessedAt = DateTime.UtcNow;
+            strategyInfo.LastProcessedCount = count;
+        }
     }
 }

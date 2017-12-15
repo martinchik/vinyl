@@ -17,5 +17,6 @@ namespace Vinyl.Metadata
         public DateTime ProcessedAt { get; set; }
         public int? DataLimit { get; set; }
         public int UpdatePeriodInHours { get; set; }
+        public int LastProcessedCount { get; set; }
     }
 }
