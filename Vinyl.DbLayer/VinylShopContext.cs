@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Vinyl.DbLayer.Models;
 
 namespace Vinyl.DbLayer
@@ -15,7 +16,7 @@ namespace Vinyl.DbLayer
         public virtual DbSet<ShopParseStrategyInfo> ShopParseStrategyInfo { get; set; }
         public virtual DbSet<SearchItem> SearchItem { get; set; }
 
-        public VinylShopContext(DbContextOptions options)
+        public VinylShopContext(DbContextOptions<VinylShopContext> options)
             :base(options)
         {
         }
@@ -227,6 +228,14 @@ namespace Vinyl.DbLayer
             {
                 entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
             }
+        }
+
+        public VinylShopContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<VinylShopContext>();
+            optionsBuilder.UseNpgsql("host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd");
+
+            return new VinylShopContext(optionsBuilder.Options);
         }
     }
 }

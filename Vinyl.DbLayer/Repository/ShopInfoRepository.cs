@@ -7,15 +7,11 @@ using Vinyl.DbLayer.Models;
 
 namespace Vinyl.DbLayer.Repository
 {
-    public class ShopInfoRepository : IShopInfoRepository
+    public class ShopInfoRepository : BaseRepository
     {
-        private readonly VinylShopContext _context;
-        private readonly ILogger _logger;
-
-        public ShopInfoRepository(VinylShopContext context, ILogger<ShopInfoRepository> logger)
+        internal ShopInfoRepository(VinylShopContext context, ILogger<VinylShopContext> logger)
+            :base(context, logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public void Save(ShopInfo item)
@@ -30,11 +26,11 @@ namespace Vinyl.DbLayer.Repository
                 throw new Exception($"Shop '{item.Title}' is already exist");
 
             if (item.Id == Guid.Empty)
-                _context.ShopInfo.Add(item);
+                Context.ShopInfo.Add(item);
             else
-                _context.ShopInfo.Update(item);
+                Context.ShopInfo.Update(item);
 
-            _context.SaveChanges();
+            Context.SaveChanges();
         }
 
         public void Delete(Guid id)
@@ -43,15 +39,15 @@ namespace Vinyl.DbLayer.Repository
             if (entity == null)
                 return;
 
-            _context.ShopInfo.Remove(entity);
-            _context.SaveChanges();
+            Context.ShopInfo.Remove(entity);
+            Context.SaveChanges();
         }
 
         public ShopInfo Get(Guid id)
         {
             if (id == Guid.Empty)
                 return null;
-            return _context.ShopInfo.Find(id);
+            return Context.ShopInfo.Find(id);
         }
 
         public ShopInfo Get(string title)
@@ -59,12 +55,12 @@ namespace Vinyl.DbLayer.Repository
             if (string.IsNullOrWhiteSpace(title))
                 return null;
 
-            return _context.ShopInfo.FirstOrDefault(t => string.Compare(t.Title, title, StringComparison.InvariantCultureIgnoreCase) == 0);
+            return Context.ShopInfo.FirstOrDefault(t => string.Compare(t.Title, title, StringComparison.InvariantCultureIgnoreCase) == 0);
         }
 
         public IQueryable<ShopInfo> GetAll()
         {
-            return _context.ShopInfo.AsQueryable();
+            return Context.ShopInfo.AsQueryable();
         }
     }
 }

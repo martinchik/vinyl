@@ -49,7 +49,7 @@ namespace Vinyl.ParsingJob
                 c.IncludeXmlComments(xmlPath);
             });
 
-            DbLayer.DatabaseServiceRegistrator.Register(services);
+            DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
 
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordProcessor, DirtyRecordProcessor>();
