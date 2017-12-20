@@ -5,5 +5,6 @@ namespace Vinyl.DbLayer
     public interface IMetadataRepositoriesFactory
     {
         ShopInfoRepository CreateShopInfoRepository();
+        ShopParseStrategyInfoRepository CreateShopParseStrategyInfoRepository();
     }
 }

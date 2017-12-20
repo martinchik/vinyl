@@ -19,13 +19,15 @@ namespace Vinyl.ParsingJob.Data
             _metadataFactory = metadataFactory ?? throw new ArgumentNullException(nameof(metadataFactory));
         }
 
-        public async Task<IList<ShopInfo>> GetShops(CancellationToken token)
+        public Task<List<ShopInfo>> GetShops(CancellationToken token)
         {
-            using (var shopInfoRepository = _metadataFactory.CreateShopInfoRepository())
+            return Task.Run(() =>
             {
-                var res = shopInfoRepository.GetAll().ToList();
-                return await Task.FromResult(TestShops.GetAll().ToList());
-            }
+                using (var shopInfoRepository = _metadataFactory.CreateShopInfoRepository())
+                {
+                    return shopInfoRepository.GetAll().Select(_ => _.ToMetaData()).ToList();
+                }
+            });
         }
     }
 }

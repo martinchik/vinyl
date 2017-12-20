@@ -7,6 +7,6 @@ namespace Vinyl.ParsingJob.Data
 {
     public interface IShopInfoService
     {
-        Task<IList<ShopInfo>> GetShops(CancellationToken token);
+        Task<List<ShopInfo>> GetShops(CancellationToken token);
     }
 }

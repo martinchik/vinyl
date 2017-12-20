@@ -41,7 +41,7 @@ namespace Vinyl.ParsingJob.Job
             try
             {
                 await Task.WhenAll(_strategiesService
-                    .GetStrategiesForRun(shops)
+                    .GetStrategiesForRun()
                     .Select(strategyInfo => Task.Run(() =>
                     {
                         var count = RunStrategy(strategyInfo, token);

@@ -18,6 +18,7 @@ using System.Net;
 using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 using Microsoft.Extensions.PlatformAbstractions;
+using Microsoft.EntityFrameworkCore;
 
 namespace Vinyl.ParsingJob
 {
@@ -59,12 +60,13 @@ namespace Vinyl.ParsingJob
             services.AddSingleton<ParsingRepeatableJob>();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, ParsingRepeatableJob job)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, 
+            ParsingRepeatableJob job)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-            }
+            }            
 
             app.UseMvc();            
 

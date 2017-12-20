@@ -11,9 +11,10 @@ using Vinyl.DbLayer;
 namespace Vinyl.DbLayer.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
-    {        
-        protected override void BuildModel(ModelBuilder modelBuilder)
+    [Migration("20171218143823_FirstData")]
+    partial class FirstData
+    {
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

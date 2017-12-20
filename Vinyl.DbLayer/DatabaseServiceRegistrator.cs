@@ -2,9 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Text;
-using Vinyl.DbLayer.Repository;
 
 namespace Vinyl.DbLayer
 {
@@ -40,8 +37,22 @@ namespace Vinyl.DbLayer
                     )
                 );
 
-            services.AddTransient<VinylShopContext>();
             services.AddTransient<IMetadataRepositoriesFactory, MetadataRepositoriesFactory>();
+
+            try
+            {
+                using (var ctx = CreateContext(configuration))
+                {
+                    ctx.Database.Migrate();
+
+                    new MetadataInitializer().Initialize(ctx);
+                }
+            }
+            catch (Exception exc)
+            {
+                System.Diagnostics.Trace.WriteLine("Error during update database. Exception:" + exc.ToString());
+                throw exc;
+            }
         }
     }
 }

@@ -1,9 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Vinyl.DbLayer.Repository;
 
 namespace Vinyl.DbLayer
@@ -20,9 +17,9 @@ namespace Vinyl.DbLayer
         }        
 
         public ShopInfoRepository CreateShopInfoRepository()
-        {
-            var ctx = DatabaseServiceRegistrator.CreateContext(_configuration);
-            return new ShopInfoRepository(ctx, _logger);
-        }
+            => new ShopInfoRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public ShopParseStrategyInfoRepository CreateShopParseStrategyInfoRepository()
+            => new ShopParseStrategyInfoRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
     }
 }

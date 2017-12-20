@@ -11,7 +11,6 @@ namespace Vinyl.DbLayer.Models
         public DateTime UpdatedAt { get; set; }
         public string PreviewUrl { get; set; }
         public string FullViewUrl { get; set; }
-
         public RecordInfo Record { get; set; }
     }
 }

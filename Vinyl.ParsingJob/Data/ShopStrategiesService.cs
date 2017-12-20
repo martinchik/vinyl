@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Vinyl.ParsingJob.Processor;
+using Vinyl.DbLayer;
+using System.Threading;
 
 namespace Vinyl.ParsingJob.Data
 {
@@ -14,11 +16,13 @@ namespace Vinyl.ParsingJob.Data
     {
         private readonly IList<Type> strategies;
 
-        protected readonly IHtmlDataGetter _htmlDataGetter;
-        protected readonly ILogger _logger;
+        private readonly IHtmlDataGetter _htmlDataGetter;
+        private readonly ILogger _logger;
+        private readonly IMetadataRepositoriesFactory _metadataFactory;
 
-        public ShopStrategiesService(ILogger<ShopStrategiesService> logger, IHtmlDataGetter htmlDataGetter)
+        public ShopStrategiesService(ILogger<ShopStrategiesService> logger, IHtmlDataGetter htmlDataGetter, IMetadataRepositoriesFactory metadataFactory)
         {
+            _metadataFactory = metadataFactory ?? throw new ArgumentNullException(nameof(metadataFactory));
             _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
@@ -26,27 +30,42 @@ namespace Vinyl.ParsingJob.Data
             strategies = strategyType.Assembly.GetTypes().Where(_ => _.GetInterfaces().Contains(strategyType)).ToList();
         }
 
-        public IEnumerable<(ShopParseStrategyInfo info, IParserStrategy strategy)> GetStrategiesForRun(IEnumerable<ShopInfo> shops)
+        private List<(ShopInfo shop, ShopParseStrategyInfo strategy)> GetStrategies(CancellationToken token)
         {
-            foreach (var shopInfo in shops)
+            using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
             {
-                if (shopInfo.Strategies?.Any() != true)
+                return strategiesRepository
+                    .GetAll()
+                    .AsEnumerable()
+                    .Select(_ => (shop: _.Shop.ToMetaData(), strategy: _.ToMetaData()))
+                    .ToList();
+            }
+        }
+
+        public void UpdateStartegyStatus(ShopParseStrategyInfo strategyInfo, int count)
+        {
+            using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
+            {
+                strategiesRepository.UpdateLastProcessedCount(strategyInfo.Id, count);
+                strategiesRepository.Save();
+            }
+        }
+
+        public IEnumerable<(ShopParseStrategyInfo info, IParserStrategy strategy)> GetStrategiesForRun()
+        {
+            foreach (var strategyInfo in GetStrategies(CancellationToken.None))
+            {
+                if (!CanRunStrategy(strategyInfo.strategy))
                     continue;
 
-                foreach (var strategyInfo in shopInfo.Strategies)
-                {
-                    if (!CanRunStrategy(strategyInfo))
-                        continue;
+                if (!ValidateStrategyParametersBy(strategyInfo.shop, strategyInfo.strategy))
+                    continue;
 
-                    if (!ValidateStrategyParametersBy(shopInfo, strategyInfo))
-                        continue;
+                var strategy = GetStrategyBy(strategyInfo.shop, strategyInfo.strategy);
+                if (strategy == null)
+                    continue;
 
-                    var strategy = GetStrategyBy(shopInfo, strategyInfo);
-                    if (strategy == null)
-                        continue;
-
-                    yield return (strategyInfo, strategy);
-                }
+                yield return (strategyInfo.strategy, strategy);
             }
         }
 
@@ -116,10 +135,5 @@ namespace Vinyl.ParsingJob.Data
             return false;
         }
 
-        public void UpdateStartegyStatus(ShopParseStrategyInfo strategyInfo, int count)
-        {
-            strategyInfo.ProcessedAt = DateTime.UtcNow;
-            strategyInfo.LastProcessedCount = count;
-        }
     }
 }

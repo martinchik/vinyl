@@ -16,7 +16,7 @@ namespace Vinyl.DbLayer.Models
         public string StartUrl { get; set; }
         public int UpdatePeriodInHours { get; set; }
         public int? LastProcessedCount { get; set; }
-        public int DataLimit { get; set; }
+        public int? DataLimit { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public DateTime? ProcessedAt { get; set; }

@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Linq;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
 using Vinyl.DbLayer.Models;
 
 namespace Vinyl.DbLayer
@@ -27,7 +25,7 @@ namespace Vinyl.DbLayer
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.FullViewUrl)
                     .IsRequired()
@@ -37,7 +35,7 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(1000);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.HasOne(d => d.Record)
                     .WithMany(p => p.RecordArt)
@@ -71,7 +69,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Country).HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.Currency).HasMaxLength(255);
 
@@ -87,7 +85,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Style).HasMaxLength(255);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.ViewType).HasMaxLength(255);
 
@@ -116,7 +114,7 @@ namespace Vinyl.DbLayer
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.Link)
                     .IsRequired()
@@ -124,7 +122,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Text).HasMaxLength(1000);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.HasOne(d => d.Record)
                     .WithMany(p => p.RecordLinks)
@@ -141,7 +139,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Country).HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.Emails).HasMaxLength(255);
 
@@ -151,7 +149,7 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.Url).HasMaxLength(1000);
             });
@@ -164,15 +162,15 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
 
-                entity.Property(e => e.ProcessedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.ProcessedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.StartUrl)
                     .IsRequired()
                     .HasMaxLength(1000);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);//.HasColumnType("datetime");
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.HasOne(d => d.Shop)
                     .WithMany(p => p.ShopParseStrategyInfo)
@@ -185,57 +183,16 @@ namespace Vinyl.DbLayer
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.PriceFrom);//.HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.PriceFrom);
 
-                entity.Property(e => e.PriceTo);//.HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.PriceTo);
 
                 entity.Property(e => e.TextLine1)
                     .IsRequired()
                     .HasMaxLength(1000);
 
                 entity.Property(e => e.TextLine2).HasMaxLength(1000);
-            });
-
-            // shadow properties
-            modelBuilder.Entity<ShopInfo>().Property<DateTime>("UpdatedAt");
-            modelBuilder.Entity<ShopParseStrategyInfo>().Property<DateTime>("UpdatedAt");
-            modelBuilder.Entity<RecordInfo>().Property<DateTime>("UpdatedAt");
-            modelBuilder.Entity<RecordInShopLink>().Property<DateTime>("UpdatedAt");
-            modelBuilder.Entity<RecordLinks>().Property<DateTime>("UpdatedAt");
-            
-        }
-
-        public override int SaveChanges()
-        {
-            ChangeTracker.DetectChanges();
-
-            updateUpdatedProperty<ShopInfo>();
-            updateUpdatedProperty<ShopParseStrategyInfo>();
-            updateUpdatedProperty<RecordInfo>();
-            updateUpdatedProperty<RecordInShopLink>();
-            updateUpdatedProperty<RecordLinks>();            
-
-            return base.SaveChanges();
-        }
-
-        private void updateUpdatedProperty<T>() where T : class
-        {
-            var modifiedSourceInfo =
-                ChangeTracker.Entries<T>()
-                    .Where(e => e.State == EntityState.Added || e.State == EntityState.Modified);
-
-            foreach (var entry in modifiedSourceInfo)
-            {
-                entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
-            }
-        }
-
-        public VinylShopContext CreateDbContext(string[] args)
-        {
-            var optionsBuilder = new DbContextOptionsBuilder<VinylShopContext>();
-            optionsBuilder.UseNpgsql("host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd");
-
-            return new VinylShopContext(optionsBuilder.Options);
+            });   
         }
     }
 }

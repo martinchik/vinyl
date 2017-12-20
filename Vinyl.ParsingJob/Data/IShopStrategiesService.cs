@@ -6,7 +6,7 @@ namespace Vinyl.ParsingJob.Data
 {
     public interface IShopStrategiesService
     {
-        IEnumerable<(ShopParseStrategyInfo info, IParserStrategy strategy)> GetStrategiesForRun(IEnumerable<ShopInfo> shops);
+        IEnumerable<(ShopParseStrategyInfo info, IParserStrategy strategy)> GetStrategiesForRun();
         void UpdateStartegyStatus(ShopParseStrategyInfo strategyInfo, int count);
     }
 }
