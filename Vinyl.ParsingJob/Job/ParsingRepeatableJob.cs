@@ -17,12 +17,12 @@ namespace Vinyl.ParsingJob.Job
     {
         private readonly IShopStrategiesService _strategiesService;
         private readonly IShopInfoService _shopInfoService;
-        private readonly IDirtyRecordProcessor _recordProcessor;
+        private readonly IDirtyRecordExportProcessor _recordProcessor;
 
         public const string Name = "parsing-job";
 
         public ParsingRepeatableJob(ILogger<ParsingRepeatableJob> logger, IShopStrategiesService strategiesService, IShopInfoService shopInfoService,
-            IDirtyRecordProcessor recordProcessor) :
+            IDirtyRecordExportProcessor recordProcessor) :
             base(logger, Name, Repeat.Immediately().Than(Repeat.Each.Hours(3)), TimeSpan.FromHours(1))
         {
             _strategiesService = strategiesService ?? throw new ArgumentNullException(nameof(strategiesService));

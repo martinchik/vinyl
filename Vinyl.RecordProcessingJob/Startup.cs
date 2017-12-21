@@ -14,6 +14,8 @@ using Vinyl.Kafka.Lib;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.Extensions.PlatformAbstractions;
 using System.IO;
+using Vinyl.RecordProcessingJob.Processor;
+using Vinyl.RecordProcessingJob.Data;
 
 namespace Vinyl.RecordProcessingJob
 {
@@ -28,10 +30,7 @@ namespace Vinyl.RecordProcessingJob
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
-            services.AddSingleton<ProcessingJob>();
-
+        {            
             services.AddMvc();
 
             services.AddSwaggerGen(c =>
@@ -41,6 +40,13 @@ namespace Vinyl.RecordProcessingJob
                 var xmlPath = Path.Combine(basePath, $"{PlatformServices.Default.Application.ApplicationName}.xml");
                 c.IncludeXmlComments(xmlPath);
             });
+
+            DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
+
+            services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
+            services.AddTransient<IDirtyRecordImportProcessor, DirtyRecordImportProcessor>();
+            services.AddTransient<IRecordService, RecordService>();
+            services.AddSingleton<ProcessingJob>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

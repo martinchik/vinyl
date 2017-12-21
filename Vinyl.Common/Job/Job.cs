@@ -66,6 +66,14 @@ namespace Vinyl.Common.Job
                     await ExecuteWithTimeoutAsync(_executionTimeout.Value, token);
                 }
             }
+            catch (OperationCanceledException)
+            {
+                Logger.LogInformation($"{JobName}. Job token has been cancelled.");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogCritical(ex, $"{JobName}. Job failed");
+            }
             finally
             {
                 IsRunning = false;

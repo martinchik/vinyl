@@ -7,44 +7,12 @@ using Vinyl.DbLayer.Models;
 
 namespace Vinyl.DbLayer.Repository
 {
-    public class ShopParseStrategyInfoRepository : BaseRepository
+    public class ShopParseStrategyInfoRepository : BaseRepositoryTemplate<ShopParseStrategyInfo>
     {
         internal ShopParseStrategyInfoRepository(VinylShopContext context, ILogger<VinylShopContext> logger)
-            :base(context, logger)
+            :base(context, context.ShopParseStrategyInfo, logger)
         {
-        }
-
-        public void Save(ShopParseStrategyInfo item)
-        {
-            if (item == null)
-                throw new ArgumentNullException(nameof(item));
-
-            var other = Get(item.Id);
-            if (other != null && other.Id != item.Id)
-                throw new Exception($"Shop '{item.Id}' is already exist");
-
-            if (item.Id == Guid.Empty)
-                Context.ShopParseStrategyInfo.Add(item);
-            else
-                Context.ShopParseStrategyInfo.Update(item);
-        }
-
-        public void Delete(Guid id)
-        {
-            var entity = Get(id);
-            if (entity == null)
-                return;
-
-            Context.ShopParseStrategyInfo.Remove(entity);
-        }
-
-        public ShopParseStrategyInfo Get(Guid id)
-        {
-            if (id == Guid.Empty)
-                return null;
-
-            return Context.ShopParseStrategyInfo.Find(id);
-        }
+        }        
 
         public IQueryable<ShopParseStrategyInfo> GetBy(Guid shopId)
         {
@@ -54,7 +22,7 @@ namespace Vinyl.DbLayer.Repository
             return Context.ShopParseStrategyInfo.Where(t => t.ShopId == shopId).Include(_ => _.Shop).AsQueryable();
         }
 
-        public IQueryable<ShopParseStrategyInfo> GetAll()
+        public IQueryable<ShopParseStrategyInfo> GetAllWithShops()
         {
             return Context.ShopParseStrategyInfo.Include(_ => _.Shop).AsQueryable();
         }

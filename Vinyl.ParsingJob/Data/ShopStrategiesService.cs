@@ -35,7 +35,7 @@ namespace Vinyl.ParsingJob.Data
             using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
             {
                 return strategiesRepository
-                    .GetAll()
+                    .GetAllWithShops()
                     .AsEnumerable()
                     .Select(_ => (shop: _.Shop.ToMetaData(), strategy: _.ToMetaData()))
                     .ToList();
@@ -47,7 +47,7 @@ namespace Vinyl.ParsingJob.Data
             using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
             {
                 strategiesRepository.UpdateLastProcessedCount(strategyInfo.Id, count);
-                strategiesRepository.Save();
+                strategiesRepository.Commit();
             }
         }
 
@@ -74,9 +74,10 @@ namespace Vinyl.ParsingJob.Data
             if (string.IsNullOrEmpty(strategyInfo.ClassName))
                 return false;
 
+#if !DEBUG
             if ((DateTime.UtcNow - strategyInfo.ProcessedAt).TotalHours < strategyInfo.UpdatePeriodInHours)
                 return false;
-
+#endif
             return true;
         }
 

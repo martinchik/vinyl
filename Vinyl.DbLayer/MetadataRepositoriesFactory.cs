@@ -21,5 +21,11 @@ namespace Vinyl.DbLayer
 
         public ShopParseStrategyInfoRepository CreateShopParseStrategyInfoRepository()
             => new ShopParseStrategyInfoRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public RecordInfoRepository CreateRecordInfoRepository()
+            => new RecordInfoRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public RecordInShopLinkRepository CreateRecordInShopLinkRepository()
+            => new RecordInShopLinkRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
     }
 }

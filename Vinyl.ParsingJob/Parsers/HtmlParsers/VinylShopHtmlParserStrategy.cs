@@ -60,12 +60,15 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 var titleNode = linkNode.Descendants("h3").FirstOrDefault();
                 if (titleNode != null)
                 {
-                    var subNames = titleNode.InnerText.Split(" / ");
+                    var titleText = titleNode.InnerText;
+                    var subNames = titleText.Split(" / ");
                     if (subNames.Length > 2)
                     {
                         record.Artist = subNames[0].ToNormalValue();
-                        record.Album = record.Title = subNames[1].ToNormalValue();
+                        record.Album = subNames[1].ToNormalValue();
                         record.Year = subNames[2].ToNormalValue();
+
+                        record.Title = titleText;
 
                         int v = record.Year.IndexOf("(");
 
@@ -82,7 +85,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                     record.Info = descriptNode.Descendants("p").FirstOrDefault()?.InnerText.ToNormalValue() ?? string.Empty;
                     var priceNode = descriptNode.Descendants("span").FirstOrDefault()?.Descendants("span").FirstOrDefault();
                     if (priceNode != null)
-                        record.Price = priceNode.InnerText.ToNormalValue().Replace("BYR", string.Empty).Trim();
+                        record.Price = priceNode.InnerText.ToNormalValue();
+                    //record.Price = priceNode.InnerText.ToNormalValue().Replace("BYR", string.Empty).Trim();
                 }
 
                 records.Add(record);

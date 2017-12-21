@@ -37,7 +37,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                     record.Title = record.Album = row[1].ToString();
                     record.Barcode = row[2].ToString();
                     record.Year = row[3].ToString();
-                    record.Price = row[4].ToString();
+                    record.Price = row[4].ToString() + " р";
 
                     yield return record;
                 }

@@ -57,6 +57,10 @@ namespace Vinyl.DbLayer
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
+
+                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
             });
 
             modelBuilder.Entity<RecordInShopLink>(entity =>

@@ -18,6 +18,8 @@ namespace Vinyl.DbLayer.Models
         public string Album { get; set; }
         public int? Year { get; set; }
         public string Info { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
 
         public ICollection<RecordArt> RecordArt { get; set; }
         public ICollection<RecordInShopLink> RecordInShopLink { get; set; }

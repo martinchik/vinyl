@@ -27,7 +27,7 @@ namespace Vinyl.ParsingJob.Data
                 {
                     return shopInfoRepository.GetAll().Select(_ => _.ToMetaData()).ToList();
                 }
-            });
+            }, token);
         }
     }
 }

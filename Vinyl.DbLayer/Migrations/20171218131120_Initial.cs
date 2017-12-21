@@ -17,7 +17,6 @@ namespace Vinyl.DbLayer.Migrations
                     Artist = table.Column<string>(maxLength: 255, nullable: true),
                     Info = table.Column<string>(maxLength: 1000, nullable: true),
                     Title = table.Column<string>(maxLength: 255, nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     Year = table.Column<int>(nullable: true)
                 },
                 constraints: table =>

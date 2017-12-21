@@ -1,0 +1,24 @@
+﻿using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Vinyl.DbLayer.Models;
+
+namespace Vinyl.DbLayer.Repository
+{
+    public class RecordInShopLinkRepository : BaseRepositoryTemplate<RecordInShopLink>
+    {
+        internal RecordInShopLinkRepository(VinylShopContext context, ILogger<VinylShopContext> logger)
+            :base(context, context.RecordInShopLink, logger)
+        {
+        }
+        
+        public RecordInShopLink FindBy(Guid recordId, Guid shopId, Guid strategyId)
+        {            
+            return Context.RecordInShopLink.FirstOrDefault(_ => 
+                _.RecordId == recordId &&
+                _.ShopId == shopId &&
+                _.StrategyId == strategyId);
+        }
+    }
+}

@@ -1,19 +1,16 @@
-﻿using Vinyl.Metadata;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Vinyl.Kafka;
+using Vinyl.Metadata;
 
 namespace Vinyl.ParsingJob.Processor
 {
-    public class DirtyRecordProcessor : IDirtyRecordProcessor
+    public class DirtyRecordExportProcessor : IDirtyRecordExportProcessor
     {
         private readonly ILogger _logger;
         private readonly IMessageProducer _messageBus;
 
-        public DirtyRecordProcessor(ILogger<DirtyRecordProcessor> logger, IMessageProducer messageBus)
+        public DirtyRecordExportProcessor(ILogger<DirtyRecordExportProcessor> logger, IMessageProducer messageBus)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
@@ -21,10 +18,13 @@ namespace Vinyl.ParsingJob.Processor
         
         public bool AddRecord(ShopParseStrategyInfo strategy, DirtyRecord record)
         {
-            if (record == null ||
-                string.IsNullOrEmpty(record.Title) ||
+            if (record == null || strategy == null ||
+                string.IsNullOrEmpty(record.Album) ||
                 string.IsNullOrEmpty(record.Artist))
                 return false;
+
+            record.ShopId = strategy.ShopId;
+            record.ShopParseStrategyId = strategy.Id;
 
             _messageBus.SendMessage(record).ContinueWith(_ => 
             {

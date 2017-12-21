@@ -1,7 +1,11 @@
-﻿namespace Vinyl.Metadata
+﻿using System;
+
+namespace Vinyl.Metadata
 {
     public class DirtyRecord
     {
+        public Guid ShopId { get; set; }
+        public Guid ShopParseStrategyId { get; set; }
         public string Url { get; set; }
         public string Artist { get; set; }
         public string Title { get; set; }
@@ -16,7 +20,7 @@
         public string YearRecorded { get; set; }
         public string Label { get; set; }
         public string Style { get; set; }
-        public string View { get; set; } //LP, СLP
+        public string View { get; set; } //LP, СLP      
 
         public override string ToString()
         {

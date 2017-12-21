@@ -53,7 +53,7 @@ namespace Vinyl.ParsingJob
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
 
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
-            services.AddTransient<IDirtyRecordProcessor, DirtyRecordProcessor>();
+            services.AddTransient<IDirtyRecordExportProcessor, DirtyRecordExportProcessor>();
             services.AddTransient<IMessageProducer>(_ => new KafkaProducer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
             services.AddTransient<IShopInfoService, ShopInfoService>();
             services.AddTransient<IShopStrategiesService, ShopStrategiesService>();

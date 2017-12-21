@@ -73,6 +73,8 @@ services:
     build:
       context: ./Vinyl.RecordProcessingJob
       dockerfile: Dockerfile
+    environment:
+      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
     networks:
       - vinylnetwork
 

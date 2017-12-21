@@ -33,6 +33,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Vinyl.Common\Vinyl.Common.csproj" />
+    <ProjectReference Include="..\Vinyl.DbLayer\Vinyl.DbLayer.csproj" />
     <ProjectReference Include="..\Vinyl.Kafka.Lib\Vinyl.Kafka.Lib.csproj" />
     <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
   </ItemGroup>

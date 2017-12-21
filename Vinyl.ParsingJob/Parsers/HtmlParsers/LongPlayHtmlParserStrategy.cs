@@ -78,9 +78,11 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 else if (subNode.HasClass("bloopis"))
                 {
                     record.Artist = ParseNodeValue(subNode.ChildNodes[1]);
-                    record.Title = record.Album = ParseNodeValue(subNode.ChildNodes[3]);
+                    record.Album = ParseNodeValue(subNode.ChildNodes[3]);
                     record.Style = ParseNodeValue(subNode.ChildNodes[5]);
-                    record.Price = ParseNodeValue(subNode.ChildNodes[7]);
+                    record.Price = ParseNodeValue(subNode.ChildNodes[7]) + " белр";
+
+                    record.Title = $"{record.Artist} - {record.Album}";
                 }
             }
 

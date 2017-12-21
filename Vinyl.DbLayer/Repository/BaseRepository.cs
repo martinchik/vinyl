@@ -18,12 +18,12 @@ namespace Vinyl.DbLayer.Repository
             Logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        public void Save()
+        public void Commit()
         {
             Context.SaveChanges(true);
         }
 
-        public Task SaveAsync(CancellationToken cancellationToken = default(CancellationToken))
+        public Task CommitAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
             return Context.SaveChangesAsync(true, cancellationToken);
         }
