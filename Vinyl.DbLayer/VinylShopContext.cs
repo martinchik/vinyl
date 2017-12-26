@@ -25,7 +25,8 @@ namespace Vinyl.DbLayer
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
 
                 entity.Property(e => e.FullViewUrl)
                     .IsRequired()
@@ -34,8 +35,6 @@ namespace Vinyl.DbLayer
                 entity.Property(e => e.PreviewUrl)
                     .IsRequired()
                     .HasMaxLength(1000);
-
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.HasOne(d => d.Record)
                     .WithMany(p => p.RecordArt)
@@ -58,9 +57,8 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
-
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
             });
 
             modelBuilder.Entity<RecordInShopLink>(entity =>
@@ -73,13 +71,12 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Country).HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
 
                 entity.Property(e => e.Currency).HasMaxLength(255);
 
-                entity.Property(e => e.Label).HasMaxLength(255);
-
-                entity.Property(e => e.Price);//.HasColumnType("decimal(10, 2)");
+                entity.Property(e => e.Label).HasMaxLength(255);                
 
                 entity.Property(e => e.ShopInfo).HasMaxLength(1000);
 
@@ -88,8 +85,6 @@ namespace Vinyl.DbLayer
                 entity.Property(e => e.State).HasMaxLength(255);
 
                 entity.Property(e => e.Style).HasMaxLength(255);
-
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.Property(e => e.ViewType).HasMaxLength(255);
 
@@ -118,7 +113,7 @@ namespace Vinyl.DbLayer
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt);
 
                 entity.Property(e => e.Link)
                     .IsRequired()
@@ -126,7 +121,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Text).HasMaxLength(1000);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.UpdatedAt);
 
                 entity.HasOne(d => d.Record)
                     .WithMany(p => p.RecordLinks)
@@ -143,8 +138,6 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Country).HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
-
                 entity.Property(e => e.Emails).HasMaxLength(255);
 
                 entity.Property(e => e.Phones).HasMaxLength(255);
@@ -153,7 +146,8 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
 
                 entity.Property(e => e.Url).HasMaxLength(1000);
             });
@@ -166,15 +160,12 @@ namespace Vinyl.DbLayer
                     .IsRequired()
                     .HasMaxLength(255);
 
-                entity.Property(e => e.CreatedAt).HasDefaultValue(DateTime.UtcNow);
-
-                entity.Property(e => e.ProcessedAt).HasDefaultValue(DateTime.UtcNow);
+                entity.Property(e => e.CreatedAt).IsRequired();
+                entity.Property(e => e.UpdatedAt).IsRequired();
 
                 entity.Property(e => e.StartUrl)
                     .IsRequired()
                     .HasMaxLength(1000);
-
-                entity.Property(e => e.UpdatedAt).HasDefaultValue(DateTime.UtcNow);
 
                 entity.HasOne(d => d.Shop)
                     .WithMany(p => p.ShopParseStrategyInfo)
@@ -185,11 +176,7 @@ namespace Vinyl.DbLayer
 
             modelBuilder.Entity<SearchItem>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
-
-                entity.Property(e => e.PriceFrom);
-
-                entity.Property(e => e.PriceTo);
+                entity.Property(e => e.Id).ValueGeneratedNever();                
 
                 entity.Property(e => e.TextLine1)
                     .IsRequired()

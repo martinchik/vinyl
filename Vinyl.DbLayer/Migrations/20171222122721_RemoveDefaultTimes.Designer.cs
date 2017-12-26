@@ -11,9 +11,10 @@ using Vinyl.DbLayer;
 namespace Vinyl.DbLayer.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
+    [Migration("20171222122721_RemoveDefaultTimes")]
+    partial class RemoveDefaultTimes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,8 +96,6 @@ namespace Vinyl.DbLayer.Migrations
                         .HasMaxLength(255);
 
                     b.Property<decimal?>("Price");
-
-                    b.Property<decimal?>("PriceBy");
 
                     b.Property<Guid>("RecordId");
 
@@ -228,8 +227,6 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<int?>("DataLimit");
-
-                    b.Property<string>("DefaultCurrency");
 
                     b.Property<int?>("LastProcessedCount");
 

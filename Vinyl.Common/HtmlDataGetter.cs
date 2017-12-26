@@ -9,7 +9,7 @@ using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Vinyl.ParsingJob.Parsers
+namespace Vinyl.Common
 {
     public class HtmlDataGetter : IHtmlDataGetter
     {

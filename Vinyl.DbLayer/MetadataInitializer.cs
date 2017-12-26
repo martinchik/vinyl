@@ -44,7 +44,6 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    DataLimit = 100,
                     UpdatePeriodInHours = 5,
                     Status = 0
                 }
@@ -73,7 +72,6 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    DataLimit = 100,
                     UpdatePeriodInHours = 5,
                     Status = 0
                 },
@@ -86,14 +84,32 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    DataLimit = 100,
                     UpdatePeriodInHours = 5,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
                         { "ref-link-text","СКАЧАТЬ" }
                     }.ToParametersDbString(),
-                    Status = 0
+                    Status = 1,
+                    DefaultCurrency = "rub"
+                },
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "VinylShopExcelParserStrategy",
+                    StartUrl = "http://www.vinylshop.by/2015/10/%D1%81%D0%BE%D0%B2%D1%80%D0%B5%D0%BC%D0%B5%D0%BD%D0%BD%D1%8B%D0%B5-%D0%BF%D0%BB%D0%B0%D1%81%D1%82%D0%B8%D0%BD%D0%BA%D0%B8-%D0%B7%D0%B0%D0%BF%D0%B0%D0%B4/",
+                    ShopId = new Guid("936845B7-9976-4C7A-A4AC-2D8019C6EEA1"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = null,
+                    UpdatePeriodInHours = 5,
+                    Parameters = new Dictionary<string, string>
+                    {
+                        { "class-name", "post-content" },
+                        { "ref-link-text","СКАЧАТЬ" }
+                    }.ToParametersDbString(),
+                    Status = 1,
+                    DefaultCurrency = "rub"
                 },
                 new ShopParseStrategyInfo()
                 {
@@ -104,14 +120,14 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    DataLimit = 100,
                     UpdatePeriodInHours = 5,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
                         { "ref-link-text", "Скачать каталог" }
                     }.ToParametersDbString(),
-                    Status = 0
+                    Status = 0,
+                    DefaultCurrency = "rub"
                 }
             }
         };

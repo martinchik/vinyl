@@ -8,7 +8,8 @@ namespace Vinyl.RecordProcessingJob.Data
 {
     public interface IRecordService
     {
-        RecordInfo FindOrCreateSimilarBy(DirtyRecord dirtyRecord);
-        RecordInShopLink CreateOrUpdateShopLinkInfoBy(DirtyRecord dirtyRecord, RecordInfo record);
+        RecordInfo FindOrCreateSimilarBy(DirtyRecord dirtyRecord, out bool isNew);
+        RecordInShopLink UpdateOrCreateShopLinkInfoBy(DirtyRecord dirtyRecord, RecordInfo record, Metadata.ShopParseStrategyInfo strategy, out bool hasImportantChanges);
+        bool UpdateOrCreateSearchItem(RecordInfo record, bool isNewRecord, bool hasImportantChanges);
     }
 }

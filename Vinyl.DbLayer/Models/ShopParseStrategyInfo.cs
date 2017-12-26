@@ -22,6 +22,7 @@ namespace Vinyl.DbLayer.Models
         public DateTime? ProcessedAt { get; set; }
         public string Parameters { get; set; }
         public int Status { get; set; }
+        public string DefaultCurrency { get; set; }
 
         public ShopInfo Shop { get; set; }
         public ICollection<RecordInShopLink> RecordInShopLink { get; set; }

@@ -5,7 +5,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 
-namespace Vinyl.Common.Extensions
+namespace Vinyl
 {
     public static class Repeat
     {

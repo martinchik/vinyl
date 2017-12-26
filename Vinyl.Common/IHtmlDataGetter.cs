@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 
-namespace Vinyl.ParsingJob.Parsers
+namespace Vinyl.Common
 {
     public interface IHtmlDataGetter
     {

@@ -18,5 +18,7 @@ namespace Vinyl.Metadata
         public int? DataLimit { get; set; }
         public int UpdatePeriodInHours { get; set; }
         public int LastProcessedCount { get; set; }
+        public StrategyStatus Status { get; set; }
+        public string DefaultCurrency { get; set; }
     }
 }

@@ -1,16 +1,8 @@
-﻿using ExcelDataReader;
-using Vinyl.Metadata;
-using Vinyl.ParsingJob.Processor;
-using HtmlAgilityPack;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Data;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+using Vinyl.Common;
+using Vinyl.Metadata;
 
 namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {

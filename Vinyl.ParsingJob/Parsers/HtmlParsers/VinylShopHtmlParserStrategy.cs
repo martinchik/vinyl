@@ -1,13 +1,11 @@
-﻿using Vinyl.Metadata;
-using Vinyl.ParsingJob.Processor;
-using HtmlAgilityPack;
+﻿using HtmlAgilityPack;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
+using Vinyl.Common;
+using Vinyl.Metadata;
 
 namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {
@@ -86,7 +84,6 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                     var priceNode = descriptNode.Descendants("span").FirstOrDefault()?.Descendants("span").FirstOrDefault();
                     if (priceNode != null)
                         record.Price = priceNode.InnerText.ToNormalValue();
-                    //record.Price = priceNode.InnerText.ToNormalValue().Replace("BYR", string.Empty).Trim();
                 }
 
                 records.Add(record);

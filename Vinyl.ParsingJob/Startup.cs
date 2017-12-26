@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
+using Microsoft.Extensions.PlatformAbstractions;
+using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
+using Vinyl.Common;
+using Vinyl.Kafka;
+using Vinyl.Kafka.Lib;
+using Vinyl.ParsingJob.Data;
 using Vinyl.ParsingJob.Job;
 using Vinyl.ParsingJob.Parsers;
 using Vinyl.ParsingJob.Processor;
-using Vinyl.ParsingJob.Data;
-using Vinyl.Kafka.Lib;
-using Vinyl.Kafka;
-using System.Net;
-using Swashbuckle.AspNetCore.Swagger;
-using System.IO;
-using Microsoft.Extensions.PlatformAbstractions;
-using Microsoft.EntityFrameworkCore;
 
 namespace Vinyl.ParsingJob
 {
@@ -35,11 +29,7 @@ namespace Vinyl.ParsingJob
         public void ConfigureServices(IServiceCollection services)
         {
             System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-
-            string hostName = Dns.GetHostName(); // Retrive the Name of HOST  
-            string myIP = Dns.GetHostAddresses(hostName).FirstOrDefault().ToString();
-            string testHost = $"{myIP}:{KafkaConstants.KafkaHostPort}";
-
+            
             services.AddMvc();
 
             services.AddSwaggerGen(c =>
@@ -49,8 +39,9 @@ namespace Vinyl.ParsingJob
                 var xmlPath = Path.Combine(basePath, $"{PlatformServices.Default.Application.ApplicationName}.xml");
                 c.IncludeXmlComments(xmlPath);
             });
-
+            
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
+            DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration);
 
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordExportProcessor, DirtyRecordExportProcessor>();

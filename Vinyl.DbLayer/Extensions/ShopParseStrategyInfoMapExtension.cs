@@ -1,4 +1,5 @@
 ﻿using System;
+using Vinyl.Metadata;
 
 namespace Vinyl.DbLayer
 {
@@ -17,7 +18,9 @@ namespace Vinyl.DbLayer
                 ShopId = obj.ShopId,
                 UpdatedAt = obj.UpdatedAt,
                 UpdatePeriodInHours = obj.UpdatePeriodInHours,
-                Url = obj.StartUrl
+                Url = obj.StartUrl,
+                Status = (StrategyStatus)obj.Status,
+                DefaultCurrency = obj.DefaultCurrency
             };
 
         public static Vinyl.DbLayer.Models.ShopParseStrategyInfo ToDbObject(this Vinyl.Metadata.ShopParseStrategyInfo obj)
@@ -33,7 +36,9 @@ namespace Vinyl.DbLayer
                 ShopId = obj.ShopId,
                 UpdatedAt = obj.UpdatedAt,
                 UpdatePeriodInHours = obj.UpdatePeriodInHours,
-                StartUrl = obj.Url
+                StartUrl = obj.Url,
+                Status = (int)obj.Status,
+                DefaultCurrency = obj.DefaultCurrency                
             };
     }
 }

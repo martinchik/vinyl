@@ -12,6 +12,7 @@ namespace Vinyl.DbLayer.Models
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
         public decimal? Price { get; set; }
+        public decimal? PriceBy { get; set; }
         public string Currency { get; set; }
         public string ShopInfo { get; set; }
         public string ShopUrl { get; set; }

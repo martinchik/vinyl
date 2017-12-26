@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Vinyl.DbLayer
@@ -27,18 +28,18 @@ namespace Vinyl.DbLayer
         }
 
         public static void Register(IConfiguration configuration, IServiceCollection services)
-        {            
+        {
             services
                 .AddEntityFrameworkNpgsql()
-                .AddDbContext<VinylShopContext>(options =>
-                    options.UseNpgsql(
-                        GetConnectionString(configuration),
-                        b => b.MigrationsAssembly("Vinyl.DbLayer")
-                    )
+                .AddDbContext<VinylShopContext>(options => options
+                    .UseNpgsql(GetConnectionString(configuration), b => b.MigrationsAssembly("Vinyl.DbLayer"))
                 );
 
             services.AddTransient<IMetadataRepositoriesFactory, MetadataRepositoriesFactory>();
+        }
 
+        public static void MigrateDataBase(IConfiguration configuration)
+        { 
             try
             {
                 using (var ctx = CreateContext(configuration))

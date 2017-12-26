@@ -8,5 +8,6 @@ namespace Vinyl.DbLayer
         ShopParseStrategyInfoRepository CreateShopParseStrategyInfoRepository();
         RecordInfoRepository CreateRecordInfoRepository();
         RecordInShopLinkRepository CreateRecordInShopLinkRepository();
+        SearchItemRepository CreateSearchItemRepository();
     }
 }

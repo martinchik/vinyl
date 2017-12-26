@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Vinyl.RecordProcessingJob.Job;
+using Microsoft.Extensions.PlatformAbstractions;
+using Swashbuckle.AspNetCore.Swagger;
+using System.IO;
+using Vinyl.Common;
 using Vinyl.Kafka;
 using Vinyl.Kafka.Lib;
-using Swashbuckle.AspNetCore.Swagger;
-using Microsoft.Extensions.PlatformAbstractions;
-using System.IO;
-using Vinyl.RecordProcessingJob.Processor;
 using Vinyl.RecordProcessingJob.Data;
+using Vinyl.RecordProcessingJob.Job;
+using Vinyl.RecordProcessingJob.Processor;
 
 namespace Vinyl.RecordProcessingJob
 {
@@ -32,6 +28,7 @@ namespace Vinyl.RecordProcessingJob
         public void ConfigureServices(IServiceCollection services)
         {            
             services.AddMvc();
+            services.AddMemoryCache();
 
             services.AddSwaggerGen(c =>
             {
@@ -43,9 +40,13 @@ namespace Vinyl.RecordProcessingJob
 
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
 
+            
+            services.AddTransient<ICurrencyConverter, CurrencyConverter>();
+            services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
             services.AddTransient<IDirtyRecordImportProcessor, DirtyRecordImportProcessor>();
             services.AddTransient<IRecordService, RecordService>();
+            services.AddTransient<IAdditionalInfoSearchEngine, AdditionalInfoSearchEngine>();
             services.AddSingleton<ProcessingJob>();
         }
 

@@ -59,6 +59,8 @@ services:
       dockerfile: Dockerfile
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
+    volumes:
+      - parsingjob_data:/app
     networks:
       - vinylnetwork
 
@@ -80,6 +82,7 @@ services:
 
 volumes:
   pgdata:
+  parsingjob_data:
 
 networks:
   vinylnetwork:

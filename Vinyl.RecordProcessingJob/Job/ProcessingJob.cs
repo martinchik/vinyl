@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Vinyl.Common.Extensions;
 using Vinyl.Common.Job;
 using System.Threading;
 using Vinyl.Metadata;

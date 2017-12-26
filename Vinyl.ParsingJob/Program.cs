@@ -25,6 +25,7 @@ namespace Vinyl.ParsingJob
                     builder.SetMinimumLevel(LogLevel.Trace);
                     builder.AddConsole();
                     builder.AddFile("Logs/get-data-job-{Date}.log");
+                    builder.AddDebug();                    
                 })
                 .UseStartup<Startup>()
                 .Build();

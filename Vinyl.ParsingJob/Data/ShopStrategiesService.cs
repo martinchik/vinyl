@@ -1,14 +1,13 @@
-﻿using Vinyl.Metadata;
-using Vinyl.ParsingJob.Parsers;
-using Vinyl.ParsingJob.Parsers.HtmlParsers;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Vinyl.ParsingJob.Processor;
-using Vinyl.DbLayer;
 using System.Threading;
+using Vinyl.Common;
+using Vinyl.DbLayer;
+using Vinyl.Metadata;
+using Vinyl.ParsingJob.Parsers;
+using Vinyl.ParsingJob.Parsers.HtmlParsers;
 
 namespace Vinyl.ParsingJob.Data
 {
@@ -74,10 +73,9 @@ namespace Vinyl.ParsingJob.Data
             if (string.IsNullOrEmpty(strategyInfo.ClassName))
                 return false;
 
-#if !DEBUG
             if ((DateTime.UtcNow - strategyInfo.ProcessedAt).TotalHours < strategyInfo.UpdatePeriodInHours)
                 return false;
-#endif
+
             return true;
         }
 
