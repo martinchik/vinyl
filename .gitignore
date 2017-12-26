@@ -25,3 +25,4 @@
 /Vinyl.RecordProcessingJob/Logs
 /Vinyl.DbLayer/bin/Debug/netcoreapp2.0
 /Vinyl.DbLayer/obj
+/Vinyl.DbLayer/bin/Release/netcoreapp2.0
