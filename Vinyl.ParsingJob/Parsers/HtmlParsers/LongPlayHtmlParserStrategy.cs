@@ -34,8 +34,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             return string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
         }
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token) =>  
-            GetRecordNodes(pageData)
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token) =>
+            GetRecordNodes(pageData, "//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]")
                 .AsParallel()
                 .WithCancellation(token)
                 .WithDegreeOfParallelism(_degreeOfParalellism)
@@ -53,17 +53,15 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 }
                 return null;
             });
-        
-
-        private IEnumerable<HtmlNode> GetRecordNodes(string htmlPageData)
+                
+        private IEnumerable<HtmlNode> GetRecordNodes(string html, string searchPattern)
         {
-            if (!string.IsNullOrWhiteSpace(htmlPageData))
+            if (!string.IsNullOrWhiteSpace(html))
             {
-                var doc = new HtmlDocument();
-                doc.LoadHtml(htmlPageData);
-                if (doc.DocumentNode != null && doc.DocumentNode.HasChildNodes)
+                var rootNode = LoadDocumentFromHtml(html);
+                if (rootNode?.HasChildNodes == true)
                 {
-                    foreach (var node in doc.DocumentNode.SelectNodes("//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]"))
+                    foreach (var node in rootNode.SelectNodes(searchPattern))
                     {
                         yield return node;
                     }
@@ -133,24 +131,49 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         
         private IEnumerable<(string, string)> ParseTable(string html)
         {
-            if (!string.IsNullOrWhiteSpace(html))
-            {
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-                if (doc.DocumentNode != null && doc.DocumentNode.HasChildNodes)
-                {
-                    foreach (var tableLine in doc.DocumentNode.SelectNodes("//table[contains(@class, 'zebra')]//tr"))
-                    {
-                        yield return (ParseNodeTableValue(tableLine.ChildNodes[1]), ParseNodeTableValue(tableLine.ChildNodes[3]));
-                    }
-                }
-            }
+            foreach (var tableLine in GetRecordNodes(html, "//table[contains(@class, 'zebra')]//tr"))
+                yield return (ParseNodeTableValue(tableLine.ChildNodes[1]), ParseNodeTableValue(tableLine.ChildNodes[3]));
         }
 
         private string ParseNodeTableValue(HtmlNode node)
+            => node.InnerText.ToNormalValue().Replace(":", string.Empty);
+
+        private HtmlNode LoadDocumentFromHtml(string html)
         {
-            return node.InnerText.ToNormalValue()
-                .Replace(":", string.Empty);
+            var doc = new HtmlDocument();
+            try
+            {
+                doc.LoadHtml(html);
+                return doc.DocumentNode;
+            }
+            catch (Exception exc)
+            {
+                var reasons = TryGetErrors(doc);
+                if (string.IsNullOrEmpty(reasons))
+                    _logger.LogWarning(exc, "Error loading html");
+                else
+                    _logger.LogWarning("Error loading html. Reasons:" + reasons);
+            }
+
+            return null;
+        }
+
+        private string TryGetErrors(HtmlDocument doc)
+        {
+            try
+            {
+                if (doc?.ParseErrors?.Any() == true)
+                {
+                    return string.Join(";", doc.ParseErrors.Select(_ =>
+                        $"{_.Reason} in code:{_.Code} and Line:{_.Line}"
+                    ));
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogWarning(exc, "Error in getting errors from parse html results");
+            }
+            return string.Empty;
         }
     }
 }

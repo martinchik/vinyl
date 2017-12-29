@@ -25,4 +25,7 @@ https://www.microsoft.com/net/learn/get-started/linuxubuntu
 cmd "$(docker-machine env -u)"
 
 
-	  
+8. copy logs
+docker cp recordprocessingjob:/app/Logs/. /tmp/rpjoblogs/.
+docker cp parsingjob:/app/Logs/. /tmp/parsingjoblogs/.
+docker cp kafka:/opt/kafka/logs/. /tmp/kafkalogs/.

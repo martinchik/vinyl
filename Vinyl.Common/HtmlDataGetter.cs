@@ -50,6 +50,11 @@ namespace Vinyl.Common
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Page was not find by {url}.");
+                        return string.Empty;
+                    }
                     throw new HttpRequestException($"Response exception: {(int)response.StatusCode} ({response.ReasonPhrase}) Content:({responseContent})");
                 }
                 else if (responseContent != null && responseContent.Length > 5)

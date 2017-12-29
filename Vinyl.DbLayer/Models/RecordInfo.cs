@@ -24,5 +24,10 @@ namespace Vinyl.DbLayer.Models
         public ICollection<RecordArt> RecordArt { get; set; }
         public ICollection<RecordInShopLink> RecordInShopLink { get; set; }
         public ICollection<RecordLinks> RecordLinks { get; set; }
+
+        public override string ToString()
+        {
+            return Title + "; Id:" + Id;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading;
 using Vinyl.Common;
 using Vinyl.Metadata;
@@ -38,7 +39,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             Stopwatch sw = Stopwatch.StartNew();
 
             try
-            {                
+            {
                 do
                 {
                     readedPageCount = 0;
@@ -62,7 +63,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                     pageIndex++;
                     readedAllCount += readedPageCount;
                 }
-                while (readedPageCount > 0);                
+                while (readedPageCount > 0);
             }
             finally
             {
