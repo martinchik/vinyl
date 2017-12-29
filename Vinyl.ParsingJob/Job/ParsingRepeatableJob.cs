@@ -39,16 +39,13 @@ namespace Vinyl.ParsingJob.Job
             Result = "";
             try
             {
-                await Task.WhenAll(_strategiesService
-                    .GetStrategiesForRun()
-                    .Select(strategyInfo => Task.Run(() =>
-                    {
-                        var count = RunStrategy(strategyInfo, token);
-                        Interlocked.Add(ref countRecords, count);
+                foreach(var strategyInfo in _strategiesService.GetStrategiesForRun())
+                {
+                    var count = RunStrategy(strategyInfo, token);
+                    Interlocked.Add(ref countRecords, count);
 
-                        _strategiesService.UpdateStartegyStatus(strategyInfo.info, count);
-                    }))
-                    .ToArray());
+                    _strategiesService.UpdateStartegyStatus(strategyInfo.info, count);
+                };
             }
             catch (Exception exc)
             {
