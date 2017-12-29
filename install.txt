@@ -1,0 +1,77 @@
+token - 485d208fff07fb246c121cb9c8cc53e866acd66079d4fa0996b389f9b88981eb
+
+docker-machine create --driver digitalocean --digitalocean-image ubuntu-17-10-x64 --digitalocean-access-token 485d208fff07fb246c121cb9c8cc53e866acd66079d4fa0996b389f9b88981eb ubuntu-vinyl
+
+docker-machine inspect ubuntu-vinyl
+
+reset SSH password
+
+docker-machine ssh ubuntu-vinyl
+
+cmd "$(docker-machine env ubuntu-vinyl)"
+
+https://www.microsoft.com/net/learn/get-started/linuxubuntu
+
+docker-compose  -f "C:\workspace\vs\Vinyl\docker-compose.yml" -f "C:\workspace\vs\Vinyl\docker-compose.override.yml" -f "C:\workspace\vs\Vinyl\obj\Docker\docker-compose.vs.debug.g.yml" -p dockercompose-vinyl up -d --build --force-recreate --remove-orphans
+
+cmd "$(docker-machine env -u)"
+
+
+
+docker run -it --rm -p 80:80 --name aspnetcore_sample aspnetapp
+ 
+  nginxproxy:
+    hostname: nginxproxy
+    container_name: nginxproxy
+    build:
+      context:  ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "20081:20081"
+    links:
+      - parsingjob
+      - site
+    depends_on:
+      - parsingjob
+      - site
+    networks:
+      - vinylnetwork
+
+	  
+	  
+
+FROM microsoft/aspnetcore:2.0 AS base
+WORKDIR /app
+
+FROM microsoft/aspnetcore-build:2.0 AS build
+WORKDIR /src
+COPY *.sln ./
+COPY Vinyl.Site/Vinyl.Site.csproj Vinyl.Site/
+RUN dotnet restore
+COPY . .
+WORKDIR /src/Vinyl.Site
+RUN dotnet build -c Release -o /app
+
+FROM build AS publish
+RUN dotnet publish -c Release -o /app
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app .
+ENV ASPNETCORE_URLS http://*:20080
+EXPOSE 20080/tcp
+
+ENTRYPOINT ["dotnet", "Vinyl.Site.dll", "--server.urls", "http://*:20080"]
+
+
+
+FROM microsoft/aspnetcore:2.0
+ARG source
+WORKDIR /app
+EXPOSE 20080/tcp
+COPY ${source:-obj/Docker/publish} .
+ENV ASPNETCORE_URLS http://*:20080
+ENTRYPOINT ["dotnet", "Vinyl.Site/Vinyl.Site.dll", "--server.urls", "http://*:20080"]
+
+	  

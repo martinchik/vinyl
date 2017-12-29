@@ -1,28 +1,29 @@
 version: '3'
 
 services:
+
   postgresserver:
-     image: postgres
-     hostname: postgresdb
-     container_name: postgresdb
-     restart: always
-     ports:
-       - 5430:5432
-     environment:
-        POSTGRES_USER: "dbuser"
-        POSTGRES_PASSWORD: "dbpwd"
-        POSTGRES_DB: "vinylshop"
-     volumes:
-       - pgdata:/var/lib/postgresql/data
-     networks:
-      - vinylnetwork
+    image: postgres
+    hostname: postgresdb
+    container_name: postgresdb
+    restart: always
+    ports:
+      - 5430:5432
+    environment:
+      POSTGRES_USER: "dbuser"
+      POSTGRES_PASSWORD: "dbpwd"
+      POSTGRES_DB: "vinylshop"
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+    networks:
+    - vinylnetwork
 
   zookeeper:
     hostname: zookeeper
     container_name: zookeeper
     image: wurstmeister/zookeeper
     ports:
-      - "2181:2181"
+      - 2181:2181
     networks:
       - vinylnetwork
 
@@ -33,8 +34,11 @@ services:
     depends_on:
       - zookeeper
     ports:
-      - "9092:9092"
-    environment:      
+      - 9092:9092
+    environment:
+      ES_JAVA_OPTS: -Xms256m -Xmx256m
+      KAFKA_JMX_OPTS: -Xms256m -Xmx256m
+      KAFKA_HEAP_OPTS: -Xmx256M -Xms256M
       KAFKA_CREATE_TOPICS: "dirty_records:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181    
       KAFKA_BROKER_ID: 0
@@ -43,47 +47,58 @@ services:
     networks:
       - vinylnetwork
 
-  vinyl.parsingjob:
-    image: vinyl.parsingjob
+  parsingjob:
+    image: parsingjob
     hostname: parsingjob
     container_name: parsingjob
     links:
-       - postgresserver
+        - postgresserver
     depends_on:
       - kafka
       - postgresserver
     ports:
-      - "20081:20081"
+      - 20081:20081
     build:
-      context: ./Vinyl.ParsingJob
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Vinyl.ParsingJob/Dockerfile
     environment:
-      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
-    volumes:
-      - parsingjob_data:/app
+      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
     networks:
       - vinylnetwork
 
-  vinyl.recordprocessingjob:
-    image: vinyl.recordprocessingjob
+  recordprocessingjob:
+    image: recordprocessingjob
     hostname: recordprocessingjob
-    container_name: recordprocessingjob
+    container_name: recordprocessingjob      
     depends_on:
       - kafka
     ports:
-      - "20082:20082"
+      - 20082:20082
     build:
-      context: ./Vinyl.RecordProcessingJob
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: Vinyl.RecordProcessingJob/Dockerfile
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
     networks:
       - vinylnetwork
 
-volumes:
-  pgdata:
-  parsingjob_data:
+  site:
+    image: site
+    hostname: site
+    container_name: site
+    depends_on:
+      - kafka
+    ports:
+      - 80:80
+    build:
+      context: .
+      dockerfile: Vinyl.Site/Dockerfile
+    networks:
+      - vinylnetwork
 
 networks:
   vinylnetwork:
      driver: bridge
+
+volumes:
+  pgdata:

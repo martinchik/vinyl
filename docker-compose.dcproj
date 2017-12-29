@@ -5,14 +5,15 @@
     <DockerTargetOS>Linux</DockerTargetOS>
     <ProjectGuid>29fe3ca7-f885-4405-9e03-5038a05b7a4e</ProjectGuid>
     <DockerLaunchBrowser>True</DockerLaunchBrowser>
-    <DockerServiceUrl>http://localhost:{ServicePort}/swagger</DockerServiceUrl>
-    <DockerServiceName>vinyl.parsingjob</DockerServiceName>
+    <DockerServiceUrl>http://localhost</DockerServiceUrl>
+    <DockerServiceName>site</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include=".dockerignore" />
     <None Include="docker-compose.ci.build.yml" />
-    <None Include="docker-compose.override.yml">
+     <None Include="docker-compose.override.yml">
       <DependentUpon>docker-compose.yml</DependentUpon>
     </None>
-    <None Include="docker-compose.yml" />
+	<None Include="docker-compose.yml" />
   </ItemGroup>
 </Project>

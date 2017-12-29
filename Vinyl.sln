@@ -21,6 +21,7 @@ Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-co
 	ProjectSection(ProjectDependencies) = postProject
 		{E8C2EB06-0271-49B0-8BE0-637B679F87A3} = {E8C2EB06-0271-49B0-8BE0-637B679F87A3}
 		{B0511807-26FE-47B9-958F-114AFFDD8755} = {B0511807-26FE-47B9-958F-114AFFDD8755}
+		{6B685A4D-A940-4353-9C64-54129F2E80B7} = {6B685A4D-A940-4353-9C64-54129F2E80B7}
 		{189E535D-274D-4343-9CF3-DCB0C23FA432} = {189E535D-274D-4343-9CF3-DCB0C23FA432}
 		{14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD} = {14F23FA9-D6B8-47EF-B5A9-FD0AF3FBBDBD}
 	EndProjectSection
@@ -36,7 +37,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.RecordProcessingJob",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.RecordProcessingJob.Tests", "Vinyl.RecordProcessingJob.Tests\Vinyl.RecordProcessingJob.Tests.csproj", "{B0511807-26FE-47B9-958F-114AFFDD8755}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vinyl.DbLayer", "Vinyl.DbLayer\Vinyl.DbLayer.csproj", "{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.DbLayer", "Vinyl.DbLayer\Vinyl.DbLayer.csproj", "{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Site", "Vinyl.Site\Vinyl.Site.csproj", "{6B685A4D-A940-4353-9C64-54129F2E80B7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{DF9D7529-023A-4267-A147-0DD77C39EDC4}"
+	ProjectSection(SolutionItems) = preProject
+		nginx\Dockerfile = nginx\Dockerfile
+		nginx\nginx.conf = nginx\nginx.conf
+		sample.txt = sample.txt
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +90,10 @@ Global
 		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B685A4D-A940-4353-9C64-54129F2E80B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B685A4D-A940-4353-9C64-54129F2E80B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B685A4D-A940-4353-9C64-54129F2E80B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B685A4D-A940-4353-9C64-54129F2E80B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -93,6 +107,7 @@ Global
 		{189E535D-274D-4343-9CF3-DCB0C23FA432} = {30E14712-D401-49D6-AE91-1072CE57ABBE}
 		{B0511807-26FE-47B9-958F-114AFFDD8755} = {467CA0DC-4058-48B3-BB83-F238BB59B6CF}
 		{0904CDE4-5D1A-4BCF-A23E-1A6F08486E55} = {FCE21F67-E0D7-4455-8A11-D34CB1FD6349}
+		{6B685A4D-A940-4353-9C64-54129F2E80B7} = {30E14712-D401-49D6-AE91-1072CE57ABBE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6A72305D-7832-424D-9907-A5B57081762C}

@@ -1,0 +1,1 @@
+docker-compose  -f "docker-compose.yml" -p dockercompose-vinyl up -d --build --force-recreate --remove-orphans

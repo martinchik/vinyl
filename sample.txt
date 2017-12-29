@@ -1,0 +1,17 @@
+ nginxproxy:
+    hostname: nginxproxy
+    container_name: nginxproxy
+    build:
+      context:  ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+      - "20081:20081"
+    links:
+      - parsingjob
+      - site
+    depends_on:
+      - parsingjob
+      - site
+    networks:
+      - vinylnetwork
