@@ -1,0 +1,1 @@
+docker-machine ssh ubuntu-vinyl
