@@ -6,8 +6,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
+using System;
 using System.IO;
 using Vinyl.Common;
+using Vinyl.Common.Helpers;
 using Vinyl.Kafka;
 using Vinyl.Kafka.Lib;
 using Vinyl.RecordProcessingJob.Data;
@@ -30,17 +32,17 @@ namespace Vinyl.RecordProcessingJob
         {            
             services.AddMvc();
             services.AddMemoryCache();
-
+            
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Info { Title = "Record Processing Job API", Version = "v1" });
+                c.DocInclusionPredicate((version, apiDescription) => { apiDescription.RelativePath = SwaggerHelper.ApiChangeRelativePath(apiDescription.RelativePath); return true; });
+                c.SwaggerDoc("v1", new Info { Title = "Record Processing Job API", Version = "v1", TermsOfService = "None", Description = "Functions for monitoring Record Processing Job " });
                 var basePath = PlatformServices.Default.Application.ApplicationBasePath;
                 var xmlPath = Path.Combine(basePath, $"{PlatformServices.Default.Application.ApplicationName}.xml");
                 c.IncludeXmlComments(xmlPath);
             });
 
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
-
             
             services.AddTransient<ICurrencyConverter, CurrencyConverter>();
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
@@ -71,10 +73,13 @@ namespace Vinyl.RecordProcessingJob
                 job.Stop();
             });
 
-            job.Start();
+            job.Start();            
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "Record Processing Job API"); });
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/" + SwaggerHelper.GetSwaggerPrefix() + "swagger/v1/swagger.json", "Record Processing Job API");
+            });
         }
     }
 }

@@ -40,9 +40,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vinyl.Site", "Vinyl.Site\Vi
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Nginx", "Nginx", "{DF9D7529-023A-4267-A147-0DD77C39EDC4}"
 	ProjectSection(SolutionItems) = preProject
+		nginx\default.conf = nginx\default.conf
 		nginx\Dockerfile = nginx\Dockerfile
 		nginx\nginx.conf = nginx\nginx.conf
-		sample.txt = sample.txt
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{85833FB8-8577-40A4-8B83-6CF930DD06A6}"

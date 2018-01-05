@@ -24,8 +24,9 @@ namespace Vinyl.RecordProcessingJob
                 {
                     builder.SetMinimumLevel(LogLevel.Trace);
                     builder.AddConsole();
-                    builder.AddFile("Logs/get-data-job-{Date}.log");
+                    builder.AddFile("Logs/record-processing-job-{Date}.log");
                 })
+                .UseUrls("http://*:20082")
                 .UseStartup<Startup>()
                 .Build();
     }

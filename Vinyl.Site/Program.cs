@@ -19,6 +19,15 @@ namespace Vinyl.Site
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
+                .CaptureStartupErrors(true)
+                .ConfigureLogging((hostingContext, builder) =>
+                {
+                    builder.SetMinimumLevel(LogLevel.Trace);
+                    builder.AddConsole();
+                    builder.AddFile("Logs/site-{Date}.log");
+                    builder.AddDebug();
+                })
+                .UseUrls("http://*:20080")
                 .UseStartup<Startup>()
                 .Build();
     }

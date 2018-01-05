@@ -23,6 +23,5 @@ RUN dotnet publish -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-EXPOSE 80/tcp
-ENV ASPNETCORE_URLS http://*:80
-ENTRYPOINT ["dotnet", "Vinyl.Site.dll", "--server.urls", "http://*:80"]
+EXPOSE 20080
+ENTRYPOINT ["dotnet", "Vinyl.Site.dll"]

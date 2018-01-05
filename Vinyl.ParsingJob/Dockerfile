@@ -24,6 +24,5 @@ RUN dotnet publish -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-EXPOSE 20081/tcp
-ENV ASPNETCORE_URLS http://*:20081
-ENTRYPOINT ["dotnet", "Vinyl.ParsingJob.dll", "--server.urls", "http://*:20081"]
+EXPOSE 20081
+ENTRYPOINT ["dotnet", "Vinyl.ParsingJob.dll"]

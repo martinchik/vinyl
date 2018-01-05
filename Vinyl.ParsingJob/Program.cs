@@ -27,6 +27,7 @@ namespace Vinyl.ParsingJob
                     builder.AddFile("Logs/get-data-job-{Date}.log");
                     builder.AddDebug();                    
                 })
+                .UseUrls("http://*:20081")
                 .UseStartup<Startup>()
                 .Build();
     }

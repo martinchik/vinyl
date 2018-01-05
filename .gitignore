@@ -28,3 +28,4 @@
 /Vinyl.DbLayer/bin/Release/netcoreapp2.0
 /Vinyl.Site/bin/Debug/netcoreapp2.0
 /Vinyl.Site/obj
+/Vinyl.Site/Logs

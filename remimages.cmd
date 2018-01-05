@@ -1,2 +1,2 @@
-docker rmi -f kafka zookeeper postgresdb recordprocessingjob parsingjob site
+docker rmi -f kafka zookeeper postgresdb recordprocessingjob parsingjob site nginxproxy
 docker images
