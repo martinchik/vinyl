@@ -29,3 +29,4 @@
 /Vinyl.Site/bin/Debug/netcoreapp2.0
 /Vinyl.Site/obj
 /Vinyl.Site/Logs
+*.cmd
