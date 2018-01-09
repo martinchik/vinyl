@@ -45,7 +45,7 @@ namespace Vinyl.ParsingJob
             });
             
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
-            DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration);
+            DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration).GetAwaiter().GetResult();
 
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordExportProcessor, DirtyRecordExportProcessor>();

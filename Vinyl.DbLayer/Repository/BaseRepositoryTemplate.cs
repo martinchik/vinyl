@@ -1,9 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using Vinyl.DbLayer.Models;
 
 namespace Vinyl.DbLayer.Repository
 {
@@ -65,7 +63,9 @@ namespace Vinyl.DbLayer.Repository
         
         public virtual IQueryable<T> GetAll()
         {
-            return Set.AsQueryable();
+            return Set
+                .AsNoTracking()
+                .AsQueryable();
         }        
     }
 }

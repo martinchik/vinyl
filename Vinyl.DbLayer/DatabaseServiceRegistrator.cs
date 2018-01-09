@@ -3,6 +3,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.IO;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Vinyl.DbLayer
 {
@@ -38,13 +42,15 @@ namespace Vinyl.DbLayer
             services.AddTransient<IMetadataRepositoriesFactory, MetadataRepositoriesFactory>();
         }
 
-        public static void MigrateDataBase(IConfiguration configuration)
+        public static async Task MigrateDataBase(IConfiguration configuration)
         { 
             try
             {
                 using (var ctx = CreateContext(configuration))
                 {
-                    ctx.Database.Migrate();
+                    await ctx.Database.MigrateAsync();
+
+                    await ctx.RunScriptFromResources("Vinyl.DbLayer.Scripts.Support_FTS.sql");
 
                     new MetadataInitializer().Initialize(ctx);
                 }
@@ -52,7 +58,7 @@ namespace Vinyl.DbLayer
             catch (Exception exc)
             {
                 System.Diagnostics.Trace.WriteLine("Error during update database. Exception:" + exc.ToString());
-                throw exc;
+                throw;
             }
         }
     }
