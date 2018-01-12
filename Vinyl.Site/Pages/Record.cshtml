@@ -1,0 +1,103 @@
+﻿@page
+@model Vinyl.Site.Pages.RecordModel
+@{
+    ViewData["Title"] = Model.Record.Title;
+}
+
+<div class="record-info-block">
+    <h2>@Model.Record.Title</h2>
+    <div class="record-info">
+        <p class="albom-info"><strong>Альбом: </strong>@Model.Record.Album</p>
+        <p class="artist-info"><strong>Артист: </strong>@Model.Record.Artist</p>
+        @if (!string.IsNullOrEmpty(Model.Record.Info))
+        {
+            <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
+        }
+        @if (Model.Record.Year > 0)
+        {
+            <p class="year-info"><strong>Год: </strong>@Model.Record.Year</p>
+        }
+    </div>
+</div>
+
+@if (Model.Record.RecordInShopLink?.Any() == true)
+{
+<div class="record-in-shops-block">
+    <h3>В магазинах</h3>
+
+    <table class="table table-condensed table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Магазин</th>
+                <th>Описание</th>
+                <th>Цена в бел.руб.</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var risLink in Model.Record.RecordInShopLink)
+            {
+                var shopItem = Model.GetShopBy(risLink);
+            <tr>
+                <td>
+                    <p><a href="@shopItem.Url">@shopItem.Title</a></p>
+                    @if (!string.IsNullOrEmpty(shopItem.Phones))
+                    {
+                    <p class="Phones-info">Телефон: @shopItem.Phones</p>
+                    }
+                    @if (!string.IsNullOrEmpty(shopItem.Emails))
+                    {
+                    <p class="Emails-info">E-mail: @shopItem.Emails</p>
+                    }
+                </td>
+                <td>
+                    @if (!string.IsNullOrEmpty(risLink.Barcode))
+                    {
+                    <p class="Barcode-info">Код: @risLink.Barcode</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.CountInPack))
+                    {
+                    <p class="CountInPack-info">Количество пластинок: @risLink.CountInPack</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.YearRecorded))
+                    {
+                    <p class="YearRecorded-info">Год записи: @risLink.YearRecorded</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.Country))
+                    {
+                    <p class="Country-info">Страна: @risLink.Country</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.Label))
+                    {
+                    <p class="Label-info">Лэйбл: @risLink.Label</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.State))
+                    {
+                    <p class="State-info">Состояние: @risLink.State</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.Style))
+                    {
+                    <p class="Style-info">Стиль: @risLink.Style</p>
+                    }
+                    @if (!string.IsNullOrEmpty(risLink.ViewType))
+                    {
+                    <p class="ViewType-info">Вид: @risLink.ViewType</p>
+                    }
+                </td>
+                <td>
+                    @if (!Model.IsActive(risLink))
+                    {
+                    <p class="not-active-info"><strong>Не продается</strong></p>
+                    }
+                    <p class="Shop-Price-info"><strong>@risLink.PriceBy?.ToString("F2")</strong></p>
+                    <br />
+                    <p><a href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">Перейти в магазин</a></p>
+                    <p class="Shop-Date-info">Информация обновлена: @risLink.UpdatedAt.ToLongDateString()</p>
+                </td>
+            </tr>
+            }           
+        </tbody>
+    </table>
+   
+</div>
+}
+

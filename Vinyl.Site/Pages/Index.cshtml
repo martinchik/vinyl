@@ -4,63 +4,62 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="row">
-    <div class="col-md-5">
-        <h2>Search</h2>
-        <form method="POST">
-            <div class="form-actions no-color">
-                <p>
-                    Enter a text for search: @Html.TextBox("searchText")
-                </p>
-                <p>
-                    <input type="submit" value="Search" class="btn btn-default"  />
-                </p>
-            </div>
-        </form>
-        
-        @if (Model.Items?.Any() == true)
-        {
-            <p>
-                Number of rows updated: @Model.Items.Count
-            </p>
-
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Text</th>
-                        <th>Price (BYN)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var record in Model.Items)
-                    {
-                        <tr>
-                            <td>
-                                <div>@record.TextLine1</div>
-                                <div>@record.TextLine2</div>
-                            </td>
-                            <td>
-                                @if (!record.Sell)
-                                {
-                                    <p>Not sell</p>
-                                }
-                                else if (record.PriceFrom == record.PriceTo)
-                                { 
-                                    <p>@record.PriceFrom</p>
-                                }
-                                else 
-                                { 
-                                    <p>from: @record.PriceFrom to @record.PriceTo</p>
-                                }
-                            </td>
-                            <td>
-                                <a asp-page="./Record" asp-route-id="@record.RecordId">open</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        }
+<h2>Найти и купить пластинку</h2>
+<form method="get">
+    <div class="form-actions no-color">
+        <p>
+            @Html.TextBox("search")
+            <input type="submit" value="Найти" class="btn btn-default"  />
+        </p>
     </div>
-    
-</div>
+</form>
+        
+@if (Model.Items != null && !string.IsNullOrEmpty(Model.SearchText))
+{
+    <p>
+        Найдено @Model.Items.Count
+    </p>
+
+    <table class="table table-condensed table-bordered table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Цена в бел.руб.</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var record in Model.Items)
+            {
+                <tr>
+                    <td>
+                        <div><a asp-page="./Record" asp-route-id="@record.RecordId.Compress()">@record.TextLine1</a></div>
+                        <div>@record.TextLine2</div>
+                    </td>
+                    <td>
+                        @if (!record.Sell)
+                        {
+                            <p>Не продается</p>
+                        }
+                        else if (record.PriceFrom == record.PriceTo)
+                        { 
+                            <p>@record.PriceFrom?.ToString("F2")</p>
+                        }
+                        else if (!(record.PriceFrom > 0 ))
+                        { 
+                            <p>@record.PriceTo?.ToString("F2")</p>
+                        }
+                        else if (!(record.PriceTo > 0 ))
+                        { 
+                            <p>@record.PriceFrom?.ToString("F2")</p>
+                        }
+                        else 
+                        { 
+                            <p>от @record.PriceFrom?.ToString("F2") по @record.PriceTo?.ToString("F2")</p>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+

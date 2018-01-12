@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +36,15 @@ namespace Vinyl.DbLayer.Repository
             return Context.RecordInfo.FirstOrDefault(_ => 
                 string.Compare(_.Artist, artist, true) == 0 &&
                 string.Compare(_.Album, album, true) == 0);
-        }        
+        }
+
+        public RecordInfo GetFull(Guid id)
+        {
+            return Context.RecordInfo
+                .Include(_ => _.RecordArt)
+                .Include(_ => _.RecordInShopLink)
+                .Include(_ => _.RecordLinks)
+                .FirstOrDefault(_ => _.Id == id);
+        }
     }
 }

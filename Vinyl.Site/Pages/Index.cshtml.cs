@@ -18,17 +18,25 @@ namespace Vinyl.Site.Pages
             _db = db;
         }
 
-        public IList<SearchItem> Items { get; private set; }
+        public string SearchText { get; private set; } = string.Empty;
 
-        public IActionResult OnPost(string searchText)
+        public IList<SearchItem> Items { get; private set; } = null;
+        
+        [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "search" })]
+        public IActionResult OnGet(string search = null)
         {
-            using (var rep = _db.CreateSearchItemRepository())
+            SearchText = search;
+
+            if (!string.IsNullOrWhiteSpace(search))
             {
-                Items = rep.Find(searchText)
-                    .OrderByDescending(_ => _.Sell)
-                    .ThenBy(_ => _.PriceFrom)
-                    .Take(100)
-                    .ToList();
+                using (var rep = _db.CreateSearchItemRepository())
+                {
+                    Items = rep.Find(search)
+                        .OrderByDescending(_ => _.Sell)
+                        .ThenBy(_ => _.PriceFrom)
+                        .Take(100)
+                        .ToList();
+                }
             }
 
             return Page();

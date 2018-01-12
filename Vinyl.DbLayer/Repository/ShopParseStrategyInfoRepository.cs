@@ -37,5 +37,13 @@ namespace Vinyl.DbLayer.Repository
             strategy.ProcessedAt = DateTime.UtcNow;
             strategy.UpdatedAt = DateTime.UtcNow;
         }
+
+        public IEnumerable<ShopParseStrategyInfo> Get(Guid[] strategyIds)
+        {
+            if (strategyIds?.Any() != true)
+                return Enumerable.Empty<ShopParseStrategyInfo>();
+
+            return Context.ShopParseStrategyInfo.Where(_ => strategyIds.Contains(_.Id)).AsEnumerable();
+        }
     }
 }

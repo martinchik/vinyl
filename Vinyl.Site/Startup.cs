@@ -51,7 +51,7 @@ namespace Vinyl.Site
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller}/{action=Index}/{id?}");
+                    template: "{controller}/{action}/{id?}");
             });
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
