@@ -8,7 +8,8 @@ using System.Threading.Tasks;
 
 namespace Vinyl.Kafka.Lib
 {
-    public class KafkaConsumer : IMessageConsumer
+    public class KafkaConsumer<T> : IMessageConsumer<T>
+        where T : class
     {
         private readonly Consumer<Null, string> _consumer;
         private readonly string _topic;
@@ -37,7 +38,7 @@ namespace Vinyl.Kafka.Lib
             };
         }
         
-        public void SubscribeOnTopic<T>(Action<T, string> action, CancellationToken cancellationToken) where T : class
+        public void SubscribeOnTopic(Action<T, string> action, CancellationToken cancellationToken)
         {
             if (_consumer.Assignment?.Count > 0)
                 throw new Exception("Already subscribed on topic " + _topic);
@@ -49,14 +50,14 @@ namespace Vinyl.Kafka.Lib
                 Message<Null, string> msg;
                 if (_consumer.Consume(out msg, TimeSpan.FromMilliseconds(10)))
                 {
-                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");
+                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");                    
                 }
             }
         }        
 
         public void Dispose()
         {
-            _consumer?.Dispose();
+            _consumer.Dispose();
         }
     }
 }

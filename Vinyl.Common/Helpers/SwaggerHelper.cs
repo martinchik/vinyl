@@ -8,7 +8,7 @@ namespace Vinyl.Common.Helpers
     {
         public static string GetSwaggerPrefix()
         {
-            var swaggerPrefix = Environment.GetEnvironmentVariable("PROXY_PREFIX");
+            var swaggerPrefix = EnvironmentVariable.PROXY_PREFIX;
             return !string.IsNullOrEmpty(swaggerPrefix)
                 ? swaggerPrefix + "/"
                 : string.Empty;

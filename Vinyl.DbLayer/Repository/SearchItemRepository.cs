@@ -26,17 +26,26 @@ namespace Vinyl.DbLayer.Repository
             return Context.SearchItem.SingleOrDefault(t => t.RecordId == recordId);
         }
 
-        public IQueryable<SearchItem> Find(string text)
+        public SearchItem GetBy(Guid recordId, string countryCode)
+        {
+            if (recordId == Guid.Empty)
+                return null;
+
+            return Context.SearchItem.SingleOrDefault(t => t.RecordId == recordId && t.CountryCode == countryCode);
+        }
+
+        public IQueryable<SearchItem> Find(string text, string countryCode)
         {
             if (string.IsNullOrEmpty(text) || text.Length < 3)
                 return Enumerable.Empty<SearchItem>().AsQueryable();
 
-            var worlds = Regex.Replace(text.Trim().ToLower(), @"\s+", ",");
-            var sqlParameter = new NpgsqlParameter("@worlds", worlds);
+            var words = Regex.Replace(text.Trim().ToLower(), @"\s+", ",");
+            var sqlParameterWords = new NpgsqlParameter("@words", words);
+            var sqlParameterCountry = new NpgsqlParameter("@country", countryCode);
 
             return Context
                 .SearchItem
-                .FromSql("SELECT * FROM fts_search(@worlds)", sqlParameter)
+                .FromSql("SELECT * FROM fts_search(@words, @country)", sqlParameterWords, sqlParameterCountry)
                 .AsNoTracking()
                 .AsQueryable();
         }

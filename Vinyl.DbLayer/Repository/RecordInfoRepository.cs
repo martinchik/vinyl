@@ -30,9 +30,7 @@ namespace Vinyl.DbLayer.Repository
 
         public RecordInfo FindBy(string artist, string album)
         {
-            artist = artist.Trim().ToLower();
-            album = album.Trim().ToLower();
-
+           
             return Context.RecordInfo.FirstOrDefault(_ => 
                 string.Compare(_.Artist, artist, true) == 0 &&
                 string.Compare(_.Album, album, true) == 0);

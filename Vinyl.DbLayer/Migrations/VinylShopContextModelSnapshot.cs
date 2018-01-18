@@ -58,11 +58,11 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Info")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(255);
+                        .HasMaxLength(1000);
 
                     b.Property<DateTime>("UpdatedAt");
 
@@ -92,7 +92,7 @@ namespace Vinyl.DbLayer.Migrations
                         .HasMaxLength(255);
 
                     b.Property<string>("Label")
-                        .HasMaxLength(255);
+                        .HasMaxLength(1000);
 
                     b.Property<decimal?>("Price");
 
@@ -103,13 +103,15 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<Guid>("ShopId");
 
                     b.Property<string>("ShopInfo")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("ShopUrl")
                         .HasMaxLength(1000);
 
                     b.Property<string>("State")
                         .HasMaxLength(255);
+
+                    b.Property<int>("Status");
 
                     b.Property<Guid>("StrategyId");
 
@@ -165,6 +167,9 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     b.Property<Guid>("Id");
 
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(255);
+
                     b.Property<decimal?>("PriceFrom");
 
                     b.Property<decimal?>("PriceTo");
@@ -175,7 +180,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<string>("TextLine1")
                         .IsRequired()
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("TextLine2")
                         .HasMaxLength(1000);
@@ -192,7 +197,7 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<string>("City")
                         .HasMaxLength(255);
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryCode")
                         .HasMaxLength(255);
 
                     b.Property<DateTime>("CreatedAt");

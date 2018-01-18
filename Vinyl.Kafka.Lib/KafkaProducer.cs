@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace Vinyl.Kafka.Lib
 {
-    public class KafkaProducer : IMessageProducer
+    public class KafkaProducer<T> : IMessageProducer<T>
+         where T : class
     {
         private readonly Producer<Null, string> _producer;
         private readonly string _topic;
@@ -38,7 +39,7 @@ namespace Vinyl.Kafka.Lib
             };
         }
 
-        public Task<string> SendMessage<T>(T @object) where T : class
+        public Task<string> SendMessage(T @object)
         {            
             var msg = Newtonsoft.Json.JsonConvert.SerializeObject(@object);
             return _producer.ProduceAsync(_topic, null, msg).ContinueWith(_ =>

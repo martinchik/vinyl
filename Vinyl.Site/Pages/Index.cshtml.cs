@@ -31,7 +31,7 @@ namespace Vinyl.Site.Pages
             {
                 using (var rep = _db.CreateSearchItemRepository())
                 {
-                    Items = rep.Find(search)
+                    Items = rep.Find(search, "BY")
                         .OrderByDescending(_ => _.Sell)
                         .ThenBy(_ => _.PriceFrom)
                         .Take(100)

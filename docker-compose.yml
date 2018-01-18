@@ -44,6 +44,7 @@ services:
       KAFKA_CREATE_TOPICS: "dirty_records:1:1"
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181    
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      KAFKA_LOG_RETENTION_HOURS: 6
       KAFKA_BROKER_ID: 0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -66,6 +67,8 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
       PROXY_PREFIX: "parsing"
+      KAFKA_DIRTY_RECORDS_TOPIC: "dirty_records"
+      KAFKA_CONNECT: "kafka:9092"
     networks:
       - vinylnetwork
 
@@ -85,6 +88,9 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"
       PROXY_PREFIX: "processing"
+      KAFKA_DIRTY_RECORDS_TOPIC: "dirty_records"
+      KAFKA_FIND_INFO_RECORDS_TOPIC: "find_infos_records"
+      KAFKA_CONNECT: "kafka:9092"
     networks:
       - vinylnetwork
 

@@ -8,8 +8,30 @@ namespace Vinyl.RecordProcessingJob.Data
 {
     public class ParseSpecialFields
     {
-        private static readonly Regex _regexForNumbers = new Regex(@"^\d$");
+        private static readonly Regex _regexForNumbers = new Regex(@"^\d+$");
         private static readonly Regex _regexForDecimals = new Regex(@"[^0-9\.]+");
+
+        public static string ParseRecordName(string @value)
+        {
+            if (!string.IsNullOrEmpty(@value))
+            {
+                var items = @value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(_ =>
+                {
+                    var it = _.ToLower().Trim();
+                    if (it.Length == 0)
+                        return string.Empty;
+                    if (it.Contains("lp") && it.Length < 4)
+                        return string.Empty;
+                    if (it.Contains("(") && it.Contains(")"))
+                        return string.Empty;
+
+                    return _;
+                }).ToArray();
+
+                return string.Join(" ", items);
+            }
+            return string.Empty;
+        }
 
         public static int? ParseYear(string @value)
         {
@@ -93,6 +115,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 case "бруб":
                 case "b":
                 case "br":
+                case "byr":
                 case "bel":
                     return "BYN";
                 case "дол":

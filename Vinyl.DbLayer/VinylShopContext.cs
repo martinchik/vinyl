@@ -51,11 +51,11 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Artist).HasMaxLength(255);
 
-                entity.Property(e => e.Info).HasMaxLength(1000);
+                entity.Property(e => e.Info).HasMaxLength(2000);
 
                 entity.Property(e => e.Title)
                     .IsRequired()
-                    .HasMaxLength(255);
+                    .HasMaxLength(1000);
 
                 entity.Property(e => e.CreatedAt).IsRequired();
                 entity.Property(e => e.UpdatedAt).IsRequired();
@@ -76,9 +76,9 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Currency).HasMaxLength(255);
 
-                entity.Property(e => e.Label).HasMaxLength(255);                
+                entity.Property(e => e.Label).HasMaxLength(1000);                
 
-                entity.Property(e => e.ShopInfo).HasMaxLength(1000);
+                entity.Property(e => e.ShopInfo).HasMaxLength(2000);
 
                 entity.Property(e => e.ShopUrl).HasMaxLength(1000);
 
@@ -136,7 +136,7 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.City).HasMaxLength(255);
 
-                entity.Property(e => e.Country).HasMaxLength(255);
+                entity.Property(e => e.CountryCode).HasMaxLength(255);
 
                 entity.Property(e => e.Emails).HasMaxLength(255);
 
@@ -180,9 +180,11 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.TextLine1)
                     .IsRequired()
-                    .HasMaxLength(1000);
+                    .HasMaxLength(2000);
 
                 entity.Property(e => e.TextLine2).HasMaxLength(1000);
+
+                entity.Property(e => e.CountryCode).HasMaxLength(255);
             });   
         }
     }

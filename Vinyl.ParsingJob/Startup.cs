@@ -12,6 +12,7 @@ using Vinyl.Common;
 using Vinyl.Common.Helpers;
 using Vinyl.Kafka;
 using Vinyl.Kafka.Lib;
+using Vinyl.Metadata;
 using Vinyl.ParsingJob.Data;
 using Vinyl.ParsingJob.Job;
 using Vinyl.ParsingJob.Parsers;
@@ -49,7 +50,7 @@ namespace Vinyl.ParsingJob
 
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordExportProcessor, DirtyRecordExportProcessor>();
-            services.AddTransient<IMessageProducer>(_ => new KafkaProducer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
+            services.AddTransient<IMessageProducer<DirtyRecord>>(_ => new KafkaProducer<DirtyRecord>(EnvironmentVariable.KAFKA_DIRTY_RECORDS_TOPIC, EnvironmentVariable.KAFKA_CONNECT));
             services.AddTransient<IShopInfoService, ShopInfoService>();
             services.AddTransient<IShopStrategiesService, ShopStrategiesService>();
             services.AddSingleton<ParsingRepeatableJob>();

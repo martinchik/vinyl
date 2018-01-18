@@ -15,8 +15,10 @@ namespace Vinyl.DbLayer.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     Album = table.Column<string>(maxLength: 255, nullable: true),
                     Artist = table.Column<string>(maxLength: 255, nullable: true),
-                    Info = table.Column<string>(maxLength: 1000, nullable: true),
-                    Title = table.Column<string>(maxLength: 255, nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    Info = table.Column<string>(maxLength: 2000, nullable: true),
+                    Title = table.Column<string>(maxLength: 1000, nullable: false),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     Year = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -29,11 +31,12 @@ namespace Vinyl.DbLayer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
+                    CountryCode = table.Column<string>(maxLength: 255, nullable: true),
                     PriceFrom = table.Column<decimal>(nullable: true),
                     PriceTo = table.Column<decimal>(nullable: true),
                     RecordId = table.Column<Guid>(nullable: false),
                     Sell = table.Column<bool>(nullable: false),
-                    TextLine1 = table.Column<string>(maxLength: 1000, nullable: false),
+                    TextLine1 = table.Column<string>(maxLength: 2000, nullable: false),
                     TextLine2 = table.Column<string>(maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
@@ -47,12 +50,12 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     City = table.Column<string>(maxLength: 255, nullable: true),
-                    Country = table.Column<string>(maxLength: 255, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 241, DateTimeKind.Utc)),
+                    CountryCode = table.Column<string>(maxLength: 255, nullable: true),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     Emails = table.Column<string>(maxLength: 255, nullable: true),
                     Phones = table.Column<string>(maxLength: 255, nullable: true),
                     Title = table.Column<string>(maxLength: 255, nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 241, DateTimeKind.Utc)),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     Url = table.Column<string>(maxLength: 1000, nullable: true)
                 },
                 constraints: table =>
@@ -65,11 +68,11 @@ namespace Vinyl.DbLayer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 222, DateTimeKind.Utc)),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     FullViewUrl = table.Column<string>(maxLength: 1000, nullable: false),
                     PreviewUrl = table.Column<string>(maxLength: 1000, nullable: false),
                     RecordId = table.Column<Guid>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 224, DateTimeKind.Utc))
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -87,12 +90,12 @@ namespace Vinyl.DbLayer.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 238, DateTimeKind.Utc)),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     Link = table.Column<string>(maxLength: 1000, nullable: false),
                     RecordId = table.Column<Guid>(nullable: false),
                     Text = table.Column<string>(maxLength: 1000, nullable: true),
                     ToType = table.Column<int>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 238, DateTimeKind.Utc))
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,16 +114,17 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     Id = table.Column<Guid>(nullable: false),
                     ClassName = table.Column<string>(maxLength: 255, nullable: false),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 244, DateTimeKind.Utc)),
-                    DataLimit = table.Column<int>(nullable: false),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
+                    DataLimit = table.Column<int>(nullable: true),
+                    DefaultCurrency = table.Column<string>(nullable: true),
                     LastProcessedCount = table.Column<int>(nullable: true),
                     Parameters = table.Column<string>(nullable: true),
-                    ProcessedAt = table.Column<DateTime>(nullable: true, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 245, DateTimeKind.Utc)),
+                    ProcessedAt = table.Column<DateTime>(nullable: true),
                     ShopId = table.Column<Guid>(nullable: false),
                     StartUrl = table.Column<string>(maxLength: 1000, nullable: false),
                     Status = table.Column<int>(nullable: false),
                     UpdatePeriodInHours = table.Column<int>(nullable: false),
-                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 245, DateTimeKind.Utc))
+                    UpdatedAt = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,18 +145,20 @@ namespace Vinyl.DbLayer.Migrations
                     Barcode = table.Column<string>(maxLength: 255, nullable: true),
                     CountInPack = table.Column<string>(maxLength: 255, nullable: true),
                     Country = table.Column<string>(maxLength: 255, nullable: true),
-                    CreatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 233, DateTimeKind.Utc)),
+                    CreatedAt = table.Column<DateTime>(nullable: false),
                     Currency = table.Column<string>(maxLength: 255, nullable: true),
-                    Label = table.Column<string>(maxLength: 255, nullable: true),
+                    Label = table.Column<string>(maxLength: 1000, nullable: true),
                     Price = table.Column<decimal>(nullable: true),
+                    PriceBy = table.Column<decimal>(nullable: true),
                     RecordId = table.Column<Guid>(nullable: false),
                     ShopId = table.Column<Guid>(nullable: false),
-                    ShopInfo = table.Column<string>(maxLength: 1000, nullable: true),
+                    ShopInfo = table.Column<string>(maxLength: 2000, nullable: true),
                     ShopUrl = table.Column<string>(maxLength: 1000, nullable: true),
                     State = table.Column<string>(maxLength: 255, nullable: true),
+                    Status = table.Column<int>(nullable: false),
                     StrategyId = table.Column<Guid>(nullable: false),
                     Style = table.Column<string>(maxLength: 255, nullable: true),
-                    UpdatedAt = table.Column<DateTime>(nullable: false, defaultValue: new DateTime(2017, 12, 18, 13, 11, 20, 234, DateTimeKind.Utc)),
+                    UpdatedAt = table.Column<DateTime>(nullable: false),
                     ViewType = table.Column<string>(maxLength: 255, nullable: true),
                     YearRecorded = table.Column<string>(maxLength: 255, nullable: true)
                 },

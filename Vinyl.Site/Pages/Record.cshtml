@@ -1,22 +1,19 @@
 ﻿@page
 @model Vinyl.Site.Pages.RecordModel
 @{
-    ViewData["Title"] = Model.Record.Title;
+    ViewData["Title"] = $"{Model.Record.Album} / {Model.Record.Artist}";
 }
 
 <div class="record-info-block">
-    <h2>@Model.Record.Title</h2>
     <div class="record-info">
         <p class="albom-info"><strong>Альбом: </strong>@Model.Record.Album</p>
         <p class="artist-info"><strong>Артист: </strong>@Model.Record.Artist</p>
+        <p class="year-info"><strong>Год: </strong>@Model.Record.Year</p>
+        
         @if (!string.IsNullOrEmpty(Model.Record.Info))
-        {
-            <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
-        }
-        @if (Model.Record.Year > 0)
-        {
-            <p class="year-info"><strong>Год: </strong>@Model.Record.Year</p>
-        }
+    {
+        <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
+    }
     </div>
 </div>
 
@@ -50,6 +47,10 @@
                     }
                 </td>
                 <td>
+                    @if (!string.IsNullOrEmpty(risLink.ShopInfo))
+                    {
+                    <p class="ShopInfo-info">Описание: @risLink.ShopInfo</p>
+                    }
                     @if (!string.IsNullOrEmpty(risLink.Barcode))
                     {
                     <p class="Barcode-info">Код: @risLink.Barcode</p>

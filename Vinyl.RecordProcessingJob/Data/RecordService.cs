@@ -26,7 +26,10 @@ namespace Vinyl.RecordProcessingJob.Data
             isNew = false;
             using (var repository = _metadataFactory.CreateRecordInfoRepository())
             {
-                var record = repository.FindBy(dirtyRecord.Artist, dirtyRecord.Album);
+                var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist);
+                var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album);
+
+                var record = repository.FindBy(artist.Trim().ToLower(), album.Trim().ToLower());
                 if (record == null)
                 {
                     record = new RecordInfo()
@@ -96,6 +99,12 @@ namespace Vinyl.RecordProcessingJob.Data
                     link.PriceBy = _currencyConverter.ConvertCurrencyToBYN(price.currency, price.price).GetAwaiter().GetResult();
                 }
 
+                if (link.Status != (int)strategy.Status)
+                {
+                    link.Status = (int)strategy.Status;
+                    hasImportantChanges = true;
+                }
+
                 link.UpdatedAt = DateTime.UtcNow;
                 if (link.Id == Guid.Empty)
                 {
@@ -111,7 +120,7 @@ namespace Vinyl.RecordProcessingJob.Data
             }
         }
 
-        public bool UpdateOrCreateSearchItem(RecordInfo record, bool isNewRecord, bool hasImportantChanges)
+        public bool UpdateOrCreateSearchItem(RecordInfo record, string countryCode, bool isNewRecord, bool hasImportantChanges)
         {
             if (record == null)
                 return false;
@@ -122,7 +131,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 SearchItem searchItem = null;
                 if (!isNewRecord)
                 {
-                    searchItem = repository.GetBy(record.Id);
+                    searchItem = repository.GetBy(record.Id, countryCode);
                     if (!hasImportantChanges)
                         return false;
                 }
@@ -130,6 +139,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 {
                     searchItem = new SearchItem();
                     searchItem.RecordId = record.Id;
+                    searchItem.CountryCode = countryCode;
                 }
 
                 var linkPrices = linksRepository.FindBy(record.Id).Select(_ => new

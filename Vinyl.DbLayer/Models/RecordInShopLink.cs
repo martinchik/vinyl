@@ -24,6 +24,7 @@ namespace Vinyl.DbLayer.Models
         public string Label { get; set; }
         public string Style { get; set; }
         public string ViewType { get; set; }
+        public int Status { get; set; }
 
         public RecordInfo Record { get; set; }
         public ShopInfo Shop { get; set; }

@@ -12,6 +12,7 @@ using Vinyl.Common;
 using Vinyl.Common.Helpers;
 using Vinyl.Kafka;
 using Vinyl.Kafka.Lib;
+using Vinyl.Metadata;
 using Vinyl.RecordProcessingJob.Data;
 using Vinyl.RecordProcessingJob.Job;
 using Vinyl.RecordProcessingJob.Processor;
@@ -46,15 +47,19 @@ namespace Vinyl.RecordProcessingJob
             
             services.AddTransient<ICurrencyConverter, CurrencyConverter>();
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
-            services.AddTransient<IMessageConsumer>(_ => new KafkaConsumer(KafkaConstants.DirtyRecordTopicNameCmd, KafkaConstants.KafkaHostAddress));
+            services.AddTransient<IMessageConsumer<DirtyRecord>>(_ => new KafkaConsumer<DirtyRecord>(EnvironmentVariable.KAFKA_DIRTY_RECORDS_TOPIC, EnvironmentVariable.KAFKA_CONNECT));
+            services.AddTransient<IMessageProducer<FindInfosRecord>>(_ => new KafkaProducer<FindInfosRecord>(EnvironmentVariable.KAFKA_FIND_INFO_RECORDS_TOPIC, EnvironmentVariable.KAFKA_CONNECT));
+            services.AddTransient<IMessageConsumer<FindInfosRecord>>(_ => new KafkaConsumer<FindInfosRecord>(EnvironmentVariable.KAFKA_FIND_INFO_RECORDS_TOPIC, EnvironmentVariable.KAFKA_CONNECT));
             services.AddTransient<IDirtyRecordImportProcessor, DirtyRecordImportProcessor>();
             services.AddTransient<IRecordService, RecordService>();
             services.AddTransient<IAdditionalInfoSearchEngine, AdditionalInfoSearchEngine>();
             services.AddSingleton<ProcessingJob>();
+            services.AddSingleton<AdditionalInfoSearchJob>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, ProcessingJob job)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, 
+            ProcessingJob job, AdditionalInfoSearchJob searchJob)
         {
             if (env.IsDevelopment())
             {
@@ -71,9 +76,11 @@ namespace Vinyl.RecordProcessingJob
             applicationLifetime.ApplicationStopping.Register(() =>
             {
                 job.Stop();
+                searchJob.Stop();
             });
 
-            job.Start();            
+            job.Start();
+            searchJob.Start();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

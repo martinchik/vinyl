@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using System;
 using Vinyl.RecordProcessingJob.Job;
 
 namespace Vinyl.RecordProcessingJob.Controllers
@@ -11,23 +8,32 @@ namespace Vinyl.RecordProcessingJob.Controllers
     public class StatusController : Controller
     {
         private readonly ProcessingJob _job;
+        private readonly AdditionalInfoSearchJob _searchJob;
 
-        public StatusController(ProcessingJob job)
+        public StatusController(ProcessingJob job, AdditionalInfoSearchJob searchJob)
         {
             _job = job ?? throw new ArgumentNullException(nameof(job));
+            _searchJob = searchJob ?? throw new ArgumentNullException(nameof(searchJob));
         }
 
         [HttpGet]
-        public dynamic GetStatus()
+        public dynamic[] GetStatus()
         {
-            return new
+            return new[] { new
             {
                 Name = _job.JobName,
                 Status = _job.IsRunning ? "running" : "suspend",
                 LastStartDate = _job.LastStart,
                 LastFinishDate = _job.LastFinish,
                 Result = _job.Result
-            };
+            }, new
+            {
+                Name = _searchJob.JobName,
+                Status = _searchJob.IsRunning ? "running" : "suspend",
+                LastStartDate = _searchJob.LastStart,
+                LastFinishDate = _searchJob.LastFinish,
+                Result = _searchJob.Result
+            }};
         }
 
         [HttpGet("health")]
@@ -39,8 +45,12 @@ namespace Vinyl.RecordProcessingJob.Controllers
         [HttpGet("restart")]
         public string Restart()
         {
+            _searchJob.Stop();
+            
             _job.Stop();
             _job.Start();
+
+            _searchJob.Start();
 
             return "Restarted";
         }

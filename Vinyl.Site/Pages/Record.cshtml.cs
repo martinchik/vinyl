@@ -20,9 +20,7 @@ namespace Vinyl.Site.Pages
 
         public RecordInfo Record { get; private set; }
 
-        public IList<ShopInfo> Shops { get; private set; }
-
-        public IList<ShopParseStrategyInfo> Strategies { get; private set; }
+        public IList<ShopInfo> Shops { get; private set; }        
 
         public ShopInfo GetShopBy(RecordInShopLink link)
             => link?.ShopId != Guid.Empty && Shops?.Any() == true
@@ -30,9 +28,7 @@ namespace Vinyl.Site.Pages
                 : null;
 
         public bool IsActive(RecordInShopLink link)
-            => link?.StrategyId != Guid.Empty && Strategies?.Any() == true
-                ? Strategies.FirstOrDefault(_ => _.Id == link.StrategyId).Status == (int)Metadata.StrategyStatus.Active
-                : false;
+            => link.Status == (int)Metadata.StrategyStatus.Active;
 
         [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "id" })]
         public IActionResult OnGet(string id = null)
@@ -61,15 +57,6 @@ namespace Vinyl.Site.Pages
                     using (var rep = _db.CreateShopInfoRepository())
                     {
                         Shops = rep.Get(shopIds).ToList();
-                    }
-                }
-
-                var strategiesIds = Record.RecordInShopLink.Select(_ => _.StrategyId).ToArray();
-                if (strategiesIds.Any())
-                {
-                    using (var rep = _db.CreateShopParseStrategyInfoRepository())
-                    {
-                        Strategies = rep.Get(strategiesIds).ToList();
                     }
                 }
             }

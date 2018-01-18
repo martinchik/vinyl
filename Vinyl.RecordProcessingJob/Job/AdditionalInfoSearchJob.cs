@@ -8,25 +8,27 @@ using System.Threading;
 using Vinyl.Metadata;
 using Vinyl.Kafka;
 using Vinyl.RecordProcessingJob.Processor;
+using Vinyl.DbLayer;
 
 namespace Vinyl.RecordProcessingJob.Job
 {
-    public class ProcessingJob : Vinyl.Common.Job.Job
+    public class AdditionalInfoSearchJob : Vinyl.Common.Job.Job
     {
-        private readonly IMessageConsumer<DirtyRecord> _messageBus;
-        private readonly IDirtyRecordImportProcessor _importProcessor;
+        private readonly IMessageConsumer<FindInfosRecord> _messageBus;
+        private readonly IAdditionalInfoSearchEngine _searchEngine;
 
-        public const string Name = "processing-job";
+        public const string Name = "additional_info-job";
 
         private long _recivedCount;
         private long _successCount;
         private long _failedCount;
 
-        public ProcessingJob(ILogger<ProcessingJob> logger, IMessageConsumer<DirtyRecord> messageBus, IDirtyRecordImportProcessor importProcessor) :
+        public AdditionalInfoSearchJob(ILogger<AdditionalInfoSearchJob> logger, IMessageConsumer<FindInfosRecord> messageBus,
+            IAdditionalInfoSearchEngine searchEngine) :
             base(logger, Name, null)
         {
             _messageBus = messageBus ?? throw new ArgumentNullException(nameof(messageBus));
-            _importProcessor = importProcessor ?? throw new ArgumentNullException(nameof(importProcessor));
+            _searchEngine = searchEngine ?? throw new ArgumentNullException(nameof(searchEngine));
         }
 
         protected override Task ExecuteAsync(CancellationToken token)
@@ -36,7 +38,7 @@ namespace Vinyl.RecordProcessingJob.Job
                 token);
         }
 
-        private void ProcessKafkaMessage(DirtyRecord msg, string message)
+        private void ProcessKafkaMessage(FindInfosRecord msg, string message)
         {
             Interlocked.Increment(ref _recivedCount);
 
@@ -44,7 +46,7 @@ namespace Vinyl.RecordProcessingJob.Job
 
             Logger.LogTrace("Kafka recieved msg:" + message);
 
-            if (_importProcessor.ProcessRecord(msg))
+            if (_searchEngine.Search(msg))
             {
                 Interlocked.Increment(ref _successCount);
             }
@@ -52,7 +54,7 @@ namespace Vinyl.RecordProcessingJob.Job
             {
                 Interlocked.Increment(ref _failedCount);
 
-                Logger.LogTrace("Failed to process dirty record:" + msg.ToString());
+                Logger.LogTrace("Failed to search additional infos:" + msg.ToString());
             }
 
             Result = $"Recieved {_recivedCount} records (successed:{_successCount} and failed:{_failedCount})";

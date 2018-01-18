@@ -18,7 +18,7 @@ namespace Vinyl.DbLayer.Models
         public string Phones { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
-        public string Country { get; set; }
+        public string CountryCode { get; set; }
         public string City { get; set; }
 
         public ICollection<RecordInShopLink> RecordInShopLink { get; set; }

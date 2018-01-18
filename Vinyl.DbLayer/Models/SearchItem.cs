@@ -13,5 +13,6 @@ namespace Vinyl.DbLayer.Models
         public decimal? PriceTo { get; set; }
         public bool Sell { get; set; }
         public string TextLine2 { get; set; }
+        public string CountryCode { get; set; }
     }
 }

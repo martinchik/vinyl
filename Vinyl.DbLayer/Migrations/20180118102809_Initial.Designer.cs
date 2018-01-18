@@ -11,7 +11,7 @@ using Vinyl.DbLayer;
 namespace Vinyl.DbLayer.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    [Migration("20171218131120_Initial")]
+    [Migration("20180118102809_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,9 +25,7 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     b.Property<Guid>("Id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 222, DateTimeKind.Utc));
+                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("FullViewUrl")
                         .IsRequired()
@@ -39,9 +37,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<Guid>("RecordId");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 224, DateTimeKind.Utc));
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -60,12 +56,14 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<string>("Artist")
                         .HasMaxLength(255);
 
+                    b.Property<DateTime>("CreatedAt");
+
                     b.Property<string>("Info")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(255);
+                        .HasMaxLength(1000);
 
                     b.Property<DateTime>("UpdatedAt");
 
@@ -89,24 +87,24 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<string>("Country")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 233, DateTimeKind.Utc));
+                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Currency")
                         .HasMaxLength(255);
 
                     b.Property<string>("Label")
-                        .HasMaxLength(255);
+                        .HasMaxLength(1000);
 
                     b.Property<decimal?>("Price");
+
+                    b.Property<decimal?>("PriceBy");
 
                     b.Property<Guid>("RecordId");
 
                     b.Property<Guid>("ShopId");
 
                     b.Property<string>("ShopInfo")
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("ShopUrl")
                         .HasMaxLength(1000);
@@ -114,14 +112,14 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<string>("State")
                         .HasMaxLength(255);
 
+                    b.Property<int>("Status");
+
                     b.Property<Guid>("StrategyId");
 
                     b.Property<string>("Style")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 234, DateTimeKind.Utc));
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("ViewType")
                         .HasMaxLength(255);
@@ -144,9 +142,7 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     b.Property<Guid>("Id");
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 238, DateTimeKind.Utc));
+                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Link")
                         .IsRequired()
@@ -159,9 +155,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<int>("ToType");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 238, DateTimeKind.Utc));
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 
@@ -174,6 +168,9 @@ namespace Vinyl.DbLayer.Migrations
                 {
                     b.Property<Guid>("Id");
 
+                    b.Property<string>("CountryCode")
+                        .HasMaxLength(255);
+
                     b.Property<decimal?>("PriceFrom");
 
                     b.Property<decimal?>("PriceTo");
@@ -184,7 +181,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<string>("TextLine1")
                         .IsRequired()
-                        .HasMaxLength(1000);
+                        .HasMaxLength(2000);
 
                     b.Property<string>("TextLine2")
                         .HasMaxLength(1000);
@@ -201,12 +198,10 @@ namespace Vinyl.DbLayer.Migrations
                     b.Property<string>("City")
                         .HasMaxLength(255);
 
-                    b.Property<string>("Country")
+                    b.Property<string>("CountryCode")
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 241, DateTimeKind.Utc));
+                    b.Property<DateTime>("CreatedAt");
 
                     b.Property<string>("Emails")
                         .HasMaxLength(255);
@@ -218,9 +213,7 @@ namespace Vinyl.DbLayer.Migrations
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 241, DateTimeKind.Utc));
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.Property<string>("Url")
                         .HasMaxLength(1000);
@@ -238,19 +231,17 @@ namespace Vinyl.DbLayer.Migrations
                         .IsRequired()
                         .HasMaxLength(255);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 244, DateTimeKind.Utc));
+                    b.Property<DateTime>("CreatedAt");
 
-                    b.Property<int>("DataLimit");
+                    b.Property<int?>("DataLimit");
+
+                    b.Property<string>("DefaultCurrency");
 
                     b.Property<int?>("LastProcessedCount");
 
                     b.Property<string>("Parameters");
 
-                    b.Property<DateTime?>("ProcessedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 245, DateTimeKind.Utc));
+                    b.Property<DateTime?>("ProcessedAt");
 
                     b.Property<Guid>("ShopId");
 
@@ -262,9 +253,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<int>("UpdatePeriodInHours");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(new DateTime(2017, 12, 18, 13, 11, 20, 245, DateTimeKind.Utc));
+                    b.Property<DateTime>("UpdatedAt");
 
                     b.HasKey("Id");
 

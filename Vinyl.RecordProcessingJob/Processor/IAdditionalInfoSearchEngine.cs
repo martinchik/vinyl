@@ -1,9 +1,10 @@
 ﻿using System;
+using Vinyl.Metadata;
 
 namespace Vinyl.RecordProcessingJob.Processor
 {
     public interface IAdditionalInfoSearchEngine
     {
-        void AddToSearchQueue(Guid recordId);
+        bool Search(FindInfosRecord record);
     }
 }

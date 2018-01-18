@@ -6,64 +6,41 @@ using System.Linq;
 using System.Threading.Tasks;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
+using Vinyl.DbLayer.Repository;
+using Vinyl.Metadata;
 
 namespace Vinyl.RecordProcessingJob.Processor
 {
     public class AdditionalInfoSearchEngine : IAdditionalInfoSearchEngine
     {
-        private BlockingCollection<Guid> _itemsToSearch;
-
         private readonly ILogger _logger;
         private readonly IMetadataRepositoriesFactory _metadataFactory;
+        private RecordInfoRepository _recordRepository;
 
         public AdditionalInfoSearchEngine(ILogger<DirtyRecordImportProcessor> logger, IMetadataRepositoriesFactory metadataFactory)
         {
             _metadataFactory = metadataFactory ?? throw new ArgumentNullException(nameof(metadataFactory));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }        
 
-            _itemsToSearch = new BlockingCollection<Guid>(1000);
-
-            Task.Run(() =>
-            {
-                foreach (var nextUuid in _itemsToSearch.GetConsumingEnumerable())
-                {
-                    SearchProcess(nextUuid);
-                }
-            });
-        }
-
-        private void SearchProcess(Guid nextUuid)
+        public bool Search(FindInfosRecord record)
         {
-            try
+            if (record == null || record.RecordId == Guid.Empty)
+                return false;
+
+            if (_recordRepository == null)
             {
-                using (var repository = _metadataFactory.CreateRecordInfoRepository())
-                {
-                    var ri = repository.Get(nextUuid);
-                    if (ri != null)
-                    {
-                        _logger.LogInformation("SearchProcess started search info for " + ri.ToString());
-                        SearchProcess(ri);
-                    }
-                }
+                _recordRepository = _metadataFactory.CreateRecordInfoRepository();
             }
-            catch (Exception exc)
-            {
-                _logger.LogError(exc, "SearchProcess has error");
-            }
+            return SearchProcess(record.ShopId, record.ShopParseStrategyId, _recordRepository.Get(record.RecordId));
         }
 
-        public void AddToSearchQueue(Guid recordId)
+        private bool SearchProcess(Guid shopId, Guid stratefyId, RecordInfo record)
         {
-            if (recordId == Guid.Empty)
-                return;
+            if (record == null)
+                return false;
 
-            _itemsToSearch.Add(recordId);
+            return true;
         }
-
-        private void SearchProcess(RecordInfo ri)
-        {
-
-        }
-
     }
 }

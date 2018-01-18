@@ -7,6 +7,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Vinyl.Common;
 
 namespace Vinyl.DbLayer
 {
@@ -15,7 +16,7 @@ namespace Vinyl.DbLayer
         internal static string GetConnectionString(IConfiguration configuration)
         {
             // Use a PostgreSQL database
-            var connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+            var connectionString = EnvironmentVariable.CONNECTION_STRING;
 
             if (string.IsNullOrEmpty(connectionString))
                 connectionString = configuration.GetConnectionString("DefaultConnection");

@@ -69,10 +69,16 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                         record.Title = titleText;
 
                         int v = record.Year.IndexOf("(");
-
+                        int indexS = record.Year.Trim().ToLower().LastIndexOf("s");
                         if (v > 0)
                         {
-                            record.Year = record.Year.Substring(0, v).Trim();                        
+                            record.Year = record.Year.Substring(0, v).Trim();
+                        }
+                        else if (indexS > 0)
+                        {
+                            int sYear;
+                            if (int.TryParse(record.Year.Substring(0, indexS), out sYear))
+                                record.Year = (1900 + sYear).ToString();
                         }
                     }
                 }
