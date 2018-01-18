@@ -72,6 +72,50 @@ namespace Vinyl.Common
             }
         }
 
+        public async Task<string> SendAsync(string url, AuthenticationHeaderValue authenticationHeader = null, CancellationToken token = default(CancellationToken))
+        {
+            if (string.IsNullOrWhiteSpace(url))
+                return null;
+
+            HttpRequestMessage request = null;
+            HttpResponseMessage response = null;
+
+            try
+            {
+                _logger.LogDebug($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Getting page from url:{url}");
+
+                request = new HttpRequestMessage(HttpMethod.Get, url);
+                if (authenticationHeader != null)
+                    request.Headers.Authorization = authenticationHeader;
+
+                response = await _httpClient.SendAsync(request, token);
+
+                var responseContent = await response.Content.ReadAsStringAsync();
+
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    if (response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Page was not find by {url}.");
+                        return string.Empty;
+                    }
+                    throw new HttpRequestException($"Response exception: {(int)response.StatusCode} ({response.ReasonPhrase}) Content:({responseContent})");
+                }
+                else if (responseContent != null && responseContent.Length > 5)
+                {
+                    return responseContent;
+                }
+
+                _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). Page was got from {url}.");
+
+                return string.Empty;
+            }
+            finally
+            {
+                response?.Dispose();
+            }
+        }
+
         public async Task<string> DownloadFileToLocal(string fileUrl, CancellationToken token = default(CancellationToken))
         {
             if (string.IsNullOrWhiteSpace(fileUrl))

@@ -20,18 +20,22 @@ namespace Vinyl.RecordProcessingJob.Data
                 @value = RemovePartFromString(@value, '[', ']');
                 @value = RemovePartFromString(@value, '=');
 
-                var items = @value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(_ =>
-                {
-                    var it = _.ToLower().Trim();
-                    if (it.Length == 0)
-                        return string.Empty;
-                    if (it.Contains("lp") && it.Length < 7)
-                        return string.Empty;
-                    if (it.Contains("(") && it.Contains(")"))
-                        return string.Empty;
+                var items = @value
+                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(_ =>
+                    {
+                        var it = _.ToLower().Trim();
+                        if (it.Length == 0)
+                            return string.Empty;
+                        if (it.Contains("lp") && it.Length < 7)
+                            return string.Empty;
+                        if (it.Contains("(") && it.Contains(")"))
+                            return string.Empty;
 
-                    return _;
-                }).Where(_ => !string.IsNullOrWhiteSpace(_)).ToArray();
+                        return _.Trim();
+                    })
+                    .Where(_ => !string.IsNullOrWhiteSpace(_))
+                    .ToArray();
 
                 return string.Join(" ", items);
             }

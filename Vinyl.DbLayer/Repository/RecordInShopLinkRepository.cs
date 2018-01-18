@@ -14,9 +14,9 @@ namespace Vinyl.DbLayer.Repository
         {
         }
         
-        public RecordInShopLink FindBy(Guid recordId, Guid shopId, Guid strategyId)
+        public IEnumerable<RecordInShopLink> FindBy(Guid recordId, Guid shopId, Guid strategyId)
         {            
-            return Context.RecordInShopLink.FirstOrDefault(_ => 
+            return Context.RecordInShopLink.Where(_ => 
                 _.RecordId == recordId &&
                 _.ShopId == shopId &&
                 _.StrategyId == strategyId);

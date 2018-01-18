@@ -29,11 +29,8 @@ namespace Vinyl.DbLayer.Repository
         }
 
         public RecordInfo FindBy(string artist, string album)
-        {
-           
-            return Context.RecordInfo.FirstOrDefault(_ => 
-                string.Compare(_.Artist, artist, true) == 0 &&
-                string.Compare(_.Album, album, true) == 0);
+        {           
+            return Context.RecordInfo.FirstOrDefault(_ => _.Artist == artist && _.Album == album);
         }
 
         public RecordInfo GetFull(Guid id)

@@ -29,19 +29,19 @@ namespace Vinyl.RecordProcessingJob.Data
                 var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist);
                 var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album);
 
-                var record = repository.FindBy(artist.Trim().ToLower(), album.Trim().ToLower());
+                var record = repository.FindBy(artist, album);
                 if (record == null)
                 {
                     record = new RecordInfo()
                     {
                         Id = Guid.NewGuid(),
-                        Title = dirtyRecord.Title?.Trim() ?? string.Empty,
-                        Artist = dirtyRecord.Artist?.Trim() ?? string.Empty,
-                        Album = dirtyRecord.Album?.Trim() ?? string.Empty,
+                        Artist = artist,
+                        Album = album,
                         CreatedAt = DateTime.UtcNow
                     };
 
                     record.Year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
+                    record.Title = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
                     record.UpdatedAt = DateTime.UtcNow;
                     repository.Add(record);
 
@@ -58,7 +58,13 @@ namespace Vinyl.RecordProcessingJob.Data
             hasImportantChanges = false;
             using (var repository = _metadataFactory.CreateRecordInShopLinkRepository())
             {
-                var link = repository.FindBy(record.Id, dirtyRecord.ShopId, dirtyRecord.ShopParseStrategyId);
+                var links = repository.FindBy(record.Id, dirtyRecord.ShopId, dirtyRecord.ShopParseStrategyId).ToList();
+                var link = links.FirstOrDefault(_ =>
+                        _.YearRecorded == dirtyRecord.YearRecorded &&
+                        _.Country == dirtyRecord.Country &&
+                        _.CountInPack == dirtyRecord.CountInPack &&
+                        _.Label == dirtyRecord.Label) ?? links.FirstOrDefault();
+                
                 if (link == null)
                 {
                     link = new RecordInShopLink
@@ -74,7 +80,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 link.CountInPack = dirtyRecord.CountInPack;
                 link.Country = dirtyRecord.Country;
                 link.Label = dirtyRecord.Label;
-                link.ShopInfo = dirtyRecord.Info;
+                link.ShopInfo = dirtyRecord.Title.AddIfExist(Environment.NewLine, dirtyRecord.Info);
                 link.ShopUrl = dirtyRecord.Url;
 
                 var state = ParseSpecialFields.ParseState(dirtyRecord.State);
