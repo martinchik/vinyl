@@ -5,6 +5,7 @@
 }
 
 <div class="record-info-block">
+    <h3>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h3>
     <div class="record-info">
         <p class="albom-info"><strong>Альбом: </strong>@Model.Record.Album</p>
         <p class="artist-info"><strong>Артист: </strong>@Model.Record.Artist</p>
@@ -91,7 +92,7 @@
                     }
                     <p class="Shop-Price-info"><strong>@risLink.PriceBy?.ToString("F2")</strong></p>
                     <br />
-                    <p><a href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">Перейти в магазин</a></p>
+                    <p><a target="_blank" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">Перейти в магазин</a></p>
                     <p class="Shop-Date-info">Информация обновлена: @risLink.UpdatedAt.ToLongDateString()</p>
                 </td>
             </tr>

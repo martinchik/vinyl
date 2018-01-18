@@ -15,22 +15,52 @@ namespace Vinyl.RecordProcessingJob.Data
         {
             if (!string.IsNullOrEmpty(@value))
             {
+                @value = @value.Replace("LP 2", string.Empty).Replace("2 LP", string.Empty);
+                @value = RemovePartFromString(@value, '(', ')');
+                @value = RemovePartFromString(@value, '[', ']');
+                @value = RemovePartFromString(@value, '=');
+
                 var items = @value.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(_ =>
                 {
                     var it = _.ToLower().Trim();
                     if (it.Length == 0)
                         return string.Empty;
-                    if (it.Contains("lp") && it.Length < 4)
+                    if (it.Contains("lp") && it.Length < 7)
                         return string.Empty;
                     if (it.Contains("(") && it.Contains(")"))
                         return string.Empty;
 
                     return _;
-                }).ToArray();
+                }).Where(_ => !string.IsNullOrWhiteSpace(_)).ToArray();
 
                 return string.Join(" ", items);
             }
             return string.Empty;
+        }
+
+        public static string RemovePartFromString(string @value, char started, char? ended = null)
+        {
+            if (!string.IsNullOrEmpty(@value))
+            {
+                var sind = @value.IndexOf(started);
+                if (sind >= 0)
+                {
+                    if (@value.Count(_ => _ == started) == 1)
+                    {
+                        var lPart = value.Substring(0, sind).Trim();
+                        var send = ended == null ? -1 : @value.IndexOf(ended.Value);
+                       
+                        if (send > 0)
+                        {
+                            var rPart = (send + 2) < value.Length ? value.Substring(send + 1, value.Length - send - 1).Trim() : string.Empty;
+                            if (!string.IsNullOrEmpty(rPart))
+                                return lPart.Trim() + " " + rPart.Trim();
+                        }
+                        return lPart.Trim();
+                    }
+                }
+            }
+            return @value;
         }
 
         public static int? ParseYear(string @value)
