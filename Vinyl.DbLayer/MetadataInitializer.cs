@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Vinyl.DbLayer.Models;
@@ -6,12 +7,26 @@ using Vinyl.DbLayer.Models;
 namespace Vinyl.DbLayer
 {
     class MetadataInitializer
-    {
-        public MetadataInitializer()
+    {    
+        public MetadataInitializer ClearData(VinylShopContext context)
         {
+            context.Database.ExecuteSqlCommand(@"
+                Delete from ""SearchItem"";
+                Delete from ""RecordArt"";
+                Delete from ""RecordLinks"";
+                Delete from ""RecordInShopLink"";
+                Delete from ""RecordInfo"";
+                Delete from ""ShopParseStrategyInfo"";
+                Delete from ""ShopInfo"";
+                DROP FUNCTION fts_search;
+                DROP INDEX idx_fts_resords;
+                DROP FUNCTION make_tsvector;
+            ");
+            context.SaveChanges(true);
+            return this;
         }
 
-        public void Initialize(VinylShopContext context)
+        public MetadataInitializer Initialize(VinylShopContext context)
         {
             if (!context.ShopInfo.Any())
             {
@@ -20,6 +35,8 @@ namespace Vinyl.DbLayer
 
                 context.SaveChanges(true);
             }
+
+            return this;
         }
 
         private static ShopInfo GetLongPlayShop() => new ShopInfo()

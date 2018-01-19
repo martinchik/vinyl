@@ -51,9 +51,13 @@ namespace Vinyl.DbLayer
                 {
                     await ctx.Database.MigrateAsync();
 
+                    var mi = new MetadataInitializer();
+                    if (EnvironmentVariable.CLEAR_DB)
+                        mi.ClearData(ctx);
+
                     await ctx.RunScriptFromResources("Vinyl.DbLayer.Scripts.Support_FTS.sql");
 
-                    new MetadataInitializer().Initialize(ctx);
+                    mi.Initialize(ctx);
                 }
             }
             catch (Exception exc)

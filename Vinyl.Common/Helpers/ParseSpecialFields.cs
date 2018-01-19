@@ -2,22 +2,43 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace Vinyl.RecordProcessingJob.Data
+namespace Vinyl.Common
 {
     public class ParseSpecialFields
     {
         private static readonly Regex _regexForNumbers = new Regex(@"^\d+$");
         private static readonly Regex _regexForDecimals = new Regex(@"[^0-9\.]+");
+        private static readonly Regex _regexForWord = new Regex("[:!@#$%^&*()}{|\":?><\\;'/.,~]");
+
+        public static string DistinctWords(IEnumerable<string> values, string delimiter = ",")
+        {
+            if (values?.Any() == true)
+            {
+                var items = values.Where(_ => !string.IsNullOrEmpty(_)).SelectMany(str => 
+                    _regexForWord.Replace(str, string.Empty)
+                    .Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Select(_ => _.Length > 2 ? _.Trim().ToLower() : string.Empty)
+                    .Where(_ => !string.IsNullOrEmpty(_))
+                ).Distinct().ToArray();
+
+                return items.Length == 1 ? items[0] : string.Join(delimiter, items);
+            }
+            return string.Empty;
+        }
+
+        public static string DistinctWords(string value, string delimiter = ",")
+            =>  string.IsNullOrWhiteSpace(value) 
+                ? string.Empty
+                : DistinctWords(new[] { value }, delimiter);        
 
         public static string ParseRecordName(string @value)
         {
             if (!string.IsNullOrEmpty(@value))
             {
                 @value = @value.Replace("LP 2", string.Empty).Replace("2 LP", string.Empty);
-                @value = RemovePartFromString(@value, '(', ')');
-                @value = RemovePartFromString(@value, '[', ']');
+                @value = RemovePartFromString(@value, '(', ')', 3);
+                @value = RemovePartFromString(@value, '[', ']', 1);
                 @value = RemovePartFromString(@value, '=');
 
                 var items = @value
@@ -37,9 +58,17 @@ namespace Vinyl.RecordProcessingJob.Data
                     .Where(_ => !string.IsNullOrWhiteSpace(_))
                     .ToArray();
 
-                return string.Join(" ", items);
+                return items.Length == 1 ? items[0] : string.Join(" ", items);
             }
             return string.Empty;
+        }
+
+        public static string RemovePartFromString(string @value, char started, char? ended, int countTimes = 1)
+        {
+            var str = @value;
+            for(int i=0; i < countTimes; i++)
+                str = RemovePartFromString(str, started, ended);
+            return str;
         }
 
         public static string RemovePartFromString(string @value, char started, char? ended = null)
@@ -49,19 +78,16 @@ namespace Vinyl.RecordProcessingJob.Data
                 var sind = @value.IndexOf(started);
                 if (sind >= 0)
                 {
-                    if (@value.Count(_ => _ == started) == 1)
-                    {
-                        var lPart = value.Substring(0, sind).Trim();
-                        var send = ended == null ? -1 : @value.IndexOf(ended.Value);
+                    var lPart = value.Substring(0, sind).Trim();
+                    var send = ended == null ? -1 : @value.IndexOf(ended.Value, sind + 1);
                        
-                        if (send > 0)
-                        {
-                            var rPart = (send + 2) < value.Length ? value.Substring(send + 1, value.Length - send - 1).Trim() : string.Empty;
-                            if (!string.IsNullOrEmpty(rPart))
-                                return lPart.Trim() + " " + rPart.Trim();
-                        }
-                        return lPart.Trim();
+                    if (send > 0)
+                    {
+                        var rPart = (send + 2) < value.Length ? value.Substring(send + 1, value.Length - send - 1).Trim() : string.Empty;
+                        if (!string.IsNullOrEmpty(rPart))
+                            return lPart.Trim() + " " + rPart.Trim();
                     }
+                    return lPart.Trim();
                 }
             }
             return @value;

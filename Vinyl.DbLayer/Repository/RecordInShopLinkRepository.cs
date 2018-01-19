@@ -22,10 +22,11 @@ namespace Vinyl.DbLayer.Repository
                 _.StrategyId == strategyId);
         }
 
-        public IQueryable<RecordInShopLink> FindBy(Guid recordId)
+        public IQueryable<RecordInShopLink> FindBy(Guid recordId, string countryCode)
         {
             return Context.RecordInShopLink.Where(_ =>
-                _.RecordId == recordId).AsQueryable();
+                _.RecordId == recordId &&
+                _.Shop.CountryCode == countryCode).AsQueryable();
         }
 
         public IQueryable<RecordInShopLink> FindByWithStrategy(Guid recordId)

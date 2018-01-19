@@ -1,7 +1,7 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Найти и купить пластинку";
 }
 
 <h2>Найти и купить пластинку</h2>
@@ -23,7 +23,7 @@
     <table class="table table-condensed table-bordered table-striped table-hover">
         <thead>
             <tr>
-                <th>Название</th>
+                <th colspan="2">Название</th>
                 <th>Цена в бел.руб.</th>
             </tr>
         </thead>
@@ -31,31 +31,19 @@
             @foreach (var record in Model.Items)
             {
                 <tr>
+                    <td width="100">
+                        <img onload="" src="./Index?id=@record.RecordId.Compress()&handler=RecordImage" height="60" />
+                    </td>
                     <td>
                         <div><a asp-page="./Record" asp-route-id="@record.RecordId.Compress()">@record.TextLine1</a></div>
-                        <div>@record.TextLine2</div>
+                        <div>@Model.GetSecondLineText(record)</div>
                     </td>
                     <td>
                         @if (!record.Sell)
                         {
                             <p>Не продается</p>
                         }
-                        else if (record.PriceFrom == record.PriceTo)
-                        { 
-                            <p>@record.PriceFrom?.ToString("F2")</p>
-                        }
-                        else if (!(record.PriceFrom > 0 ))
-                        { 
-                            <p>@record.PriceTo?.ToString("F2")</p>
-                        }
-                        else if (!(record.PriceTo > 0 ))
-                        { 
-                            <p>@record.PriceFrom?.ToString("F2")</p>
-                        }
-                        else 
-                        { 
-                            <p>от @record.PriceFrom?.ToString("F2") по @record.PriceTo?.ToString("F2")</p>
-                        }
+                        <p>@Model.GetPriceText(record)</p>
                     </td>
                 </tr>
             }

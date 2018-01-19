@@ -42,8 +42,6 @@ namespace Vinyl.RecordProcessingJob.Job
         {
             Interlocked.Increment(ref _recivedCount);
 
-            Result = $"Recieved {_recivedCount} records";
-
             Logger.LogTrace("Kafka recieved msg:" + message);
 
             if (_searchEngine.Search(msg))

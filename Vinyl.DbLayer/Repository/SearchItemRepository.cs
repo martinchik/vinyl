@@ -34,12 +34,8 @@ namespace Vinyl.DbLayer.Repository
             return Context.SearchItem.SingleOrDefault(t => t.RecordId == recordId && t.CountryCode == countryCode);
         }
 
-        public IQueryable<SearchItem> Find(string text, string countryCode)
+        public IQueryable<SearchItem> Find(string words, string countryCode)
         {
-            if (string.IsNullOrEmpty(text) || text.Length < 3)
-                return Enumerable.Empty<SearchItem>().AsQueryable();
-
-            var words = Regex.Replace(text.Trim().ToLower(), @"\s+", ",");
             var sqlParameterWords = new NpgsqlParameter("@words", words);
             var sqlParameterCountry = new NpgsqlParameter("@country", countryCode);
 
@@ -48,6 +44,6 @@ namespace Vinyl.DbLayer.Repository
                 .FromSql("SELECT * FROM fts_search(@words, @country)", sqlParameterWords, sqlParameterCountry)
                 .AsNoTracking()
                 .AsQueryable();
-        }
+        }        
     }
 }

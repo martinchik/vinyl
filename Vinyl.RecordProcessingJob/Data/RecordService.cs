@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using System.Threading;
-using System.Threading.Tasks;
+using Vinyl.Common;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
 using Vinyl.Metadata;
@@ -148,12 +146,13 @@ namespace Vinyl.RecordProcessingJob.Data
                     searchItem.CountryCode = countryCode;
                 }
 
-                var linkPrices = linksRepository.FindBy(record.Id).Select(_ => new
+                var linkPrices = linksRepository.FindBy(record.Id, countryCode).Select(_ => new
                 {
                     _.Price,
                     _.PriceBy,
                     _.State,
                     _.ShopId,
+                    _.ShopInfo,
                     isActive = _.Strategy != null ? _.Strategy.Status == (int)StrategyStatus.Active : false
                 }).ToList();
 
@@ -161,7 +160,9 @@ namespace Vinyl.RecordProcessingJob.Data
                 searchItem.PriceTo = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Max();
                 searchItem.Sell = linkPrices.All(_ => !_.isActive) ? false : true;
                 searchItem.TextLine1 = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
-                searchItem.TextLine2 = $"В {linkPrices.Where(_ => _.ShopId != Guid.Empty).Distinct().Count()} магазинах".AddIfExist(" в состоянии (", string.Join(",", linkPrices.Where(_ => !string.IsNullOrEmpty(_.State)).Select(_ => _.State)),")");
+                searchItem.TextLine2 = ParseSpecialFields.DistinctWords(linkPrices.Select(_ => _.ShopInfo).Concat(new[] { record.Artist, record.Album, record.Year?.ToString() }));
+                searchItem.ShopsCount = linkPrices.Where(_ => _.ShopId != Guid.Empty).Distinct().Count();
+                searchItem.States = string.Join(",", linkPrices.Where(_ => !string.IsNullOrEmpty(_.State)).Select(_ => _.State));
 
                 if (searchItem.Id == Guid.Empty)
                 {

@@ -8,6 +8,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Vinyl.Common;
 using Vinyl.Common.Helpers;
 using Vinyl.Kafka;
@@ -16,6 +17,7 @@ using Vinyl.Metadata;
 using Vinyl.RecordProcessingJob.Data;
 using Vinyl.RecordProcessingJob.Job;
 using Vinyl.RecordProcessingJob.Processor;
+using Vinyl.RecordProcessingJob.SearchEngine;
 
 namespace Vinyl.RecordProcessingJob
 {
@@ -53,6 +55,8 @@ namespace Vinyl.RecordProcessingJob
             services.AddTransient<IDirtyRecordImportProcessor, DirtyRecordImportProcessor>();
             services.AddTransient<IRecordService, RecordService>();
             services.AddTransient<IAdditionalInfoSearchEngine, AdditionalInfoSearchEngine>();
+            services.AddTransient<IDiscogsSearchEngine, DiscogsSearchEngine>();
+            
             services.AddSingleton<ProcessingJob>();
             services.AddSingleton<AdditionalInfoSearchJob>();
         }
@@ -78,6 +82,8 @@ namespace Vinyl.RecordProcessingJob
                 job.Stop();
                 searchJob.Stop();
             });
+
+            Task.Delay(TimeSpan.FromSeconds(15)).Wait(); // wait while parsing job will be loaded
 
             job.Start();
             searchJob.Start();

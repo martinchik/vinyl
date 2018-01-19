@@ -30,17 +30,22 @@ namespace Vinyl.Site.Pages
         public bool IsActive(RecordInShopLink link)
             => link.Status == (int)Metadata.StrategyStatus.Active;
 
+        public IEnumerable<(string text, string link)> GetLinksBy(Vinyl.Metadata.RecordLinkType linkType)
+           => Record?.RecordLinks?.Where(_ => _.ToType == (int)linkType).Select(_ => (_.Text, _.Link));
+
+        public Dictionary<Vinyl.Metadata.RecordLinkType, List<(string text, string link)>> GetLinks()
+           => Record?.RecordLinks?
+                .ToLookup(_ => (Vinyl.Metadata.RecordLinkType)_.ToType)
+                .ToDictionary(_ => _.Key, _ => _.Select(v=>(v.Text, v.Link))
+                .ToList());
+
         [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "id" })]
         public IActionResult OnGet(string id = null)
         {
             Shops = null;
             Record = null;
-
-            if (string.IsNullOrWhiteSpace(id))
-                return new NotFoundResult();
-
+           
             Guid recordId = id.ExpandToGuid();
-
             if (recordId == Guid.Empty)
                 return new NotFoundResult();
 
@@ -62,6 +67,21 @@ namespace Vinyl.Site.Pages
             }
 
             return Page();
+        }
+
+        [ResponseCache(Duration = 360, VaryByQueryKeys = new[] { "id" })]
+        public ActionResult OnGetRecordImage(string id = null)
+        {
+            Guid recordId = id.ExpandToGuid();
+            if (recordId == Guid.Empty)
+                return new NotFoundResult();
+
+            string url = string.Empty;
+            using (var rep = _db.CreateRecordArtRepository())
+            {
+                url = rep.FindFullImage(recordId);
+            }
+            return RedirectPermanent(string.IsNullOrEmpty(url) ? "./images/noimage.png" : url);
         }
     }
 }

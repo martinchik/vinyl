@@ -27,7 +27,14 @@ namespace Vinyl.DbLayer
 
         public RecordInShopLinkRepository CreateRecordInShopLinkRepository()
             => new RecordInShopLinkRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
         public SearchItemRepository CreateSearchItemRepository()
             => new SearchItemRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public RecordArtRepository CreateRecordArtRepository()
+            => new RecordArtRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public RecordLinksRepository CreateRecordLinksRepository()
+             => new RecordLinksRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
     }
 }

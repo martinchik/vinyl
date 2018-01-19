@@ -14,5 +14,7 @@ namespace Vinyl.DbLayer.Models
         public bool Sell { get; set; }
         public string TextLine2 { get; set; }
         public string CountryCode { get; set; }
+        public int ShopsCount { get; set; }
+        public string States { get; set; }
     }
 }

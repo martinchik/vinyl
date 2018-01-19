@@ -29,8 +29,10 @@ namespace Vinyl.Common
             }
 
             _httpClient.DefaultRequestHeaders
-                  .Accept
-                  .Add(new MediaTypeWithQualityHeaderValue("application/json"));//ACCEPT header
+                .UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("vinyl_aggs", "1.0")));
+            _httpClient.DefaultRequestHeaders
+                .Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            
         }
 
         public async Task<string> GetPage(string url, CancellationToken token = default(CancellationToken))

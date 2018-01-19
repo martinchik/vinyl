@@ -3,11 +3,13 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
 using Vinyl.DbLayer.Repository;
 using Vinyl.Metadata;
+using Vinyl.RecordProcessingJob.SearchEngine;
 
 namespace Vinyl.RecordProcessingJob.Processor
 {
@@ -15,11 +17,14 @@ namespace Vinyl.RecordProcessingJob.Processor
     {
         private readonly ILogger _logger;
         private readonly IMetadataRepositoriesFactory _metadataFactory;
-        private RecordInfoRepository _recordRepository;
+        private readonly IDiscogsSearchEngine _discogsSearchEngine;
 
-        public AdditionalInfoSearchEngine(ILogger<DirtyRecordImportProcessor> logger, IMetadataRepositoriesFactory metadataFactory)
+        public AdditionalInfoSearchEngine(ILogger<DirtyRecordImportProcessor> logger, 
+            IMetadataRepositoriesFactory metadataFactory,
+            IDiscogsSearchEngine discogsSearchEngine)
         {
             _metadataFactory = metadataFactory ?? throw new ArgumentNullException(nameof(metadataFactory));
+            _discogsSearchEngine = discogsSearchEngine ?? throw new ArgumentNullException(nameof(discogsSearchEngine));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }        
 
@@ -28,17 +33,73 @@ namespace Vinyl.RecordProcessingJob.Processor
             if (record == null || record.RecordId == Guid.Empty)
                 return false;
 
-            if (_recordRepository == null)
+            try
             {
-                _recordRepository = _metadataFactory.CreateRecordInfoRepository();
+                return SearchProcess(record.ShopId, record.ShopParseStrategyId, record.RecordId
+                        , CancellationToken.None).GetAwaiter().GetResult();
             }
-            return SearchProcess(record.ShopId, record.ShopParseStrategyId, _recordRepository.Get(record.RecordId));
+            catch (Exception exc)
+            {
+                _logger.LogWarning(exc, $"Cannot find additional item for recordid={record.RecordId} and strategyid={record.ShopParseStrategyId}");
+            }
+            return false;
         }
 
-        private bool SearchProcess(Guid shopId, Guid stratefyId, RecordInfo record)
+        private async Task<bool> SearchProcess(Guid shopId, Guid stratefyId, Guid recordId, CancellationToken token)
         {
-            if (record == null)
-                return false;
+            using (var recordRepository = _metadataFactory.CreateRecordInfoRepository())
+            using (var recordInShopRepository = _metadataFactory.CreateRecordInShopLinkRepository())
+            using (var recordLinksRepository = _metadataFactory.CreateRecordLinksRepository())
+            using (var recordArtRepository = _metadataFactory.CreateRecordArtRepository())
+            {
+                var record = recordRepository.Get(recordId);
+                if (record == null)
+                    return false;
+
+                var allFromShops = recordInShopRepository.FindBy(record.Id, shopId, stratefyId).ToList();
+                var barcode = allFromShops
+                    .Where(_ => !string.IsNullOrEmpty(_.Barcode))
+                    .Select(_ => _.Barcode)
+                    .FirstOrDefault();
+
+                var discogsItem = !string.IsNullOrEmpty(barcode)
+                    ? await _discogsSearchEngine.FindBy(barcode, token)
+                    : await _discogsSearchEngine.FindBy(record.Artist, record.Album, record.Year?.ToString(), token);
+
+                await Task.Delay(TimeSpan.FromSeconds(3)); //  Response exception: 429 (Too Many Requests) Content:({"message": "You are making requests too quickly."}
+
+                if (discogsItem != null && !string.IsNullOrEmpty(discogsItem.Value.url))
+                {
+                    if (!string.IsNullOrEmpty(discogsItem.Value.img))
+                    {
+                        recordArtRepository.Add(new RecordArt()
+                        {
+                            CreatedAt = DateTime.UtcNow,
+                            UpdatedAt = DateTime.UtcNow,
+                            Id = Guid.NewGuid(),
+                            RecordId = record.Id,
+                            PreviewUrl = discogsItem.Value.img,
+                            FullViewUrl = string.Empty
+                        });
+
+                        await recordArtRepository.CommitAsync();
+                    }
+                    recordLinksRepository.Add(new RecordLinks()
+                    {
+                        CreatedAt = DateTime.UtcNow,
+                        UpdatedAt = DateTime.UtcNow,
+                        Id = Guid.NewGuid(),
+                        RecordId = record.Id,
+                        ToType = (int)RecordLinkType.Discogs,
+                        Link = discogsItem.Value.url,
+                        Text = discogsItem.Value.title
+                    });
+
+                    await recordLinksRepository.CommitAsync();
+                    
+                    return true;
+                }
+            }
 
             return true;
         }

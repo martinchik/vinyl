@@ -21,4 +21,7 @@
     <ProjectReference Include="..\Vinyl.DbLayer\Vinyl.DbLayer.csproj" />
     <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+  </ItemGroup>
 </Project>

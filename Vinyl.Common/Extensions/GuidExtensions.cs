@@ -17,6 +17,9 @@ namespace Vinyl
 
         public static Guid ExpandToGuid(this string compressedGuid)
         {
+            if (string.IsNullOrWhiteSpace(compressedGuid))
+                return Guid.Empty;
+
             string base64 = compressedGuid
                 .Replace('_', '/')
                 .Replace('-', '+')

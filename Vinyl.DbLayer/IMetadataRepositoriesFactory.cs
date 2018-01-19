@@ -9,5 +9,7 @@ namespace Vinyl.DbLayer
         RecordInfoRepository CreateRecordInfoRepository();
         RecordInShopLinkRepository CreateRecordInShopLinkRepository();
         SearchItemRepository CreateSearchItemRepository();
+        RecordArtRepository CreateRecordArtRepository();
+        RecordLinksRepository CreateRecordLinksRepository();
     }
 }
