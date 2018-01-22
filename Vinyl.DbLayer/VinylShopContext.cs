@@ -76,9 +76,10 @@ namespace Vinyl.DbLayer
 
                 entity.Property(e => e.Currency).HasMaxLength(255);
 
-                entity.Property(e => e.Label).HasMaxLength(1000);                
-
+                entity.Property(e => e.Label).HasMaxLength(1000);
+                entity.Property(e => e.ShopRecordTitle).HasMaxLength(1000);
                 entity.Property(e => e.ShopInfo).HasMaxLength(2000);
+                entity.Property(e => e.ShopImageUrl).HasMaxLength(1000);
 
                 entity.Property(e => e.ShopUrl).HasMaxLength(1000);
 
@@ -120,6 +121,8 @@ namespace Vinyl.DbLayer
                     .HasMaxLength(1000);
 
                 entity.Property(e => e.Text).HasMaxLength(1000);
+                entity.Property(e => e.Tracks);
+                entity.Property(e => e.Videos);
 
                 entity.Property(e => e.UpdatedAt);
 

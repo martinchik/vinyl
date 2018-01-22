@@ -106,6 +106,11 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             try
             {
                 var subPage = await _htmlDataGetter.GetPage(record.Url, token);
+
+                var imageLink = ParseImage(subPage).FirstOrDefault();
+                if (!string.IsNullOrEmpty(imageLink))
+                    record.ImageUrl = imageLink;
+
                 var tableMap = ParseTable(subPage).Where(_=>_.Item1.Length > 0).ToDictionary(_=>_.Item1.ToLower(), _=>_.Item2);
                 if (tableMap?.Count > 7)
                 {
@@ -133,6 +138,12 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         {
             foreach (var tableLine in GetRecordNodes(html, "//table[contains(@class, 'zebra')]//tr"))
                 yield return (ParseNodeTableValue(tableLine.ChildNodes[1]), ParseNodeTableValue(tableLine.ChildNodes[3]));
+        }
+
+        private IEnumerable<string> ParseImage(string html)
+        {
+            foreach (var imgItem in GetRecordNodes(html, "//article//a[contains(@class, 'fancybox')]//img"))
+                yield return "http://longplay.by/" + imgItem.GetAttributeValue("src", "");
         }
 
         private string ParseNodeTableValue(HtmlNode node)

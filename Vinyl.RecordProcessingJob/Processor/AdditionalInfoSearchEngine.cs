@@ -62,46 +62,76 @@ namespace Vinyl.RecordProcessingJob.Processor
                     .Select(_ => _.Barcode)
                     .FirstOrDefault();
 
-                var discogsItem = !string.IsNullOrEmpty(barcode)
-                    ? await _discogsSearchEngine.FindBy(barcode, token)
-                    : await _discogsSearchEngine.FindBy(record.Artist, record.Album, record.Year?.ToString(), token);
+                var links = await SearchInDiscogs(record, barcode, recordArtRepository, recordLinksRepository, token);
+                if (links == null)
+                    return false;
 
-                await Task.Delay(TimeSpan.FromSeconds(3)); //  Response exception: 429 (Too Many Requests) Content:({"message": "You are making requests too quickly."}
+                return true;
+            }
+        }
 
-                if (discogsItem != null && !string.IsNullOrEmpty(discogsItem.Value.url))
+        private async Task<RecordLinks> SearchInDiscogs(RecordInfo record, string barcode, 
+            RecordArtRepository recordArtRepository, RecordLinksRepository recordLinksRepository,
+            CancellationToken token)
+        { 
+            var discogsItem = !string.IsNullOrEmpty(barcode)
+                ? await _discogsSearchEngine.FindBy(barcode, token)
+                : await _discogsSearchEngine.FindBy(record.Artist, record.Album, record.Year?.ToString(), token);
+
+            await Task.Delay(TimeSpan.FromSeconds(3)); //  Response exception: 429 (Too Many Requests) Content:({"message": "You are making requests too quickly."}
+
+            if (discogsItem != null && !string.IsNullOrEmpty(discogsItem.Value.url))
+            {
+                var resources = !string.IsNullOrEmpty(discogsItem.Value.resources)
+                    ? await _discogsSearchEngine.GetResourcesByUrl(discogsItem.Value.resources, token)
+                    : null;
+
+                var tracks = resources?.tracklist?
+                        .Where(item => item.title != null && !string.IsNullOrWhiteSpace(item.title))
+                        .Select(item => item.title)
+                        .ToArray() ?? new string[] { };
+
+                var videos = resources?.videos?
+                        .Where(item => item.title != null && !string.IsNullOrWhiteSpace(item.title))
+                        .Select(item => string.Concat(item.title, "$",  item.uri))
+                        .ToArray() ?? new string[] { };
+
+                if (!string.IsNullOrEmpty(discogsItem.Value.img))
                 {
-                    if (!string.IsNullOrEmpty(discogsItem.Value.img))
-                    {
-                        recordArtRepository.Add(new RecordArt()
-                        {
-                            CreatedAt = DateTime.UtcNow,
-                            UpdatedAt = DateTime.UtcNow,
-                            Id = Guid.NewGuid(),
-                            RecordId = record.Id,
-                            PreviewUrl = discogsItem.Value.img,
-                            FullViewUrl = string.Empty
-                        });
-
-                        await recordArtRepository.CommitAsync();
-                    }
-                    recordLinksRepository.Add(new RecordLinks()
+                    recordArtRepository.Add(new RecordArt()
                     {
                         CreatedAt = DateTime.UtcNow,
                         UpdatedAt = DateTime.UtcNow,
                         Id = Guid.NewGuid(),
                         RecordId = record.Id,
-                        ToType = (int)RecordLinkType.Discogs,
-                        Link = discogsItem.Value.url,
-                        Text = discogsItem.Value.title
+                        PreviewUrl = discogsItem.Value.img,
+                        FullViewUrl = string.Empty
                     });
 
-                    await recordLinksRepository.CommitAsync();
-                    
-                    return true;
+                    await recordArtRepository.CommitAsync();
                 }
+
+                var links = new RecordLinks()
+                {
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    Id = Guid.NewGuid(),
+                    RecordId = record.Id,
+                    ToType = (int)RecordLinkType.Discogs,
+                    Link = discogsItem.Value.url,
+                    Text = discogsItem.Value.title,
+                    Tracks = tracks?.Any() == true ? string.Join("|", tracks) : string.Empty,
+                    Videos = videos?.Any() == true ? string.Join("|", videos) : string.Empty
+                };
+
+                recordLinksRepository.Add(links);
+
+                await recordLinksRepository.CommitAsync();
+                    
+                return links;
             }
 
-            return true;
+            return null;           
         }
     }
 }

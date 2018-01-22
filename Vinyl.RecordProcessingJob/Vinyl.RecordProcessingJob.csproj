@@ -26,6 +26,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Google.Apis" Version="1.32.0" />
+    <PackageReference Include="Google.Apis.YouTube.v3" Version="1.32.0.1079" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />

@@ -29,14 +29,14 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
         private AuthenticationHeaderValue BuildAuthHeaderValue()
             => new AuthenticationHeaderValue("Discogs", $"key={_discogsConsumerKey}, secret={_discogsConsumerSecret}");
         
-        public async Task<(string title, string img, string url, long id)?> FindBy(string barcode, CancellationToken token)
+        public async Task<(string title, string img, string url, long id, string resources)?> FindBy(string barcode, CancellationToken token)
         {
             var url = $"{_apiUrl}database/search?barcode={barcode}";
 
             return await FindByUrl(url, token);
         }
 
-        public async Task<(string title, string img, string url, long id)?> FindBy(string artist, string album, string year, CancellationToken token)
+        public async Task<(string title, string img, string url, long id, string resources)?> FindBy(string artist, string album, string year, CancellationToken token)
         {
             var url = $"{_apiUrl}database/search?q={artist}-{album}&{{?title,artist}}";
             if (!string.IsNullOrEmpty(year))
@@ -45,7 +45,7 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
             return await FindByUrl(url, token);
         }
 
-        private async Task<(string title, string img, string url, long id)?> FindByUrl(string url, CancellationToken token)
+        private async Task<(string title, string img, string url, long id, string resources)?> FindByUrl(string url, CancellationToken token)
         {
             var result = await _htmlDataGetter.SendAsync(url, BuildAuthHeaderValue(), token);
             if (string.IsNullOrEmpty(result))
@@ -67,7 +67,8 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
                                     title: item.title ?? string.Empty,
                                     img: item.thumb ?? string.Empty,
                                     url: item.uri != null ? string.Concat(_siteUrl, (string)item.uri) : string.Empty,
-                                    id: item.id ?? (long)0
+                                    id: item.id ?? (long)0,
+                                    resources: item.resource_url ?? string.Empty
                                 );
                             }
                         }
@@ -80,6 +81,40 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
             }
 
             return null;
+        }
+
+        public async Task<Resources> GetResourcesByUrl(string url, CancellationToken token)
+        {
+            var result = await _htmlDataGetter.SendAsync(url, BuildAuthHeaderValue(), token);
+            if (string.IsNullOrEmpty(result))
+                return null;
+
+            try
+            {
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<Resources>(result);                                
+            }
+            catch (Exception exc)
+            {
+                _logger.LogWarning(exc, "Error in parsing results with tracks from discogs");
+            }
+
+            return null;
+        }
+
+        public class Resources
+        {
+            public VideoItem[] videos { get; set; }
+            public TrackItem[] tracklist { get; set; }
+        }
+
+        public class VideoItem
+        {
+            public string title { get; set; }
+            public string uri { get; set; }
+        }
+        public class TrackItem
+        {
+            public string title { get; set; }
         }
     }
 }

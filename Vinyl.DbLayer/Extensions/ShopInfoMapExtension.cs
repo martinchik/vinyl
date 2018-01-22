@@ -1,4 +1,6 @@
-﻿namespace Vinyl.DbLayer
+﻿using Vinyl.Metadata;
+
+namespace Vinyl.DbLayer
 {
     public static class ShopInfoMapExtension
     {
@@ -8,7 +10,8 @@
                 Id = obj.Id,
                 Name = obj.Title,
                 Url = obj.Url,
-                CountryCode = obj.CountryCode
+                CountryCode = obj.CountryCode,
+                ShopType = (ShopType)obj.ShopType
             };
 
         public static Vinyl.DbLayer.Models.ShopInfo ToDbObject(this Vinyl.Metadata.ShopInfo obj)
@@ -17,7 +20,8 @@
                 Id = obj.Id,
                 Title = obj.Name,
                 Url = obj.Url,
-                CountryCode = obj.CountryCode
+                CountryCode = obj.CountryCode,
+                ShopType = (int)obj.ShopType
             };
     }
 }

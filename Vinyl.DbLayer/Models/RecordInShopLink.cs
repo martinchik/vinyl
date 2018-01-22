@@ -15,6 +15,8 @@ namespace Vinyl.DbLayer.Models
         public decimal? PriceBy { get; set; }
         public string Currency { get; set; }
         public string ShopInfo { get; set; }
+        public string ShopRecordTitle { get; set; }
+        public string ShopImageUrl { get; set; }
         public string ShopUrl { get; set; }
         public string State { get; set; }
         public string Barcode { get; set; }

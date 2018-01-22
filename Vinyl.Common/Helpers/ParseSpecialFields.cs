@@ -55,10 +55,10 @@ namespace Vinyl.Common
 
                         return _.Trim();
                     })
-                    .Where(_ => !string.IsNullOrWhiteSpace(_))
+                    .Where(_ => _ != null && _.Length > 0 && !(_.Length == 1 && (int)_[0] == 8206))
                     .ToArray();
 
-                return items.Length == 1 ? items[0] : string.Join(" ", items);
+                return (items.Length == 1 ? items[0] : string.Join(" ", items)).Trim();
             }
             return string.Empty;
         }

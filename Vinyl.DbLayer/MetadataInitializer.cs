@@ -26,6 +26,18 @@ namespace Vinyl.DbLayer
             return this;
         }
 
+        public MetadataInitializer RestartParsing(VinylShopContext context)
+        {
+            foreach (var it in context.ShopParseStrategyInfo.ToArray())
+            {
+                it.LastProcessedCount = 0;
+                it.ProcessedAt = DateTime.UtcNow.AddDays(-1);
+                context.ShopParseStrategyInfo.Update(it);
+            }
+            context.SaveChanges(true);
+            return this;
+        }
+
         public MetadataInitializer Initialize(VinylShopContext context)
         {
             if (!context.ShopInfo.Any())

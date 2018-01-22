@@ -20,6 +20,7 @@ namespace Vinyl.DbLayer.Models
         public DateTime UpdatedAt { get; set; }
         public string CountryCode { get; set; }
         public string City { get; set; }
+        public int ShopType { get; set; }
 
         public ICollection<RecordInShopLink> RecordInShopLink { get; set; }
         public ICollection<ShopParseStrategyInfo> ShopParseStrategyInfo { get; set; }

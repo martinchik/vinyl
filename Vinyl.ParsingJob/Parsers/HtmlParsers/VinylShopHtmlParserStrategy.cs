@@ -55,6 +55,12 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 DirtyRecord record = new DirtyRecord();
                 record.Url = linkNode.GetAttributeValue("href", "");
 
+                var imgNode = linkNode.Descendants("img").FirstOrDefault();
+                if (imgNode != null)
+                {
+                    record.ImageUrl = imgNode.GetAttributeValue("src", "");
+                }
+
                 var titleNode = linkNode.Descendants("h3").FirstOrDefault();
                 if (titleNode != null)
                 {

@@ -57,7 +57,8 @@ namespace Vinyl.DbLayer
 
                     await ctx.RunScriptFromResources("Vinyl.DbLayer.Scripts.Support_FTS.sql");
 
-                    mi.Initialize(ctx);
+                    mi.Initialize(ctx)
+                        .RestartParsing(ctx);
                 }
             }
             catch (Exception exc)

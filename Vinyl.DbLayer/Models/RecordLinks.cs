@@ -12,7 +12,8 @@ namespace Vinyl.DbLayer.Models
         public int ToType { get; set; }
         public string Link { get; set; }
         public string Text { get; set; }
-
+        public string Tracks { get; set; }
+        public string Videos { get; set; }
         public RecordInfo Record { get; set; }
     }
 }

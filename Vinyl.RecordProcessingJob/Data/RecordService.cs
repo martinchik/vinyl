@@ -24,8 +24,8 @@ namespace Vinyl.RecordProcessingJob.Data
             isNew = false;
             using (var repository = _metadataFactory.CreateRecordInfoRepository())
             {
-                var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist);
-                var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album);
+                var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist).Trim();
+                var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album).Trim();
 
                 var record = repository.FindBy(artist, album);
                 if (record == null)
@@ -61,6 +61,7 @@ namespace Vinyl.RecordProcessingJob.Data
                         _.YearRecorded == dirtyRecord.YearRecorded &&
                         _.Country == dirtyRecord.Country &&
                         _.CountInPack == dirtyRecord.CountInPack &&
+                        (_.ShopRecordTitle == dirtyRecord.Title || _.ShopRecordTitle == null || _.ShopRecordTitle.Length == 0) &&
                         _.Label == dirtyRecord.Label) ?? links.FirstOrDefault();
                 
                 if (link == null)
@@ -78,8 +79,10 @@ namespace Vinyl.RecordProcessingJob.Data
                 link.CountInPack = dirtyRecord.CountInPack;
                 link.Country = dirtyRecord.Country;
                 link.Label = dirtyRecord.Label;
-                link.ShopInfo = dirtyRecord.Title.AddIfExist(Environment.NewLine, dirtyRecord.Info);
+                link.ShopInfo = dirtyRecord.Info;
                 link.ShopUrl = dirtyRecord.Url;
+                link.ShopRecordTitle = dirtyRecord.Title;
+                link.ShopImageUrl = dirtyRecord.ImageUrl;
 
                 var state = ParseSpecialFields.ParseState(dirtyRecord.State);
                 if (link.State != state)
@@ -153,8 +156,11 @@ namespace Vinyl.RecordProcessingJob.Data
                     _.State,
                     _.ShopId,
                     _.ShopInfo,
+                    _.UpdatedAt,
                     isActive = _.Strategy != null ? _.Strategy.Status == (int)StrategyStatus.Active : false
-                }).ToList();
+                })
+                .Where(_ => _.UpdatedAt > DateTime.UtcNow.AddDays(-5))
+                .ToList();
 
                 searchItem.PriceFrom = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Min();
                 searchItem.PriceTo = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Max();

@@ -54,7 +54,7 @@ namespace Vinyl.ParsingJob.Job
             }
             finally
             {
-                Result += $"Parsed and sent {countRecords} records" + Environment.NewLine;
+                Result = $"Parsed and sent {countRecords} records" + Environment.NewLine + Result;
             }
         }
 

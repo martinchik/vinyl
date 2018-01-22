@@ -20,6 +20,7 @@ namespace Vinyl.Metadata
         public string YearRecorded { get; set; }
         public string Label { get; set; }
         public string Style { get; set; }
+        public string ImageUrl { get; set; }
         public string View { get; set; } //LP, СLP      
 
         public override string ToString()

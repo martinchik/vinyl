@@ -11,9 +11,10 @@ using Vinyl.DbLayer;
 namespace Vinyl.DbLayer.Migrations
 {
     [DbContext(typeof(VinylShopContext))]
-    partial class VinylShopContextModelSnapshot : ModelSnapshot
+    [Migration("20180121133442_ShopExtendedFields")]
+    partial class ShopExtendedFields
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -160,11 +161,7 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<int>("ToType");
 
-                    b.Property<string>("Tracks");
-
                     b.Property<DateTime>("UpdatedAt");
-
-                    b.Property<string>("Videos");
 
                     b.HasKey("Id");
 
@@ -221,8 +218,6 @@ namespace Vinyl.DbLayer.Migrations
 
                     b.Property<string>("Phones")
                         .HasMaxLength(255);
-
-                    b.Property<int>("ShopType");
 
                     b.Property<string>("Title")
                         .IsRequired()

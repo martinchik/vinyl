@@ -16,43 +16,48 @@
             {
                 <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
             }
+            <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank"  href="https://www.youtube.com/results?search_query=@(Model.Record.Album + Model.Record.Artist)">YouTube</atarget="_blank"></p>
         </div>
         <div class="col-sm-6 record-links">
-            <img onload="" src="./Index?id=@Model.Record.Id.Compress()&handler=RecordImage" height="200" />
+            
         </div>
     </div>
 </div>
 
 @if (Model.Record.RecordLinks?.Any() == true)
 {
-    <div class="record-links-block">
-        <h3>Ссылки на описание (могут быть не точные)</h3>
-
-        <table class="table table-condensed table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th>Портал</th>
-                    <th>Ссылка</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var mapItem in Model.GetLinks())
+<div class="record-links-block">
+    <h3>Информация из других источников</h3>    
+    @{
+        var discogsLink = Model.GetDiscogsLink();
+    }
+    <div class="row">        
+        <div class="col-sm-6 record-info">
+            <p><h4>Discogs - <a href="@discogsLink.link">@discogsLink.text</a></h4> </p>
+            <hr />
+            <div>
+                <div>
+                <p><strong>Список композиций</strong></p>
+                @foreach (var track in Model.GetDiscogsTracks())
                 {
-                    <tr>
-                        <td>
-                            <p>@mapItem.Key</p>                            
-                        </td>
-                        <td>
-                            @foreach (var rLink in @mapItem.Value)
-                            {
-                            <p><a href="@rLink.link">@rLink.text</a></p>
-                            }
-                        </td>                        
-                    </tr>
+                    <p>- @track (<a target="_blank" href="https://www.youtube.com/results?search_query=@(Model.Record.Album + " " +Model.Record.Artist + " " + track)">YouTube</a>)</p>
                 }
-            </tbody>
-        </table>
+                </div>
+                <br />
+                <div>
+                <p><strong>Список ссылок на видео</strong></p>
+                @foreach (var videoLink in Model.GetDiscogsVideos())
+                {
+                    <p><a target="_blank"  href="@videoLink.url">@videoLink.title</a></p>
+                }
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 record-links">
+            <img onload="" src="./Index?id=@Model.Record.Id.Compress()&handler=RecordImage" height="200" />
+        </div>
     </div>
+</div>
 }
 @if (Model.Record.RecordInShopLink?.Any() == true)
 {
@@ -62,7 +67,7 @@
         <table class="table table-condensed table-bordered table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Магазин</th>
+                    <th colspan="2">Магазин</th>
                     <th>Описание</th>
                     <th>Цена в бел.руб.</th>
                 </tr>
@@ -72,8 +77,19 @@
                 {
                     var shopItem = Model.GetShopBy(risLink);
                     <tr>
+                        <td width="100">
+                            @if (!string.IsNullOrEmpty(risLink.ShopImageUrl))
+                            {
+                            <img onload="" src="@risLink.ShopImageUrl" height="60" />
+                            }
+                        </td>
                         <td>
                             <p><a href="@shopItem.Url">@shopItem.Title</a></p>
+                            @if (shopItem.ShopType == (int)ShopType.Private)
+                            {
+                                <p class="is-private-info"><strong>Частная коллекция</strong></p>
+                            }
+                            
                             @if (!string.IsNullOrEmpty(shopItem.Phones))
                             {
                                 <p class="Phones-info">Телефон: @shopItem.Phones</p>
@@ -84,6 +100,7 @@
                             }
                         </td>
                         <td>
+                            <p class="ShopRecordTitle-info"><strong>@risLink.ShopRecordTitle</strong></p>
                             @if (!string.IsNullOrEmpty(risLink.ShopInfo))
                             {
                                 <p class="ShopInfo-info">Описание: @risLink.ShopInfo</p>

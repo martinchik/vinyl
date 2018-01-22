@@ -33,11 +33,22 @@ namespace Vinyl.Site.Pages
         public IEnumerable<(string text, string link)> GetLinksBy(Vinyl.Metadata.RecordLinkType linkType)
            => Record?.RecordLinks?.Where(_ => _.ToType == (int)linkType).Select(_ => (_.Text, _.Link));
 
-        public Dictionary<Vinyl.Metadata.RecordLinkType, List<(string text, string link)>> GetLinks()
-           => Record?.RecordLinks?
-                .ToLookup(_ => (Vinyl.Metadata.RecordLinkType)_.ToType)
-                .ToDictionary(_ => _.Key, _ => _.Select(v=>(v.Text, v.Link))
-                .ToList());
+        public (string text, string link) GetDiscogsLink()
+           => Record?.RecordLinks?.Where(_ => _.ToType == (int)Vinyl.Metadata.RecordLinkType.Discogs)
+                .Select(v => (v.Text, v.Link))
+                .FirstOrDefault() ?? ("Не найдено", "#");
+
+        public IEnumerable<string> GetDiscogsTracks()
+           => Record?.RecordLinks?.FirstOrDefault(_ => _.ToType == (int)Vinyl.Metadata.RecordLinkType.Discogs)
+               .Tracks?.Split("|") ?? new string[] { };
+
+        public IEnumerable<(string title, string url)> GetDiscogsVideos()
+          => Record?.RecordLinks?.FirstOrDefault(_ => _.ToType == (int)Vinyl.Metadata.RecordLinkType.Discogs)
+               .Videos?.Split("|").Select(line => 
+               {
+                   var videoItem = line.Split("$");
+                   return videoItem.Length > 1 ? (videoItem[0], videoItem[1]) : (string.Empty, string.Empty);
+               }) ?? new (string, string)[] { };
 
         [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "id" })]
         public IActionResult OnGet(string id = null)
