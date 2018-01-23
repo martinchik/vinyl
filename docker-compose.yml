@@ -67,7 +67,7 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
       PROXY_PREFIX: "parsing"
-      CLEAR_DB: "1"
+      CLEAR_DB: "0"
       KAFKA_DIRTY_RECORDS_TOPIC: "dirty_records"
       KAFKA_CONNECT: "kafka:9092"
     networks:

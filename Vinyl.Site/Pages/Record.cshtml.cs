@@ -98,7 +98,7 @@ namespace Vinyl.Site.Pages
             {
                 url = rep.FindFullImage(recordId);
             }
-            return RedirectPermanent(string.IsNullOrEmpty(url) ? "./images/noimage.png" : url);
+            return RedirectPermanent(string.IsNullOrEmpty(url) ? "./img/noimage.png" : url);
         }
     }
 }

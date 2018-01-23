@@ -1,53 +1,74 @@
 ﻿@page
 @model IndexModel
 @{
+    Layout = "_LandingLayout";
     ViewData["Title"] = "Найти и купить пластинку";
+    var isExists = Model.Items != null && !string.IsNullOrEmpty(Model.SearchText);
 }
 
-<h2>Найти и купить пластинку</h2>
-<form method="get">
-    <div class="form-actions no-color">
-        <p>
-            @Html.TextBox("search")
-            <input type="submit" value="Найти" class="btn btn-default"  />
-        </p>
+<div class="@(isExists? "header header-filter" : "")" style="background-image: url('https://images.unsplash.com/photo-1423655156442-ccc11daa4e99?crop=entropy&dpr=2&fit=crop&fm=jpg&h=750&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1450');">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 col-md-offset-3">
+
+                <form method="get">
+                    <div class="form-group label-floating is-empty">
+                        <label class="control-label title">Введите название альбома или артиста для поиска пластинки</label>
+                        <input type="text" class="form-control" style="color:white" name="search" id="search">
+                        <div class="text-center">
+                            <input type="submit" value="Найти" class="btn btn-primary btn-raised text-center" />
+                        </div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
     </div>
-</form>
-        
-@if (Model.Items != null && !string.IsNullOrEmpty(Model.SearchText))
-{
-    <p>
-        Найдено @Model.Items.Count
-    </p>
+</div>
 
-    <table class="table table-condensed table-bordered table-striped table-hover">
-        <thead>
-            <tr>
-                <th colspan="2">Название</th>
-                <th>Цена в бел.руб.</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var record in Model.Items)
-            {
-                <tr>
-                    <td width="100">
-                        <img onload="" src="./Index?id=@record.RecordId.Compress()&handler=RecordImage" height="60" />
-                    </td>
-                    <td>
-                        <div><a asp-page="./Record" asp-route-id="@record.RecordId.Compress()">@record.TextLine1</a></div>
-                        <div>@Model.GetSecondLineText(record)</div>
-                    </td>
-                    <td>
-                        @if (!record.Sell)
-                        {
-                            <p>Не продается</p>
-                        }
-                        <p>@Model.GetPriceText(record)</p>
-                    </td>
-                </tr>
+
+<div class="main main-raised">
+    <div class="container">
+        @if (Model.Items != null && !string.IsNullOrEmpty(Model.SearchText))
+        {
+            <p>Найдено @Model.Items.Count</p>
+
+            @if (Model.Items.Count == 100)
+            { 
+                <p>Отображаются не все записи....</p>
             }
-        </tbody>
-    </table>
-}
+            
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th colspan="2">Название</th>
+                        <th>Цена в бел.руб.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var record in Model.Items)
+                    {
+                        <tr>
+                            <td width="100">
+                                <img onload="" src="./Index?id=@record.RecordId.Compress()&handler=RecordImage" height="60" />
+                            </td>
+                            <td>
+                                <div><a asp-page="./Record" asp-route-id="@record.RecordId.Compress()">@record.TextLine1</a></div>
+                                <div>@Model.GetSecondLineText(record)</div>
+                            </td>
+                            <td>
+                                @if (!record.Sell)
+                                {
+                                    <p>Не продается</p>
+                                }
+                                <p>@Model.GetPriceText(record)</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
 
+
+    </div>
+</div>

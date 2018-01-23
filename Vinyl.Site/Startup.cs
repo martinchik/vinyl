@@ -25,6 +25,7 @@ namespace Vinyl.Site
             services.AddMvc();
 
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
+            DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration).GetAwaiter().GetResult();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

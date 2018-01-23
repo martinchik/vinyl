@@ -8,6 +8,7 @@ using Microsoft.Extensions.PlatformAbstractions;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Vinyl.Common;
 using Vinyl.Common.Helpers;
 using Vinyl.Kafka;
@@ -46,8 +47,7 @@ namespace Vinyl.ParsingJob
             });
             
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
-            DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration).GetAwaiter().GetResult();
-
+            
             services.AddTransient<IHtmlDataGetter, HtmlDataGetter>();
             services.AddTransient<IDirtyRecordExportProcessor, DirtyRecordExportProcessor>();
             services.AddTransient<IMessageProducer<DirtyRecord>>(_ => new KafkaProducer<DirtyRecord>(EnvironmentVariable.KAFKA_DIRTY_RECORDS_TOPIC, EnvironmentVariable.KAFKA_CONNECT));
@@ -75,6 +75,8 @@ namespace Vinyl.ParsingJob
             {
                 job.Stop();
             });
+
+            Task.Delay(TimeSpan.FromSeconds(15)).Wait(); // wait while database will be loaded
 
             job.Start();
             
