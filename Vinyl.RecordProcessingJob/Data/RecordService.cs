@@ -26,6 +26,7 @@ namespace Vinyl.RecordProcessingJob.Data
             {
                 var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist).Trim();
                 var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album).Trim();
+                var year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
 
                 var record = repository.FindBy(artist, album);
                 if (record == null)
@@ -38,10 +39,20 @@ namespace Vinyl.RecordProcessingJob.Data
                         CreatedAt = DateTime.UtcNow
                     };
 
-                    record.Year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
+                    record.Year = year;
                     record.Title = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
                     record.UpdatedAt = DateTime.UtcNow;
                     repository.Add(record);
+
+                    repository.Commit();
+                    isNew = true;
+                }
+                else if (record.Year != year)
+                {
+                    record.Year = year;
+                    record.Title = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
+                    record.UpdatedAt = DateTime.UtcNow;
+                    repository.Update(record);
 
                     repository.Commit();
                     isNew = true;
@@ -56,25 +67,23 @@ namespace Vinyl.RecordProcessingJob.Data
             hasImportantChanges = false;
             using (var repository = _metadataFactory.CreateRecordInShopLinkRepository())
             {
+                var state = ParseSpecialFields.ParseState(dirtyRecord.State);
+
                 var links = repository.FindBy(record.Id, dirtyRecord.ShopId, dirtyRecord.ShopParseStrategyId).ToList();
                 var link = links.FirstOrDefault(_ =>
                         _.YearRecorded == dirtyRecord.YearRecorded &&
                         _.Country == dirtyRecord.Country &&
-                        _.CountInPack == dirtyRecord.CountInPack &&
-                        (_.ShopRecordTitle == dirtyRecord.Title || _.ShopRecordTitle == null || _.ShopRecordTitle.Length == 0) &&
-                        _.Label == dirtyRecord.Label) ?? links.FirstOrDefault();
+                        _.ShopRecordTitle == dirtyRecord.Title &&
+                        _.Label == dirtyRecord.Label &&
+                        _.State == state
+                        ) ?? new RecordInShopLink
+                        {                        
+                            RecordId = record.Id,
+                            ShopId = dirtyRecord.ShopId,
+                            StrategyId = dirtyRecord.ShopParseStrategyId,
+                            CreatedAt = DateTime.UtcNow
+                        };                    
                 
-                if (link == null)
-                {
-                    link = new RecordInShopLink
-                    {                        
-                        RecordId = record.Id,
-                        ShopId = dirtyRecord.ShopId,
-                        StrategyId = dirtyRecord.ShopParseStrategyId,
-                        CreatedAt = DateTime.UtcNow
-                    };                    
-                }
-
                 link.Barcode = dirtyRecord.Barcode;
                 link.CountInPack = dirtyRecord.CountInPack;
                 link.Country = dirtyRecord.Country;
@@ -83,8 +92,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 link.ShopUrl = dirtyRecord.Url;
                 link.ShopRecordTitle = dirtyRecord.Title;
                 link.ShopImageUrl = dirtyRecord.ImageUrl;
-
-                var state = ParseSpecialFields.ParseState(dirtyRecord.State);
+                
                 if (link.State != state)
                 {
                     hasImportantChanges = true;
@@ -132,16 +140,13 @@ namespace Vinyl.RecordProcessingJob.Data
             if (record == null)
                 return false;
 
+            if (!isNewRecord && !hasImportantChanges)
+                return false;
+
             using (var repository = _metadataFactory.CreateSearchItemRepository())
             using (var linksRepository = _metadataFactory.CreateRecordInShopLinkRepository())
             {
-                SearchItem searchItem = null;
-                if (!isNewRecord)
-                {
-                    searchItem = repository.GetBy(record.Id, countryCode);
-                    if (!hasImportantChanges)
-                        return false;
-                }
+                SearchItem searchItem = repository.GetBy(record.Id, countryCode);
                 if (searchItem == null)
                 {
                     searchItem = new SearchItem();
@@ -159,7 +164,7 @@ namespace Vinyl.RecordProcessingJob.Data
                     _.UpdatedAt,
                     isActive = _.Strategy != null ? _.Strategy.Status == (int)StrategyStatus.Active : false
                 })
-                .Where(_ => _.UpdatedAt > DateTime.UtcNow.AddDays(-5))
+                .Where(_ => _.UpdatedAt > DateTime.UtcNow.AddDays(-GlobalConstants.RecordInShopeAliveDaysCount))
                 .ToList();
 
                 searchItem.PriceFrom = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Min();

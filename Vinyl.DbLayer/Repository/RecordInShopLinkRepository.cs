@@ -24,9 +24,11 @@ namespace Vinyl.DbLayer.Repository
 
         public IQueryable<RecordInShopLink> FindBy(Guid recordId, string countryCode)
         {
-            return Context.RecordInShopLink.Where(_ =>
-                _.RecordId == recordId &&
-                _.Shop.CountryCode == countryCode).AsQueryable();
+            return Context.RecordInShopLink
+                .Where(_ =>
+                    _.RecordId == recordId &&
+                    _.Shop.CountryCode == countryCode)
+                .AsQueryable();
         }
 
         public IQueryable<RecordInShopLink> FindByWithStrategy(Guid recordId)
@@ -35,6 +37,16 @@ namespace Vinyl.DbLayer.Repository
                 .Include(_ => _.Strategy)
                 .Where(_ => _.RecordId == recordId)
                 .AsQueryable();
+        }
+
+        public int RemoveAllWhereUpdatedAtLessThen(DateTime dateTime)
+        {
+            var res = Context.RecordInShopLink.Where(_ => _.UpdatedAt < dateTime).ToList();
+
+            foreach(var item in res)
+                Set.Remove(item);
+
+            return res.Count;
         }
     }
 }

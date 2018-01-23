@@ -21,6 +21,7 @@ namespace Vinyl.RecordProcessingJob.Job
         private long _recivedCount;
         private long _successCount;
         private long _failedCount;
+        private DateTime _lastProcessingTime;
 
         public ProcessingJob(ILogger<ProcessingJob> logger, IMessageConsumer<DirtyRecord> messageBus, IDirtyRecordImportProcessor importProcessor) :
             base(logger, Name, null)
@@ -31,13 +32,25 @@ namespace Vinyl.RecordProcessingJob.Job
 
         protected override Task ExecuteAsync(CancellationToken token)
         {
+            _lastProcessingTime = DateTime.UtcNow;
+
             return Task.Run(() => 
-                _messageBus.SubscribeOnTopic(ProcessKafkaMessage, token),
+                _messageBus.SubscribeOnTopic(ProcessKafkaMessage, () => 
+                {
+                    if ((_lastProcessingTime - DateTime.UtcNow).TotalHours == 6 && _recivedCount != 0)
+                    {
+                        _recivedCount = 0;
+                        _successCount = 0;
+                        _failedCount = 0;
+                    }
+                }, token),
                 token);
         }
 
         private void ProcessKafkaMessage(DirtyRecord msg, string message)
         {
+            _lastProcessingTime = DateTime.UtcNow;
+
             Interlocked.Increment(ref _recivedCount);
 
             Logger.LogTrace("Kafka recieved msg:" + message);

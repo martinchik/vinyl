@@ -38,7 +38,7 @@ namespace Vinyl.Kafka.Lib
             };
         }
         
-        public void SubscribeOnTopic(Action<T, string> action, CancellationToken cancellationToken)
+        public void SubscribeOnTopic(Action<T, string> action, Action keepAliveAction, CancellationToken cancellationToken)
         {
             if (_consumer.Assignment?.Count > 0)
                 throw new Exception("Already subscribed on topic " + _topic);
@@ -52,6 +52,8 @@ namespace Vinyl.Kafka.Lib
                 {
                     action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");                    
                 }
+
+                keepAliveAction();
             }
         }        
 

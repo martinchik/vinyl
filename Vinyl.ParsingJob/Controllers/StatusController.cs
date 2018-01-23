@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Vinyl.Common.Job;
 using Vinyl.ParsingJob.Job;
 
 namespace Vinyl.ParsingJob.Controllers
@@ -18,9 +19,9 @@ namespace Vinyl.ParsingJob.Controllers
         }
 
         [HttpGet]
-        public dynamic GetStatus()
+        public JobStatusInfo GetStatus()
         {
-            return new
+            return new JobStatusInfo
             {
                 Name = _job.JobName,
                 Status = _job.IsRunning ? "running" : "suspend",

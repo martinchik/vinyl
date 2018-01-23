@@ -6,7 +6,7 @@ namespace Vinyl.Kafka
 {
     public interface IMessageConsumer<T> : IDisposable
     {
-        void SubscribeOnTopic(Action<T, string> action, CancellationToken cancellationToken);
+        void SubscribeOnTopic(Action<T, string> action, Action keepAliveAction, CancellationToken cancellationToken);
     }
 
     public interface IMessageProducer<T> : IDisposable

@@ -52,6 +52,8 @@ namespace Vinyl.Common.Job
                 catch (Exception ex)
                 {
                     Logger.LogCritical(ex, $"{JobName}. Job failed");
+
+                    Result = $"Critical exception: "+ ex.Message;
                 }
             }
         }

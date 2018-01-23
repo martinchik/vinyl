@@ -6,6 +6,7 @@
 
 <div class="record-info-block">
     <h3>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h3>
+    <input type="hidden" value="@Model.Record.Id" name="recordId">
     <div class="row">
         <div class="col-sm-6 record-info">
             <p class="albom-info"><strong>Альбом: </strong>@Model.Record.Album</p>
@@ -16,10 +17,10 @@
             {
                 <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
             }
-            <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank"  href="https://www.youtube.com/results?search_query=@(Model.Record.Album + Model.Record.Artist)">YouTube</atarget="_blank"></p>
+            <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank" href="@Model.ToYouTubeLink()">YouTube</a></p>
         </div>
         <div class="col-sm-6 record-links">
-            
+
         </div>
     </div>
 </div>
@@ -40,7 +41,7 @@
                 <p><strong>Список композиций</strong></p>
                 @foreach (var track in Model.GetDiscogsTracks())
                 {
-                    <p>- @track (<a target="_blank" href="https://www.youtube.com/results?search_query=@(Model.Record.Album + " " +Model.Record.Artist + " " + track)">YouTube</a>)</p>
+                    <p>- @track (<a target="_blank" href="@Model.ToYouTubeLink(track)">YouTube</a>)</p>
                 }
                 </div>
                 <br />

@@ -29,7 +29,7 @@ namespace Vinyl.Metadata.Test
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),     
                     DataLimit = 100,
-                    UpdatePeriodInHours = 5
+                    UpdatePeriodInHours = 12
                 }
             }
         };
@@ -51,7 +51,7 @@ namespace Vinyl.Metadata.Test
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     DataLimit = 100,
-                    UpdatePeriodInHours = 5
+                    UpdatePeriodInHours = 12
                 },
                 new ShopParseStrategyInfo()
                 {
@@ -63,7 +63,7 @@ namespace Vinyl.Metadata.Test
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     DataLimit = 100,
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
@@ -80,7 +80,7 @@ namespace Vinyl.Metadata.Test
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     DataLimit = 100,
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },

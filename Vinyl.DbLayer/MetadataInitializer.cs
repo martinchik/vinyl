@@ -10,19 +10,23 @@ namespace Vinyl.DbLayer
     {    
         public MetadataInitializer ClearData(VinylShopContext context)
         {
-            context.Database.ExecuteSqlCommand(@"
-                Delete from ""SearchItem"";
-                Delete from ""RecordArt"";
-                Delete from ""RecordLinks"";
-                Delete from ""RecordInShopLink"";
-                Delete from ""RecordInfo"";
-                Delete from ""ShopParseStrategyInfo"";
-                Delete from ""ShopInfo"";
-                DROP FUNCTION fts_search;
-                DROP INDEX idx_fts_resords;
-                DROP FUNCTION make_tsvector;
-            ");
-            context.SaveChanges(true);
+            if (context.ShopInfo.Any())
+            {
+                context.Database.ExecuteSqlCommand(@"
+                    Delete from ""SearchItem"";
+                    Delete from ""RecordArt"";
+                    Delete from ""RecordLinks"";
+                    Delete from ""RecordInShopLink"";
+                    Delete from ""RecordInfo"";
+                    Delete from ""ShopParseStrategyInfo"";
+                    Delete from ""ShopInfo"";
+                    DROP FUNCTION fts_search;
+                    DROP INDEX idx_fts_resords;
+                    DROP FUNCTION make_tsvector;
+                ");
+                context.SaveChanges(true);
+            }
+
             return this;
         }
 

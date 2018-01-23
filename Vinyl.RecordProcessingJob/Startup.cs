@@ -59,11 +59,12 @@ namespace Vinyl.RecordProcessingJob
             
             services.AddSingleton<ProcessingJob>();
             services.AddSingleton<AdditionalInfoSearchJob>();
+            services.AddSingleton<AliveValidationJob>();            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, IApplicationLifetime applicationLifetime, 
-            ProcessingJob job, AdditionalInfoSearchJob searchJob)
+            ProcessingJob job, AdditionalInfoSearchJob searchJob, AliveValidationJob aliveJob)
         {
             if (env.IsDevelopment())
             {
@@ -81,12 +82,14 @@ namespace Vinyl.RecordProcessingJob
             {
                 job.Stop();
                 searchJob.Stop();
+                aliveJob.Stop();
             });
 
             Task.Delay(TimeSpan.FromSeconds(15)).Wait(); // wait while parsing job will be loaded
 
             job.Start();
             searchJob.Start();
+            aliveJob.Start();
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>

@@ -14,6 +14,19 @@ namespace Vinyl
             yield return DateTime.UtcNow;
         }
 
+        public static class After
+        {            
+            public static IEnumerable<DateTime> Hours(int hour)
+            {
+                yield return DateTime.UtcNow.AddHours(hour);
+            }
+
+            public static IEnumerable<DateTime> Minutes(int minute)
+            {
+                yield return DateTime.UtcNow.AddMinutes(minute);
+            }
+        }
+
         public static IEnumerable<DateTime> Than(this IEnumerable<DateTime> first, IEnumerable<DateTime> second)
         {
             return first.Concat(second);
@@ -62,19 +75,7 @@ namespace Vinyl
                 return minute > 0 ? Cron("{1}/{0} * * * *", minute, shift == 0 ? "*" : shift.ToString(CultureInfo.InvariantCulture)) : Cron("* * * * *");
             }
         }
-
-        public static class Localize
-        {
-            public static int HourInDanishTime(int hour)
-            {
-                var danishTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Romance Standard Time");
-                var danishTimeZoneOffsetHours = danishTimeZone.GetUtcOffset(DateTime.Now).Hours;
-                var utcHours = hour - danishTimeZoneOffsetHours;
-
-                return utcHours;
-            }
-        }
-
+        
         public static class Twice
         {
             public static IEnumerable<DateTime> PerDay(int atHour1 = 0, int atHour2 = 1)

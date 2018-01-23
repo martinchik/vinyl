@@ -27,6 +27,12 @@ namespace Vinyl.Site.Pages
                 ? Shops.FirstOrDefault(_ => _.Id == link.ShopId)
                 : null;
 
+        public string ToYouTubeLink()
+            => $"https://www.youtube.com/results?search_query={Record?.Artist}".AddIfExist(" ", Record?.Album);
+
+        public string ToYouTubeLink(string trackName)
+           => $"https://www.youtube.com/results?search_query={Record?.Artist}".AddIfExist(" ", trackName);
+
         public bool IsActive(RecordInShopLink link)
             => link.Status == (int)Metadata.StrategyStatus.Active;
 

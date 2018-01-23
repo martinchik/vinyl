@@ -51,7 +51,7 @@ namespace Vinyl.DbLayer.Repository
                 return;
 
             Set.Remove(entity);
-        }
+        }        
 
         public virtual T Get(Guid id)
         {
