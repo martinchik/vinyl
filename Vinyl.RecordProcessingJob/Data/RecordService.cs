@@ -135,12 +135,9 @@ namespace Vinyl.RecordProcessingJob.Data
             }
         }
 
-        public bool UpdateOrCreateSearchItem(RecordInfo record, string countryCode, bool isNewRecord, bool hasImportantChanges)
+        public bool UpdateOrCreateSearchItem(RecordInfo record, string countryCode)
         {
             if (record == null)
-                return false;
-
-            if (!isNewRecord && !hasImportantChanges)
                 return false;
 
             using (var repository = _metadataFactory.CreateSearchItemRepository())

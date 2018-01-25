@@ -96,6 +96,9 @@ namespace Vinyl.RecordProcessingJob.Processor
                         .Select(item => string.Concat(item.title, "$",  item.uri))
                         .ToArray() ?? new string[] { };
 
+                recordArtRepository.RemoveIfExists(record.Id);
+                recordLinksRepository.RemoveIfExists(record.Id, (int)RecordLinkType.Discogs);
+
                 if (!string.IsNullOrEmpty(discogsItem.Value.img))
                 {
                     recordArtRepository.Add(new RecordArt()

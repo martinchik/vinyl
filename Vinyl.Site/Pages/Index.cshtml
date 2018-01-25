@@ -3,42 +3,41 @@
 @{
     Layout = "_LandingLayout";
     ViewData["Title"] = "Найти и купить пластинку";
-    var isExists = Model.Items != null && !string.IsNullOrEmpty(Model.SearchText);
+    var isExists = !string.IsNullOrEmpty(Model.SearchText);
 }
 
-<div class="@(isExists? "header header-filter" : "")" style="background-image: url('https://images.unsplash.com/photo-1423655156442-ccc11daa4e99?crop=entropy&dpr=2&fit=crop&fm=jpg&h=750&ixjsv=2.1.0&ixlib=rb-0.3.5&q=50&w=1450');">
+<div class="header @(isExists? "header-small-filter" : "header-filter")" style="background-image:url(/img/vinyl/landing.jpg)">
     <div class="container">
         <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-
-                <form method="get">
-                    <div class="form-group label-floating is-empty">
-                        <label class="control-label title">Введите название альбома или артиста для поиска пластинки</label>
-                        <input type="text" class="form-control" style="color:white" name="search" id="search">
-                        <div class="text-center">
-                            <input type="submit" value="Найти" class="btn btn-primary btn-raised text-center" />
-                        </div>
+            <div class="col-md-7  @(isExists? "" : "col-md-offset-3")">
+                <form method="get" class="form-search-vinyl">
+                    <div class="form-group label-floating form-inline @(isExists? "" :"is-empty")">
+                        <label class="control-label title">Введите название альбома или артиста</label>
+                        <input type="text" class="form-control" name="search" id="search" value="@Model.SearchText" >
+                        <button class="btn btn-primary btn-raised text-center">Найти</button>
                     </div>
                 </form>
-
             </div>
         </div>
     </div>
 </div>
 
-
+@if (isExists)
+{
 <div class="main main-raised">
-    <div class="container">
-        @if (Model.Items != null && !string.IsNullOrEmpty(Model.SearchText))
-        {
-            <p>Найдено @Model.Items.Count</p>
+    <div class="section section-basic">
+        <div class="container tim-row">
+            <div class="col-md-8 col-md-offset-2 text-center">
+                <small class="label label-success">Найдено: @Model.Items.Count шт.</small>
+                @if (Model.Items?.Count == 100)
+                {
+                <br /><small>Отображаются не все записи....</small>
+                }
+            </div>
 
-            @if (Model.Items.Count == 100)
-            { 
-                <p>Отображаются не все записи....</p>
-            }
-            
-            <table class="table">
+            @if (Model.Items?.Count > 0)
+            {
+            <table class="table table-hover">
                 <thead>
                     <tr>
                         <th colspan="2">Название</th>
@@ -67,8 +66,8 @@
                     }
                 </tbody>
             </table>
-        }
-
-
+            }
+        </div>
     </div>
 </div>
+}

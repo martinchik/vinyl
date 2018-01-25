@@ -46,7 +46,7 @@ namespace Vinyl.Site.Pages
             search = ParseSpecialFields.DistinctWords(search);
 
             if (!string.IsNullOrWhiteSpace(search))
-            {
+            {                
                 using (var rep = _db.CreateSearchItemRepository())
                 {
                     Items = rep.Find(search, "BY")

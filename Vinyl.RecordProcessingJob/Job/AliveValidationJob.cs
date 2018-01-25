@@ -16,7 +16,7 @@ namespace Vinyl.RecordProcessingJob.Job
     {
         private readonly IMetadataRepositoriesFactory _metadataFactory;
 
-        public const string Name = "additional_info-job";
+        public const string Name = "alive-validation-job";
         
         public AliveValidationJob(ILogger<AdditionalInfoSearchJob> logger, IMetadataRepositoriesFactory metadataFactory) :
             base(logger, Name, Repeat.After.Minutes(1).Than(Repeat.Each.Hours(6)), TimeSpan.FromHours(1))

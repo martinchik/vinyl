@@ -4,156 +4,180 @@
     ViewData["Title"] = $"{Model.Record.Album} / {Model.Record.Artist}";
 }
 
-<div class="record-info-block">
-    <h3>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h3>
-    <input type="hidden" value="@Model.Record.Id" name="recordId">
-    <div class="row">
-        <div class="col-sm-6 record-info">
-            <p class="albom-info"><strong>Альбом: </strong>@Model.Record.Album</p>
-            <p class="artist-info"><strong>Артист: </strong>@Model.Record.Artist</p>
-            <p class="year-info"><strong>Год: </strong>@Model.Record.Year</p>
+<div class="main main-raised">
+    <div class="section section-basic">
+        <div class="container tim-row">
 
-            @if (!string.IsNullOrEmpty(Model.Record.Info))
-            {
-                <p class="additional-info"><strong>Дополнительно: </strong>@Model.Record.Info</p>
-            }
-            <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank" href="@Model.ToYouTubeLink()">YouTube</a></p>
-        </div>
-        <div class="col-sm-6 record-links">
+            <div class="record-info-block">
+                <h3>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h3>
+                <input type="hidden" value="@Model.Record.Id" name="recordId">
+                <div class="row">
+                    <div class="col-sm-6 record-info">
+                        <strong>Альбом: </strong>@Model.Record.Album<br />
+                        <strong>Артист: </strong>@Model.Record.Artist<br />
+                        <strong>Год: </strong>@Model.Record.Year<br />
 
-        </div>
-    </div>
-</div>
+                        @if (!string.IsNullOrEmpty(Model.Record.Info))
+                        {
+                            <strong>Дополнительно: </strong>@Model.Record.Info<br />
+                        }
+                        <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink()">YouTube</a></p>
+                    </div>
+                    <div class="col-sm-6 record-links">
 
-@if (Model.Record.RecordLinks?.Any() == true)
-{
-<div class="record-links-block">
-    <h3>Информация из других источников</h3>    
-    @{
-        var discogsLink = Model.GetDiscogsLink();
-    }
-    <div class="row">        
-        <div class="col-sm-6 record-info">
-            <p><h4>Discogs - <a href="@discogsLink.link">@discogsLink.text</a></h4> </p>
-            <hr />
-            <div>
-                <div>
-                <p><strong>Список композиций</strong></p>
-                @foreach (var track in Model.GetDiscogsTracks())
-                {
-                    <p>- @track (<a target="_blank" href="@Model.ToYouTubeLink(track)">YouTube</a>)</p>
-                }
-                </div>
-                <br />
-                <div>
-                <p><strong>Список ссылок на видео</strong></p>
-                @foreach (var videoLink in Model.GetDiscogsVideos())
-                {
-                    <p><a target="_blank"  href="@videoLink.url">@videoLink.title</a></p>
-                }
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-sm-6 record-links">
-            <img onload="" src="./Index?id=@Model.Record.Id.Compress()&handler=RecordImage" height="200" />
+
+            @if (Model.Record.RecordLinks?.Any() == true)
+            {
+                <hr />
+                <div class="record-links-block">
+                    <h3>Информация из других источников</h3>
+                    @{
+                        var discogsLink = Model.GetDiscogsLink();
+                    }
+                    <div class="row">
+                        <div class="col-sm-6 record-info">
+                            <h4 class="text-success"><strong>Discogs <a target="_blank" class="label label-success" href="@discogsLink.link">@discogsLink.text</a> </strong></h4> 
+
+                            <div>
+                                <div>
+                                    <p><strong>Список композиций</strong></p>
+                                    @foreach (var track in Model.GetDiscogsTracks())
+                                    {
+                                        <p>- @track <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink(track)">YouTube</a></p>
+                                    }
+                                </div>
+                                <br />
+                                <div>
+                                    <p><strong>Список ссылок на видео</strong></p>
+                                    @foreach (var videoLink in Model.GetDiscogsVideos())
+                                    {
+                                        <a target="_blank" href="@videoLink.url">@videoLink.title</a><br />
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 record-links">
+                            <img onload="" src="./Index?id=@Model.Record.Id.Compress()&handler=RecordImage" height="200" />
+                        </div>
+                    </div>
+                </div>
+            }
+            @if (Model.Record.RecordInShopLink?.Any() == true)
+            {
+                <hr />
+                <div class="record-in-shops-block">
+                    <h3>В магазинах</h3>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Магазин</th>
+                                <th>Описание</th>
+                                <th>Цена в бел.руб.</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var risLink in Model.Record.RecordInShopLink)
+                            {
+                                var shopItem = Model.GetShopBy(risLink);
+                                <tr>                                   
+                                    <td>
+                                         <div class="row">
+                                            <div class="col-sm-3 text-center">
+                                                @if (!string.IsNullOrEmpty(risLink.ShopImageUrl))
+                                                {
+                                                    <img onload="" src="@risLink.ShopImageUrl" height="60" />
+                                                }
+                                            </div>
+                                            <div class="col-sm-9">
+                                                <a target="_blank" class="btn btn-success btn-round btn-sm" href="@shopItem.Url">@shopItem.Title</a> <br />
+                                                @if (shopItem.ShopType == (int)ShopType.Private)
+                                                {
+                                                    <strong>Частная коллекция</strong><br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(shopItem.Phones))
+                                                {
+                                                    <strong>Телефон: </strong><a href="tel:@shopItem.Phones">@shopItem.Phones</a><br />
+                                                }
+                                                @if (!string.IsNullOrEmpty(shopItem.Emails))
+                                                {
+                                                    <strong>E-mail: </strong><a href="mailto:@shopItem.Emails">@shopItem.Emails</a><br />
+                                                }
+                                            </div>
+                                        </div>
+                                        
+                                    </td>
+                                    <td>
+                                        <p class="ShopRecordTitle-info"><strong>@risLink.ShopRecordTitle</strong></p>
+                                        @if (!string.IsNullOrEmpty(risLink.ShopInfo))
+                                        {
+                                            <text>Описание: @risLink.ShopInfo</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.Barcode))
+                                        {
+                                            <text>Код: @risLink.Barcode</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.CountInPack))
+                                        {
+                                            <text>Количество пластинок: @risLink.CountInPack</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.YearRecorded))
+                                        {
+                                            <text>Год записи: @risLink.YearRecorded</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.Country))
+                                        {
+                                            <text>Страна: @risLink.Country</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.Label))
+                                        {
+                                            <text>Лэйбл: @risLink.Label</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.State))
+                                        {
+                                            <text>Состояние: @risLink.State</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.Style))
+                                        {
+                                            <text>Стиль: @risLink.Style</text><br />
+                                        }
+                                        @if (!string.IsNullOrEmpty(risLink.ViewType))
+                                        {
+                                            <text>Вид: @risLink.ViewType</text><br />
+                                        }
+                                    </td>
+                                    <td>
+                                        <div class="row">
+                                            <div class="col-sm-3 text-center">
+                                                <div style="font-size:x-large"><strong>@risLink.PriceBy?.ToString("F2")</strong></div>
+                                            </div>
+                                            <div class="col-sm-9" style="font-size:medium;padding-top:3px">
+                                                @if (!Model.IsActive(risLink))
+            {
+                                    <div class=""><p>Не продается</p></div>
+}
+else
+{
+                                    <div class=""><p>В наличии</p></div>
+}
+                                            </div>
+                                        </div>
+
+                                        <p class="text-muted">Информация обновлена: @risLink.UpdatedAt.ToLongDateString()</p>
+                                        <br />
+                                        <a target="_blank" class="label label-success" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">Перейти в магазин</a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            }
+
         </div>
     </div>
 </div>
-}
-@if (Model.Record.RecordInShopLink?.Any() == true)
-{
-    <div class="record-in-shops-block">
-        <h3>В магазинах</h3>
-
-        <table class="table table-condensed table-bordered table-striped table-hover">
-            <thead>
-                <tr>
-                    <th colspan="2">Магазин</th>
-                    <th>Описание</th>
-                    <th>Цена в бел.руб.</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var risLink in Model.Record.RecordInShopLink)
-                {
-                    var shopItem = Model.GetShopBy(risLink);
-                    <tr>
-                        <td width="100">
-                            @if (!string.IsNullOrEmpty(risLink.ShopImageUrl))
-                            {
-                            <img onload="" src="@risLink.ShopImageUrl" height="60" />
-                            }
-                        </td>
-                        <td>
-                            <p><a href="@shopItem.Url">@shopItem.Title</a></p>
-                            @if (shopItem.ShopType == (int)ShopType.Private)
-                            {
-                                <p class="is-private-info"><strong>Частная коллекция</strong></p>
-                            }
-                            
-                            @if (!string.IsNullOrEmpty(shopItem.Phones))
-                            {
-                                <p class="Phones-info">Телефон: @shopItem.Phones</p>
-                            }
-                            @if (!string.IsNullOrEmpty(shopItem.Emails))
-                            {
-                                <p class="Emails-info">E-mail: @shopItem.Emails</p>
-                            }
-                        </td>
-                        <td>
-                            <p class="ShopRecordTitle-info"><strong>@risLink.ShopRecordTitle</strong></p>
-                            @if (!string.IsNullOrEmpty(risLink.ShopInfo))
-                            {
-                                <p class="ShopInfo-info">Описание: @risLink.ShopInfo</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.Barcode))
-                            {
-                                <p class="Barcode-info">Код: @risLink.Barcode</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.CountInPack))
-                            {
-                                <p class="CountInPack-info">Количество пластинок: @risLink.CountInPack</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.YearRecorded))
-                            {
-                                <p class="YearRecorded-info">Год записи: @risLink.YearRecorded</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.Country))
-                            {
-                                <p class="Country-info">Страна: @risLink.Country</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.Label))
-                            {
-                                <p class="Label-info">Лэйбл: @risLink.Label</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.State))
-                            {
-                                <p class="State-info">Состояние: @risLink.State</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.Style))
-                            {
-                                <p class="Style-info">Стиль: @risLink.Style</p>
-                            }
-                            @if (!string.IsNullOrEmpty(risLink.ViewType))
-                            {
-                                <p class="ViewType-info">Вид: @risLink.ViewType</p>
-                            }
-                        </td>
-                        <td>
-                            @if (!Model.IsActive(risLink))
-                            {
-                                <p class="not-active-info"><strong>Не продается</strong></p>
-                            }
-                            <p class="Shop-Price-info"><strong>@risLink.PriceBy?.ToString("F2")</strong></p>
-                            <br />
-                            <p><a target="_blank" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">Перейти в магазин</a></p>
-                            <p class="Shop-Date-info">Информация обновлена: @risLink.UpdatedAt.ToLongDateString()</p>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-    </div>
-}
-

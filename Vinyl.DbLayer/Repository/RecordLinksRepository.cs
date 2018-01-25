@@ -20,5 +20,15 @@ namespace Vinyl.DbLayer.Repository
                 _.RecordId == recordId &&
                 _.ToType == linkType);
         }
+
+        public int RemoveIfExists(Guid recordId, int linkType)
+        {
+            var res = FindBy(recordId, linkType).ToList();
+
+            foreach (var item in res)
+                Set.Remove(item);
+
+            return res.Count;
+        }
     }
 }

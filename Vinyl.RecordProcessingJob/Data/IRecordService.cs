@@ -10,6 +10,6 @@ namespace Vinyl.RecordProcessingJob.Data
     {
         RecordInfo FindOrCreateSimilarBy(DirtyRecord dirtyRecord, out bool isNew);
         RecordInShopLink UpdateOrCreateShopLinkInfoBy(DirtyRecord dirtyRecord, RecordInfo record, Metadata.ShopParseStrategyInfo strategy, out bool hasImportantChanges);
-        bool UpdateOrCreateSearchItem(RecordInfo record, string countryCode, bool isNewRecord, bool hasImportantChanges);
+        bool UpdateOrCreateSearchItem(RecordInfo record, string countryCode);
     }
 }

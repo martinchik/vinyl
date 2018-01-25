@@ -32,5 +32,15 @@ namespace Vinyl.DbLayer.Repository
                 .Select(_ => _.FullViewUrl ?? _.PreviewUrl)
                 .FirstOrDefault();
         }
+
+        public int RemoveIfExists(Guid recordId)
+        {
+            var res = new[] { FindBy(recordId) }.Where(_ => _ != null).ToList();
+
+            foreach (var item in res)
+                Set.Remove(item);
+
+            return res.Count;
+        }
     }
 }

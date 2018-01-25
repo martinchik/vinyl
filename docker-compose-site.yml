@@ -1,0 +1,22 @@
+version: '3'
+
+services:
+
+  site:
+    image: site
+    hostname: site
+    container_name: site
+    restart: always
+    expose:
+      - 20080
+    build:
+      context: .
+      dockerfile: Vinyl.Site/Dockerfile
+    environment:
+      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
+    networks:
+      - vinylnetwork
+
+networks:
+  vinylnetwork:
+     driver: bridge

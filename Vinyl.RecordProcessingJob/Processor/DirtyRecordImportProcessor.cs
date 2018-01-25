@@ -62,7 +62,7 @@ namespace Vinyl.RecordProcessingJob.Processor
                 if (link == null)
                     return false;
 
-                if (isNewRecord)
+                if (isNewRecord || hasImportantChanges)
                 {
                     _messageBus.SendMessage(new FindInfosRecord()
                     {
@@ -76,9 +76,10 @@ namespace Vinyl.RecordProcessingJob.Processor
                         else
                             _logger.LogError(_.Exception, "Error has occurred when message FindInfosRecord was sending to kafka");
                     });
-                }
 
-                _recordService.UpdateOrCreateSearchItem(record, shop.CountryCode, isNewRecord, hasImportantChanges);
+                    _recordService.UpdateOrCreateSearchItem(record, shop.CountryCode);
+                }
+                
                 return true;
             }
             catch (Exception exc)

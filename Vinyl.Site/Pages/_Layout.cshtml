@@ -1,13 +1,17 @@
-﻿<!DOCTYPE html>
+﻿@{
+    string _siteName = "Агрегатор поиска пластинок";
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <link rel="apple-touch-icon" sizes="76x76" href="~/img/apple-icon.png">
-    <link rel="icon" type="image/png" href="~/img/favicon.png">
+    <link rel="icon" type="image/png" href="~/img/vinyl/favicon.png">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
 
-    <title>@ViewData["Title"] - Агрегатор поиска пластинок</title>
+    <title>@ViewData["Title"] - @_siteName</title>
 
     <!--     Fonts and icons     -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
@@ -16,7 +20,7 @@
 
     <link href="../css/bootstrap.min.css" rel="stylesheet" />
     <link href="../css/material-kit.css" rel="stylesheet" />
-    
+
     <environment include="Development">
         <link rel="stylesheet" href="~/css/site.css" />
     </environment>
@@ -26,31 +30,41 @@
 
 </head>
 <body class="landing-page">
-    <nav class="navbar navbar-inverse navbar-fixed-top">
+
+    <nav class="navbar navbar-transparent navbar-fixed-top">
         <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example">
                     <span class="sr-only">Переключить навигацию</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
+                <a class="navbar-brand" asp-page="/Index">Поиск</a>
             </div>
-            <div class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a asp-page="/Index">Поиск</a></li>
+
+            <div class="collapse navbar-collapse" id="navigation-example">
+                <ul class="nav navbar-nav navbar-right">
                     <li><a asp-page="/About">О Сервисе</a></li>
                     <li><a asp-page="/Contact">Контакты</a></li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="container body-content">
+
+    <div style="margin-top:150px">
+
         @RenderBody()
-        <hr />
-        <footer>
-            <p>&copy; @DateTime.UtcNow.Year - Агрегатор поиска пластинок</p>
+
+        <footer class="footer">
+            <div class="container">
+                <div class="copyright pull-right">
+                    &copy; @DateTime.UtcNow.Year  @_siteName
+                </div>
+            </div>
         </footer>
+
     </div>
 
     <!--   Core JS Files   -->

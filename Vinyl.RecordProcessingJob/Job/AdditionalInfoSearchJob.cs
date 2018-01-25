@@ -17,7 +17,7 @@ namespace Vinyl.RecordProcessingJob.Job
         private readonly IMessageConsumer<FindInfosRecord> _messageBus;
         private readonly IAdditionalInfoSearchEngine _searchEngine;
 
-        public const string Name = "additional_info-job";
+        public const string Name = "additional-info-job";
 
         private long _recivedCount;
         private long _successCount;
