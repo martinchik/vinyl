@@ -10,7 +10,7 @@ using System.Threading;
 using Vinyl.Common;
 using Vinyl.Metadata;
 
-namespace Vinyl.ParsingJob.Parsers.HtmlParsers
+namespace Vinyl.ParsingJob.Parsers.ExcelParsers
 {
     public abstract class BaseExcelParserStrategy : BaseParserStrategy
     {
@@ -45,7 +45,11 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 fileName = _htmlDataGetter.DownloadFileToLocal(fileUrl, token).GetAwaiter().GetResult();
                 if (!string.IsNullOrEmpty(fileName))
                 {
-                    return ParseDataFromDataSet(ReadExcelFile(fileName));
+                    return ParseDataFromDataSet(ReadExcelFile(fileName)).Select(_ => 
+                    {
+                        _.Url = fileUrl;
+                        return _;
+                    });
                 }
             }
             finally
@@ -61,12 +65,20 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 
         private DataSet ReadExcelFile(string filePath)
         {
-            using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
+            try
             {
-                using (var reader = ExcelReaderFactory.CreateReader(stream))
+                using (var stream = File.Open(filePath, FileMode.Open, FileAccess.Read))
                 {
-                    return reader.AsDataSet();                    
+                    using (var reader = ExcelReaderFactory.CreateReader(stream))
+                    {
+                        return reader.AsDataSet();
+                    }
                 }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogWarning(exc, $"Error while opening Excel DataSet from file {filePath}");
+                return null;
             }
         }
 

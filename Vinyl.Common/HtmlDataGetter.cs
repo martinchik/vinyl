@@ -142,6 +142,11 @@ namespace Vinyl.Common
                         await fileStream.CopyToAsync(newFile, 81920, token);
                     }
                 }
+                else if (response.StatusCode == HttpStatusCode.NotFound)
+                {
+                    _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). File was not find by {fileUrl}.");
+                    return string.Empty;
+                }
                 else
                 { 
                     var responseContent = await response.Content.ReadAsStringAsync();

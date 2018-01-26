@@ -34,25 +34,35 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             return string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
         }
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token) =>
-            GetRecordNodes(pageData, "//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]")
-                .AsParallel()
-                .WithCancellation(token)
-                .WithDegreeOfParallelism(_degreeOfParalellism)
-                .Select(recordNode =>
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        {
+            try
             {
-                token.ThrowIfCancellationRequested();
+                return GetRecordNodes(pageData, "//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]")
+                    .AsParallel()
+                    .WithCancellation(token)
+                    .WithDegreeOfParallelism(_degreeOfParalellism)
+                    .Select(recordNode =>
+                {
+                    token.ThrowIfCancellationRequested();
 
-                try
-                {
-                    return GetDataFromRecordNode(recordNode, token).GetAwaiter().GetResult();                    
-                }
-                catch (Exception parseExc)
-                {
-                    _logger.LogWarning(parseExc, "Parsing record from page has errors");
-                }
-                return null;
-            });
+                    try
+                    {
+                        return GetDataFromRecordNode(recordNode, token).GetAwaiter().GetResult();
+                    }
+                    catch (Exception parseExc)
+                    {
+                        _logger.LogWarning(parseExc, "Parsing record from page has errors");
+                    }
+                    return null;
+                });
+            }
+            catch (Exception parseExc)
+            {
+                _logger.LogWarning(parseExc, "Parsing record from page has errors");
+            }
+            return Enumerable.Empty<DirtyRecord>();
+        }
                 
         private IEnumerable<HtmlNode> GetRecordNodes(string html, string searchPattern)
         {

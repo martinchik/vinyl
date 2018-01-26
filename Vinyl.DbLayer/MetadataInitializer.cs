@@ -44,12 +44,23 @@ namespace Vinyl.DbLayer
 
         public MetadataInitializer Initialize(VinylShopContext context)
         {
-            if (!context.ShopInfo.Any())
+            var shops = context.ShopInfo.ToList();
+            if (!shops.Any())
             {
                 context.ShopInfo.Add(GetLongPlayShop());
                 context.ShopInfo.Add(GetVinylShopShop());
+                context.ShopInfo.Add(GetMuzRayShop());
 
                 context.SaveChanges(true);
+            }
+            else 
+            {
+                var msh = GetMuzRayShop();
+                if (!shops.Any(_ => _.Id == msh.Id))
+                {
+                    context.ShopInfo.Add(msh);
+                    context.SaveChanges(true);
+                }
             }
 
             return this;
@@ -77,7 +88,7 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Status = 0
                 }
             }
@@ -105,7 +116,7 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Status = 0
                 },
                 new ShopParseStrategyInfo()
@@ -117,7 +128,7 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
@@ -135,7 +146,7 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = null,
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
@@ -153,7 +164,7 @@ namespace Vinyl.DbLayer
                     CreatedAt = DateTime.UtcNow,
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
-                    UpdatePeriodInHours = 5,
+                    UpdatePeriodInHours = 12,
                     Parameters = new Dictionary<string, string>
                     {
                         { "class-name", "post-content" },
@@ -161,6 +172,34 @@ namespace Vinyl.DbLayer
                     }.ToParametersDbString(),
                     Status = 0,
                     DefaultCurrency = "rub"
+                }
+            }
+        };
+
+        private static ShopInfo GetMuzRayShop() => new ShopInfo()
+        {
+            Id = new Guid("4BDB7592-41FB-43E2-879A-FD94013ECA77"),
+            Title = "Музыкальный Рай",
+            Url = "http://muzraiminsk.business.site/",
+            City = "Minsk",
+            CountryCode = "BY",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Emails = "kozlova.maria.92@gmail.com",
+            Phones = "+375293242424; +375336242424",
+            ShopParseStrategyInfo = new[]
+            {
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "VinylMuzRayGoogleExcelParserStrategy",
+                    StartUrl = "1rF7EpvUTVqqY8UoXK6FQERCQzTZYUfxH",
+                    ShopId = new Guid("4BDB7592-41FB-43E2-879A-FD94013ECA77"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTime.UtcNow.AddDays(-5),
+                    UpdatePeriodInHours = 12,
+                    Status = 0
                 }
             }
         };

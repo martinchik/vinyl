@@ -11,7 +11,6 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
 {
     public class YoutubeSearchEngine
     {
-        private readonly string _key = "AIzaSyDUhMttyX3p1jW5M9cBMyxcZoA5GEnV-XQ";
         private readonly ILogger _logger;
 
         public YoutubeSearchEngine(ILogger<YoutubeSearchEngine> logger)
@@ -25,8 +24,8 @@ namespace Vinyl.RecordProcessingJob.SearchEngine
 
             var youtubeService = new YouTubeService(new BaseClientService.Initializer()
             {
-                ApiKey = _key,
-                ApplicationName = this.GetType().ToString()
+                ApiKey = GlobalConstants.GoogleApiKey,
+                ApplicationName = GlobalConstants.ApplicationName
             });
 
             var searchListRequest = youtubeService.Search.List("snippet");

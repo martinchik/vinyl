@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using Vinyl.Common;
 using Vinyl.Metadata;
 
-namespace Vinyl.ParsingJob.Parsers.HtmlParsers
+namespace Vinyl.ParsingJob.Parsers
 {
     public abstract class BaseParserStrategy : IParserStrategy
     {
@@ -29,7 +30,12 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 
         protected abstract string GetNextPageUrl(int pageIndex);
 
-        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);        
+        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);
+
+        protected virtual async Task<string> DownloadPageHtml(int pageIndex, CancellationToken token)
+        {
+            return await _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token);
+        }
 
         public IEnumerable<DirtyRecord> Parse(CancellationToken token)
         {
@@ -43,7 +49,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 do
                 {
                     readedPageCount = 0;
-                    var pageData = _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token).GetAwaiter().GetResult();
+                    var pageData = DownloadPageHtml(pageIndex, token).GetAwaiter().GetResult();
 
                     if (!string.IsNullOrEmpty(pageData))
                     {

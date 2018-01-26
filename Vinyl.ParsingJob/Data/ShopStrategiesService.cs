@@ -7,6 +7,8 @@ using Vinyl.Common;
 using Vinyl.DbLayer;
 using Vinyl.Metadata;
 using Vinyl.ParsingJob.Parsers;
+using Vinyl.ParsingJob.Parsers.ExcelParsers;
+using Vinyl.ParsingJob.Parsers.GoogleDriveParsers;
 using Vinyl.ParsingJob.Parsers.HtmlParsers;
 
 namespace Vinyl.ParsingJob.Data
@@ -91,6 +93,8 @@ namespace Vinyl.ParsingJob.Data
                         .Initialize(strategyInfo.Url);
                 case "VinylShopHtmlParserStrategy": return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
                         .Initialize(strategyInfo.Url);
+                case "VinylMuzRayGoogleExcelParserStrategy": return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+                        .Initialize(strategyInfo.Url);
                 default:
                     return null;
             }
@@ -121,6 +125,9 @@ namespace Vinyl.ParsingJob.Data
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 case "VinylShopHtmlParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
+                case "VinylMuzRayGoogleExcelParserStrategy":
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 default:

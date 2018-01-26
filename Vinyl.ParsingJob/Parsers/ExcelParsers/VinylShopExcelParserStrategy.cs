@@ -4,7 +4,7 @@ using System.Data;
 using Vinyl.Common;
 using Vinyl.Metadata;
 
-namespace Vinyl.ParsingJob.Parsers.HtmlParsers
+namespace Vinyl.ParsingJob.Parsers.ExcelParsers
 {
     public class VinylShopExcelParserStrategy : BaseExcelParserStrategy
     {
