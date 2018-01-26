@@ -53,7 +53,7 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
 
                         record.Info = sb.ToString();
 
-                        record.Price = row[19].ToString();
+                        record.Price = row[19].ToString() + " бр";
 
                         yield return record;
                     }

@@ -37,7 +37,7 @@ namespace Vinyl.Site.Pages
             => link.Status == (int)Metadata.StrategyStatus.Active;
 
         public IEnumerable<(string text, string link)> GetLinksBy(Vinyl.Metadata.RecordLinkType linkType)
-           => Record?.RecordLinks?.Where(_ => _.ToType == (int)linkType).Select(_ => (_.Text, _.Link));
+           => Record?.RecordLinks?.Where(_ => _.ToType == (int)linkType && !string.IsNullOrEmpty(_.Text) && !string.IsNullOrEmpty(_.Link)).Select(_ => (_.Text, _.Link));
 
         public (string text, string link) GetDiscogsLink()
            => Record?.RecordLinks?.Where(_ => _.ToType == (int)Vinyl.Metadata.RecordLinkType.Discogs)

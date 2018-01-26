@@ -1,8 +1,9 @@
 ﻿using ExcelDataReader;
 using Google.Apis.Auth.OAuth2;
+using Google.Apis.Auth.OAuth2.Flows;
 using Google.Apis.Download;
-using Google.Apis.Drive.v2;
-using Google.Apis.Drive.v2.Data;
+using Google.Apis.Drive.v3;
+using Google.Apis.Drive.v3.Data;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 using HtmlAgilityPack;
@@ -68,26 +69,16 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
 
         protected abstract IEnumerable<DirtyRecord> ParseFileFromGoogleDrive(string fileName);        
 
-        private async Task<DriveService> CoonectToGoogle(CancellationToken token)
+        private DriveService CoonectToGoogle(CancellationToken token)
         {
-            UserCredential credential;
-
             try
             {
-                var assembly = typeof(GoogleDriveParserStrategy).Assembly;
-                var resourceStream = assembly.GetManifestResourceStream("Vinyl.ParsingJob.Parsers.GoogleDriveParsers.client_secret.json");
-                if (resourceStream == null)
-                    throw new Exception("Google drive key did not find.");
-                
-                credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
-                    GoogleClientSecrets.Load(resourceStream).Secrets, Scopes, "user", token);
-
                 var service = new DriveService(new BaseClientService.Initializer()
                 {
-                    HttpClientInitializer = credential,
+                    ApiKey = GlobalConstants.GoogleApiKey,                    
                     ApplicationName = GlobalConstants.ApplicationName,
                 });
-
+                
                 return service;
             }
             catch (Exception exc)
@@ -104,36 +95,35 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
 
             var fileName = Path.ChangeExtension(Path.GetTempFileName(), "xls");
 
-            DriveService service = await CoonectToGoogle(token);
+            DriveService service = CoonectToGoogle(token);
 
-            var url = GetLastFileFromFolder(service, folderId);
+            var fileId = await GetLastFileFromFolder(service, folderId, token);
 
-            await DownloadFile(service, url, fileName, token);
+            await DownloadFile(service, fileId, fileName, token);
 
             return fileName;
         }
 
-        private string GetLastFileFromFolder(DriveService service, string folder)
+        private async Task<string> GetLastFileFromFolder(DriveService service, string folder, CancellationToken token)
         {
             var request = service.Files.List();
             request.Q = $"'{folder}' in parents";
-            request.OrderBy = "createdDate desc";
-            request.MaxResults = 2;
+            request.OrderBy = "createdTime desc";
+            request.Spaces = "drive";
+            request.PageSize = 2;
 
-            var result = request.Execute();
-            var file = result.Items.OrderByDescending(_ => _.CreatedDate).FirstOrDefault();
+            var result = await request.ExecuteAsync(token);
+            var file = result.Files.OrderByDescending(_ => _.CreatedTime).FirstOrDefault();
 
-            return file.DownloadUrl;
+            return file.Id;
         }
 
-        private async Task DownloadFile(DriveService service, string url, string fileName, CancellationToken token)
+        private async Task DownloadFile(DriveService service, string fileId, string fileName, CancellationToken token)
         {
-            var downloader = new MediaDownloader(service);
-            downloader.ChunkSize = _downloadChunkSize;
-           
             using (var fileStream = new System.IO.FileStream(fileName, System.IO.FileMode.Create, System.IO.FileAccess.Write))
             {
-                var progress = await downloader.DownloadAsync(url, fileStream, token);
+                var file = service.Files.Get(fileId);
+                var progress = await file.DownloadAsync(fileStream, token);
                 if (progress.Status != DownloadStatus.Completed)
                     throw new Exception(string.Format("Download {0} was interpreted in the middle. Only {1} were downloaded. ", fileName, progress.BytesDownloaded));
             }

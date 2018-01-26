@@ -32,7 +32,7 @@
   <ItemGroup>
     <PackageReference Include="ExcelDataReader" Version="3.3.0" />
     <PackageReference Include="ExcelDataReader.DataSet" Version="3.3.0" />
-    <PackageReference Include="Google.Apis.Drive.v2" Version="1.32.1.1107" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.32.1.1107" />
     <PackageReference Include="HtmlAgilityPack" Version="1.6.6" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />

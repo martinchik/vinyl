@@ -86,13 +86,13 @@
                                 <tr>                                   
                                     <td>
                                          <div class="row">
-                                            <div class="col-sm-3 text-center">
+                                            <div class="col-lg-3">
                                                 @if (!string.IsNullOrEmpty(risLink.ShopImageUrl))
                                                 {
                                                     <img onload="" src="@risLink.ShopImageUrl" height="60" />
                                                 }
                                             </div>
-                                            <div class="col-sm-9">
+                                            <div class="col-lg-9">
                                                 <a target="_blank" class="btn btn-success btn-round btn-sm" href="@shopItem.Url">@shopItem.Title</a> <br />
                                                 @if (shopItem.ShopType == (int)ShopType.Private)
                                                 {
@@ -110,12 +110,13 @@
                                         </div>
                                         
                                     </td>
-                                    <td>
-                                        <p class="ShopRecordTitle-info"><strong>@risLink.ShopRecordTitle</strong></p>
+                                    <td style="word-break: break-all;">
+                                        <p class="ShopRecordTitle-info"  style="word-break: break-all;"><strong>@risLink.ShopRecordTitle</strong>
                                         @if (!string.IsNullOrEmpty(risLink.ShopInfo))
                                         {
-                                            <text>Описание: @risLink.ShopInfo</text><br />
+                                            @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))<br />
                                         }
+                                        </p>
                                         @if (!string.IsNullOrEmpty(risLink.Barcode))
                                         {
                                             <text>Код: @risLink.Barcode</text><br />
@@ -151,22 +152,22 @@
                                     </td>
                                     <td>
                                         <div class="row">
-                                            <div class="col-sm-3 text-center">
+                                            <div class="col-lg-3 text-center">
                                                 <div style="font-size:x-large"><strong>@risLink.PriceBy?.ToString("F2")</strong></div>
                                             </div>
-                                            <div class="col-sm-9" style="font-size:medium;padding-top:3px">
+                                            <div class="col-lg-9 text-center" style="font-size:medium;padding-top:3px">
                                                 @if (!Model.IsActive(risLink))
                                                 {
-                                                    <div class=""><p>Не продается</p></div>
+                                                    <div style="color:red"><strong>Не продается</strong></div>
                                                 }
                                                 else
                                                 {
-                                                    <div class=""><p>В наличии</p></div>
+                                                    <div style="color:green"><strong>В наличии</strong></div>
                                                 }
                                             </div>
                                         </div>
 
-                                        <p class="text-muted">Информация обновлена: @risLink.UpdatedAt.ToLongDateString()</p>
+                                        <p class="text-muted"  style="word-break: break-all;">Информация обновлена: @risLink.UpdatedAt.ToString("dd.MM.yyyy")</p>
                                         <br />
                                         <a target="_blank" class="label label-success" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">В магазин</a>
                                     </td>
