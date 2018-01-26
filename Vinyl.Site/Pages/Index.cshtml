@@ -2,7 +2,8 @@
 @model IndexModel
 @{
     Layout = "_LandingLayout";
-    ViewData["Title"] = "Найти и купить пластинку";
+    ViewData["Title"] = "Найти винил";
+    ViewData["PageClass"] = "landing-page";
     var isExists = !string.IsNullOrEmpty(Model.SearchText);
 }
 

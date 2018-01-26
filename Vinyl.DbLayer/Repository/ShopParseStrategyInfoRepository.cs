@@ -19,12 +19,12 @@ namespace Vinyl.DbLayer.Repository
             if (shopId == Guid.Empty)
                 return null;
 
-            return Context.ShopParseStrategyInfo.Where(t => t.ShopId == shopId).Include(_ => _.Shop).AsQueryable();
+            return Set.Where(t => t.ShopId == shopId).Include(_ => _.Shop).AsQueryable();
         }
 
         public IQueryable<ShopParseStrategyInfo> GetAllWithShops()
         {
-            return Context.ShopParseStrategyInfo.Include(_ => _.Shop).AsQueryable();
+            return Set.Include(_ => _.Shop).AsQueryable();
         }
 
         public void UpdateLastProcessedCount(Guid id, int count)
@@ -43,7 +43,13 @@ namespace Vinyl.DbLayer.Repository
             if (strategyIds?.Any() != true)
                 return Enumerable.Empty<ShopParseStrategyInfo>();
 
-            return Context.ShopParseStrategyInfo.Where(_ => strategyIds.Contains(_.Id)).AsEnumerable();
+            return Set.Where(_ => strategyIds.Contains(_.Id)).AsEnumerable();
         }
+
+        //public IEnumerable<ShopParseStrategyInfo> GetCounts()
+        //{
+        //    var blogNames = Context.Database.SqlQuery(
+        //               "SELECT Name FROM dbo.Blogs").ToList();
+        //}
     }
 }

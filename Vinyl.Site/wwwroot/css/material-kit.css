@@ -3672,14 +3672,14 @@ h2.title {
   height: 380px;
   background-position: top center;
 }
-.profile-page .profile {
+.profile {
   text-align: center;
 }
-.profile-page .profile img {
+.profile img {
   max-width: 160px;
   margin: -80px auto 0;
 }
-.profile-page .description {
+.profile .description {
   margin: 30px auto 0;
   max-width: 600px;
 }

@@ -1,19 +1,54 @@
 ﻿@page
 @model ContactModel
 @{
-    ViewData["Title"] = "Contact";
+    Layout = "_LandingLayout";
+    ViewData["Title"] = "Контакт";
+    ViewData["PageClass"] = "landing-page";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
 
-<address>
-    One Microsoft Way<br />
-    Redmond, WA 98052-6399<br />
-    <abbr title="Phone">P:</abbr>
-    425.555.0100
-</address>
+<div class="header header-small-filter" style="background-image:url(/img/vinyl/landing.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 col-md-offset-3">
+            </div>
+        </div>
+    </div>
+</div>
 
-<address>
-    <strong>Support:</strong> <a href="mailto:Support@example.com">Support@example.com</a><br />
-    <strong>Marketing:</strong> <a href="mailto:Marketing@example.com">Marketing@example.com</a>
-</address>
+<div class="main main-raised">
+    <div class="profile-content">
+        <div class="container">
+            <div class="row">
+                <div class="profile">
+                    <div class="avatar">
+                        <img src="~/img/ava.jpg" alt="Circle Image" class="img-circle img-responsive img-raised">
+                    </div>
+                    <div class="name">
+                        <h3 class="title">JonniU</h3>
+                        <h6>Разработчик на .net</h6>
+                    </div>
+                </div>
+            </div>
+            <div class="description text-center">
+                <p>
+                    Full-stack программист с большим опытом разработки различных систем, сайтов, мобильных и десктоп приложений.
+                    За свой карьерный опыт прошел все ступени программиста.
+                    Владею всеми вопросами: написания ТЗ; организация команды; разработка и поддержка рабочего продукта; внедрение.
+                    Владею большинством технологий .NET. Работаю с базами данными SQL и NoSQL, программировал приложения на Android и WindowsMobile.
+                    <br />
+                    Главный принцип работы - быстро, качественно, стабильно и с творческим подходом.
+                </p>
+
+                <h4 class="text-success">
+                    Если есть вопросы/предложения, пожалуйста, обращайтесь.
+                </h4>
+
+                <address>
+                    <strong>e-mail:</strong> <a href="mailto:developer.jonniu@gmail.com ">developer.jonniu@gmail.com </a><br />
+                </address>
+            </div>
+
+        </div>
+    </div>
+</div>
+

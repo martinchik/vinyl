@@ -1,9 +1,45 @@
 ﻿@page
 @model AboutModel
 @{
-    ViewData["Title"] = "About";
+    Layout = "_LandingLayout";
+    ViewData["Title"] = "О сервисе";
+    ViewData["PageClass"] = "landing-page";
 }
-<h2>@ViewData["Title"]</h2>
-<h3>@Model.Message</h3>
 
-<p>Use this area to provide additional information.</p>
+<div class="header header-small-filter" style="background-image:url(/img/vinyl/landing.jpg)">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-7 col-md-offset-3">
+                <h3>Аггрегатор поиска виниловых пластинок</h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main main-raised">
+    <div class="section section-basic">
+        <div class="container tim-row">
+            <div class="row">
+                
+            </div>
+            <div>
+                <p>
+                    Данный сайт разработан с целью упрощения поиска и покупки виниловых пластинок. На сайте нет рекламы. Сайт не занимается продажей и распространением пластинок.
+                    Только упрощение поиска путем связывания отдельных магазинов, продавцов, колекционеров в едином хранилище.
+                </p>
+                <h6><strong>Как это работает</strong></h6>
+                <ul>
+                    <li>Разработчик находит магазин или магазин его</li>
+                    <li>Делается анализ того как извлекать информацию о продаваемых пластинках</li>
+                    <li>Разрабатывается отдельный "плагин" для данного продавца, для "извлечения" информации с его источника</li>
+                    <li>Плагин добавляется на сайт</li>
+                    <li>Извлеченная информация приводится к стандартному виду, общему для всех</li>
+                    <li>Информация о новых исполнителях и альбомах ищется на сайтах <a href="https://www.discogs.com">www.discogs.com</a> и <a href="https://www.youtube.com/">www.youtube.com</a></li>
+                    <li>Результат добавляется или обновляется в общем каталоге</li>
+                    <li>Обновление информации от продавцов происходит 1-2 раза в день</li>
+                    <li>Если в течении 5 дней от продаца нет обновления по одной из пластинок, то эта пластинка удаляется из продающихся</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

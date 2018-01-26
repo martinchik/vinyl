@@ -2,6 +2,7 @@
 @model Vinyl.Site.Pages.RecordModel
 @{
     ViewData["Title"] = $"{Model.Record.Album} / {Model.Record.Artist}";
+    ViewData["PageClass"] = "landing-page";
 }
 
 <div class="main main-raised">
@@ -111,10 +112,10 @@
                                         
                                     </td>
                                     <td style="word-break: break-all;">
-                                        <p class="ShopRecordTitle-info"  style="word-break: break-all;"><strong>@risLink.ShopRecordTitle</strong>
+                                        <p class="ShopRecordTitle-info"  style="word-break: break-all;"><strong>@risLink.ShopRecordTitle</strong><br />
                                         @if (!string.IsNullOrEmpty(risLink.ShopInfo))
                                         {
-                                            @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))<br />
+                                            @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))
                                         }
                                         </p>
                                         @if (!string.IsNullOrEmpty(risLink.Barcode))
