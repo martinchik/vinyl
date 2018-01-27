@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
 using Vinyl.Common;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
@@ -13,10 +15,12 @@ namespace Vinyl.Site.Pages
     public class IndexModel : PageModel
     {
         private readonly IMetadataRepositoriesFactory _db;
+        private readonly ILogger _logger;
 
-        public IndexModel(IMetadataRepositoriesFactory db)
+        public IndexModel(IMetadataRepositoriesFactory db, ILogger<PageModel> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public string SearchText { get; private set; } = string.Empty;
@@ -43,27 +47,35 @@ namespace Vinyl.Site.Pages
         {
             SearchText = search;
 
-            search = ParseSpecialFields.DistinctWords(search);
+            try
+            {
+                search = ParseSpecialFields.DistinctWords(search);
 
-            if (!string.IsNullOrWhiteSpace(search))
-            {                
-                using (var rep = _db.CreateSearchItemRepository())
+                if (!string.IsNullOrWhiteSpace(search))
                 {
-                    Items = rep.Find(search, "BY")
-                        .OrderByDescending(_ => _.Sell)
-                        .ThenBy(_ => _.PriceFrom)
-                        .Take(100)
-                        .ToList();
+                    using (var rep = _db.CreateSearchItemRepository())
+                    {
+                        Items = rep.Find(search, "BY")
+                            .OrderByDescending(_ => _.Sell)
+                            .ThenBy(_ => _.PriceFrom)
+                            .Take(100)
+                            .ToList();
+                    }
                 }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogCritical(exc, "index OnGet exception");
+                StatusCode((int)HttpStatusCode.InternalServerError, exc.Message);
             }
 
             return Page();
         }
 
         [ResponseCache(Duration = 360, VaryByQueryKeys = new[] { "id" })]
-        public ActionResult OnGetRecordImage(string id = null)
+        public ActionResult OnGetRecordImage(Guid id)
         {
-            Guid recordId = id.ExpandToGuid();
+            Guid recordId = id;
             if (recordId == Guid.Empty)
                 return new NotFoundResult();
 

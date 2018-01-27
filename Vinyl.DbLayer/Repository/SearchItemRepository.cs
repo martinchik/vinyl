@@ -17,21 +17,21 @@ namespace Vinyl.DbLayer.Repository
             :base(context, context.SearchItem, logger)
         {
         }        
-
-        public SearchItem GetBy(Guid recordId)
-        {
-            if (recordId == Guid.Empty)
-                return null;
-
-            return Context.SearchItem.SingleOrDefault(t => t.RecordId == recordId);
-        }
-
+        
         public SearchItem GetBy(Guid recordId, string countryCode)
         {
             if (recordId == Guid.Empty)
                 return null;
 
             return Context.SearchItem.SingleOrDefault(t => t.RecordId == recordId && t.CountryCode == countryCode);
+        }
+
+        public SearchItem GetBy(string recordUrl, string countryCode)
+        {
+            if (string.IsNullOrEmpty(recordUrl))
+                return null;
+
+            return Context.SearchItem.SingleOrDefault(t => t.RecordUrl == recordUrl && t.CountryCode == countryCode);
         }
 
         public IQueryable<SearchItem> Find(string words, string countryCode)

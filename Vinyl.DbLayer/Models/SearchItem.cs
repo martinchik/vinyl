@@ -8,6 +8,7 @@ namespace Vinyl.DbLayer.Models
     {
         public Guid Id { get; set; }
         public Guid RecordId { get; set; }
+        public string RecordUrl { get; set; }
         public string TextLine1 { get; set; }
         public decimal? PriceFrom { get; set; }
         public decimal? PriceTo { get; set; }

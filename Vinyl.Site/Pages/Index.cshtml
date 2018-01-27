@@ -2,7 +2,7 @@
 @model IndexModel
 @{
     Layout = "_LandingLayout";
-    ViewData["Title"] = "Найти винил";
+    ViewData["Title"] = "Найти и купить винил (виниловую пластинку)";
     ViewData["PageClass"] = "landing-page";
     var isExists = !string.IsNullOrEmpty(Model.SearchText);
 }
@@ -29,7 +29,7 @@
     <div class="section section-basic">
         <div class="container tim-row">
             <div class="col-md-8 col-md-offset-2 text-center">
-                <small class="label label-success">Найдено: @Model.Items.Count шт.</small>
+                <small class="label label-success">Найдено: @(Model.Items?.Count ?? 0) шт.</small>
                 @if (Model.Items?.Count == 100)
                 {
                 <br /><small>Отображаются не все записи....</small>
@@ -50,10 +50,10 @@
                     {
                         <tr>
                             <td width="100">
-                                <img onload="" src="./Index?id=@record.RecordId.Compress()&handler=RecordImage" height="60" />
+                                <img onload="" src="./Index?id=@record.RecordId&handler=RecordImage" height="60" />
                             </td>
                             <td>
-                                <div><a asp-page="./Record" asp-route-id="@record.RecordId.Compress()">@record.TextLine1</a></div>
+                                <div><a asp-page="./Record" asp-route-name="@record.RecordUrl">@record.TextLine1</a></div>
                                 <div>@Model.GetSecondLineText(record)</div>
                             </td>
                             <td>

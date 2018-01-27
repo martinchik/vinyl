@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Net;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
 
@@ -12,10 +13,12 @@ namespace Vinyl.Site.Pages
     public class RecordModel : PageModel
     {
         private readonly IMetadataRepositoriesFactory _db;
+        private readonly ILogger _logger;
 
-        public RecordModel(IMetadataRepositoriesFactory db)
+        public RecordModel(IMetadataRepositoriesFactory db, ILogger<PageModel> logger)
         {
             _db = db;
+            _logger = logger;
         }
 
         public RecordInfo Record { get; private set; }
@@ -56,40 +59,47 @@ namespace Vinyl.Site.Pages
                    return videoItem.Length > 1 ? (videoItem[0], videoItem[1]) : (string.Empty, string.Empty);
                }) ?? new (string, string)[] { };
 
-        [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "id" })]
-        public IActionResult OnGet(string id = null)
+        [ResponseCache(Duration = 360, VaryByQueryKeys = new[] { "name" })]
+        public IActionResult OnGet(string name)
         {
             Shops = null;
             Record = null;
-           
-            Guid recordId = id.ExpandToGuid();
-            if (recordId == Guid.Empty)
-                return new NotFoundResult();
 
-            using (var rep = _db.CreateRecordInfoRepository())
+            try
             {
-                Record = rep.GetFull(recordId);
-            }
-
-            if (Record.RecordInShopLink?.Any() == true)
-            {
-                var shopIds = Record.RecordInShopLink.Select(_ => _.ShopId).ToArray();
-                if (shopIds.Any())
+                using (var rep = _db.CreateRecordInfoRepository())
                 {
-                    using (var rep = _db.CreateShopInfoRepository())
+                    if (!string.IsNullOrEmpty(name))
+                        Record = rep.GetFull(name);
+                }
+
+                if (Record == null)
+                    return new NotFoundResult();
+
+                if (Record.RecordInShopLink?.Any() == true)
+                {
+                    var shopIds = Record.RecordInShopLink.Select(_ => _.ShopId).ToArray();
+                    if (shopIds.Any())
                     {
-                        Shops = rep.Get(shopIds).ToList();
+                        using (var rep = _db.CreateShopInfoRepository())
+                        {
+                            Shops = rep.Get(shopIds).ToList();
+                        }
                     }
                 }
             }
-
+            catch (Exception exc)
+            {
+                _logger.LogCritical(exc, "record OnGet exception");
+                StatusCode((int)HttpStatusCode.InternalServerError, exc.Message);
+            }
             return Page();
         }
 
         [ResponseCache(Duration = 360, VaryByQueryKeys = new[] { "id" })]
-        public ActionResult OnGetRecordImage(string id = null)
+        public ActionResult OnGetRecordImage(Guid id)
         {
-            Guid recordId = id.ExpandToGuid();
+            Guid recordId = id;
             if (recordId == Guid.Empty)
                 return new NotFoundResult();
 

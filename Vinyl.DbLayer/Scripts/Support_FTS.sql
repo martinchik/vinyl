@@ -11,10 +11,10 @@ CREATE INDEX IF NOT EXISTS idx_fts_resords ON "SearchItem"
   USING gin(make_tsvector("TextLine2"));
   
 CREATE OR REPLACE FUNCTION fts_search(searchQuery TEXT, country TEXT)
-    RETURNS TABLE("Id" uuid, "CountryCode" TEXT, "PriceFrom" numeric, "PriceTo" numeric, "RecordId" uuid, 
+    RETURNS TABLE("Id" uuid, "CountryCode" TEXT, "PriceFrom" numeric, "PriceTo" numeric, "RecordId" uuid, "RecordUrl" TEXT,
                   "Sell" boolean, "TextLine1" TEXT, "TextLine2" TEXT, "ShopsCount" integer, "States" TEXT) 
 AS 
-$$ SELECT "Id", "CountryCode", "PriceFrom", "PriceTo", "RecordId", "Sell", "TextLine1", "TextLine2", "ShopsCount", "States"
+$$ SELECT "Id", "CountryCode", "PriceFrom", "PriceTo", "RecordId", "RecordUrl", "Sell", "TextLine1", "TextLine2", "ShopsCount", "States"
         FROM "SearchItem", to_tsquery(searchQuery) as q 
         WHERE make_tsvector("TextLine2") @@ q AND "CountryCode" = country
         ORDER BY ts_rank(make_tsvector("TextLine2"), q) DESC

@@ -1,18 +1,42 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Net;
+using System.Threading.Tasks;
+using Vinyl.DbLayer;
+using Vinyl.DbLayer.Models;
 
 namespace Vinyl.Site.Pages
 {
     public class AboutModel : PageModel
     {
-        public string Message { get; set; }
+        private readonly IMetadataRepositoriesFactory _db;
+        private readonly ILogger _logger;
 
-        public void OnGet()
+        public AboutModel(IMetadataRepositoriesFactory db, ILogger<PageModel> logger)
         {
-            Message = "Your application description page.";
+            _db = db;
+            _logger = logger;
+        }
+
+        public StatisticsItem Statistic { get; private set; }
+
+        [ResponseCache(Duration = 3600)]
+        public async Task OnGet()
+        {
+            try
+            {
+                using (var rep = _db.CreateStatisticRepository())
+                {
+                    Statistic = await rep.GetStats();
+                }
+            }
+            catch (Exception exc)
+            {
+                _logger.LogCritical(exc, "AboutPage OnGet exception");
+                StatusCode((int)HttpStatusCode.InternalServerError, exc.Message);
+            }
         }
     }
 }

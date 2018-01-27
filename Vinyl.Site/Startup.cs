@@ -22,7 +22,10 @@ namespace Vinyl.Site
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc().AddRazorPagesOptions(options => 
+            {
+                options.Conventions.AddPageRoute("/Record", "{name}");
+            });
 
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
             DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration).GetAwaiter().GetResult();
@@ -50,6 +53,10 @@ namespace Vinyl.Site
 
             app.UseMvc(routes =>
             {
+                routes.MapRoute(
+                   name: "record",
+                   template: "{name}");
+
                 routes.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}");

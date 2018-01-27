@@ -70,3 +70,10 @@ body {
 .label-link {
     padding:10px;
 }
+
+.statistics-group {
+padding-top:15px;
+}
+.statistics-group .text-success {
+    font-size: x-large
+}

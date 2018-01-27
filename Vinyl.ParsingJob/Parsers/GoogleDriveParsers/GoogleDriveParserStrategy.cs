@@ -24,8 +24,6 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
     public abstract class GoogleDriveParserStrategy : BaseParserStrategy
     {
         private string _folderId;
-        private const int KB = 0x400;
-        private readonly int _downloadChunkSize = 256 * KB;
 
         static string[] Scopes = { DriveService.Scope.DriveReadonly };
 

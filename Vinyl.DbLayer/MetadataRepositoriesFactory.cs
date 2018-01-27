@@ -36,5 +36,8 @@ namespace Vinyl.DbLayer
 
         public RecordLinksRepository CreateRecordLinksRepository()
              => new RecordLinksRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
+
+        public StatisticRepository CreateStatisticRepository()
+             => new StatisticRepository(DatabaseServiceRegistrator.CreateContext(_configuration), _logger);
     }
 }

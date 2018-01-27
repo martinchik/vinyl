@@ -35,6 +35,11 @@ namespace Vinyl.DbLayer.Repository
                 string.Compare(_.Album, album, true) == 0);
         }
 
+        public int CountByUrl(string url)
+        {
+            return Context.RecordInfo.Count(_ => _.RecordUrl == url);
+        }
+
         public RecordInfo GetFull(Guid id)
         {
             return Context.RecordInfo
@@ -42,6 +47,15 @@ namespace Vinyl.DbLayer.Repository
                 .Include(_ => _.RecordInShopLink)
                 .Include(_ => _.RecordLinks)
                 .FirstOrDefault(_ => _.Id == id);
+        }
+
+        public RecordInfo GetFull(string url)
+        {
+            return Context.RecordInfo
+                .Include(_ => _.RecordArt)
+                .Include(_ => _.RecordInShopLink)
+                .Include(_ => _.RecordLinks)
+                .FirstOrDefault(_ => _.RecordUrl == url);
         }
     }
 }

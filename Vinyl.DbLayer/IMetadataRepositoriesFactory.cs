@@ -11,5 +11,6 @@ namespace Vinyl.DbLayer
         SearchItemRepository CreateSearchItemRepository();
         RecordArtRepository CreateRecordArtRepository();
         RecordLinksRepository CreateRecordLinksRepository();
+        StatisticRepository CreateStatisticRepository();
     }
 }

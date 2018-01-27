@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{name}"
 @model Vinyl.Site.Pages.RecordModel
 @{
     ViewData["Title"] = $"{Model.Record.Album} / {Model.Record.Artist}";
@@ -10,7 +10,7 @@
         <div class="container tim-row">
 
             <div class="record-info-block">
-                <h3>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h3>
+                <h1>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h1>
                 <input type="hidden" value="@Model.Record.Id" name="recordId">
                 <div class="row">
                     <div class="col-sm-6 record-info">
@@ -40,8 +40,7 @@
                     }
                     <div class="row">
                         <div class="col-sm-6 record-info">
-                            <h4 class="text-success"><strong>Discogs <a target="_blank" class="label label-success" href="@discogsLink.link">@discogsLink.text</a> </strong></h4> 
-
+                            <h4 class="text-success"><strong>Discogs <a target="_blank" class="label label-success" href="@discogsLink.link">@discogsLink.text</a> </strong></h4>
                             <div>
                                 <div>
                                     <p><strong>Список композиций</strong></p>
@@ -55,13 +54,13 @@
                                     <p><strong>Список ссылок на видео</strong></p>
                                     @foreach (var videoLink in Model.GetDiscogsVideos())
                                     {
-                                    <text>- </text><a target="_blank" href="@videoLink.url">@videoLink.title</a><br />
+                                        <text>- </text><a target="_blank" href="@videoLink.url">@videoLink.title</a><br />
                                     }
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 record-links">
-                            <img onload="" src="./Index?id=@Model.Record.Id.Compress()&handler=RecordImage" height="200" />
+                            <img onload="" src="./Index?id=@Model.Record.Id&handler=RecordImage" height="200" />
                         </div>
                     </div>
                 </div>
@@ -84,9 +83,9 @@
                             @foreach (var risLink in Model.Record.RecordInShopLink)
                             {
                                 var shopItem = Model.GetShopBy(risLink);
-                                <tr>                                   
+                                <tr>
                                     <td>
-                                         <div class="row">
+                                        <div class="row">
                                             <div class="col-lg-3">
                                                 @if (!string.IsNullOrEmpty(risLink.ShopImageUrl))
                                                 {
@@ -109,14 +108,15 @@
                                                 }
                                             </div>
                                         </div>
-                                        
+
                                     </td>
                                     <td style="word-break: break-all;">
-                                        <p class="ShopRecordTitle-info"  style="word-break: break-all;"><strong>@risLink.ShopRecordTitle</strong><br />
-                                        @if (!string.IsNullOrEmpty(risLink.ShopInfo))
-                                        {
-                                            @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))
-                                        }
+                                        <p class="ShopRecordTitle-info" style="word-break: break-all;">
+                                            <strong>@risLink.ShopRecordTitle</strong><br />
+                                            @if (!string.IsNullOrEmpty(risLink.ShopInfo))
+                                            {
+                                                @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))
+                                            }
                                         </p>
                                         @if (!string.IsNullOrEmpty(risLink.Barcode))
                                         {
@@ -168,7 +168,7 @@
                                             </div>
                                         </div>
 
-                                        <p class="text-muted"  style="word-break: break-all;">Информация обновлена: @risLink.UpdatedAt.ToString("dd.MM.yyyy")</p>
+                                        <p class="text-muted" style="word-break: break-all;">Информация обновлена: @risLink.UpdatedAt.ToString("dd.MM.yyyy")</p>
                                         <br />
                                         <a target="_blank" class="label label-success" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">В магазин</a>
                                     </td>

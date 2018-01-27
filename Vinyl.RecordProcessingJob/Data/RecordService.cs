@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Unidecode.NET;
 using Vinyl.Common;
 using Vinyl.DbLayer;
 using Vinyl.DbLayer.Models;
@@ -27,6 +28,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist).Trim();
                 var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album).Trim();
                 var year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
+                var url = $"{artist}-{album}".Replace("'", "").Replace("\"", "").Replace(" ", "-").Replace("_", "-").Unidecode();
 
                 var record = repository.FindBy(artist, album);
                 if (record == null)
@@ -39,6 +41,7 @@ namespace Vinyl.RecordProcessingJob.Data
                         CreatedAt = DateTime.UtcNow
                     };
 
+                    record.RecordUrl = url;
                     record.Year = year;
                     record.Title = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
                     record.UpdatedAt = DateTime.UtcNow;
@@ -47,8 +50,9 @@ namespace Vinyl.RecordProcessingJob.Data
                     repository.Commit();
                     isNew = true;
                 }
-                else if (record.Year != year)
+                else if (record.Year != year || string.IsNullOrEmpty(record.RecordUrl))
                 {
+                    record.RecordUrl = url;
                     record.Year = year;
                     record.Title = $"{record.Artist} / {record.Album}".AddIfExist(" / ", record.Year?.ToString());
                     record.UpdatedAt = DateTime.UtcNow;
@@ -150,7 +154,7 @@ namespace Vinyl.RecordProcessingJob.Data
                     searchItem.RecordId = record.Id;
                     searchItem.CountryCode = countryCode;
                 }
-
+                
                 var linkPrices = linksRepository.FindBy(record.Id, countryCode).Select(_ => new
                 {
                     _.Price,
@@ -164,6 +168,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 .Where(_ => _.UpdatedAt > DateTime.UtcNow.AddDays(-GlobalConstants.RecordInShopeAliveDaysCount))
                 .ToList();
 
+                searchItem.RecordUrl = record.RecordUrl;
                 searchItem.PriceFrom = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Min();
                 searchItem.PriceTo = linkPrices.Select(_ => _.PriceBy > 0 ? _.PriceBy : _.Price ?? 0).Max();
                 searchItem.Sell = linkPrices.All(_ => !_.isActive) ? false : true;
