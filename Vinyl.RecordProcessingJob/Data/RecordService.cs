@@ -28,7 +28,7 @@ namespace Vinyl.RecordProcessingJob.Data
                 var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist).Trim();
                 var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album).Trim();
                 var year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
-                var url = $"{artist}-{album}".Replace("'", "").Replace("\"", "").Replace(" ", "-").Replace("_", "-").Unidecode();
+                var url = ParseSpecialFields.SplitWords($"{artist}-{album}").Unidecode();
 
                 var record = repository.FindBy(artist, album);
                 if (record == null)
@@ -51,6 +51,7 @@ namespace Vinyl.RecordProcessingJob.Data
                     isNew = true;
                 }
                 else if (record.Year != year || string.IsNullOrEmpty(record.RecordUrl))
+                //else if (record.Year != year || record.RecordUrl != url) // revert after
                 {
                     record.RecordUrl = url;
                     record.Year = year;

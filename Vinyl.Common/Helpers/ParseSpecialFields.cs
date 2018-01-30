@@ -11,6 +11,15 @@ namespace Vinyl.Common
         private static readonly Regex _regexForDecimals = new Regex(@"[^0-9\.]+");
         private static readonly Regex _regexForWord = new Regex("[:!@#$%^&*()}{|\":?><\\;'/.,~]");
 
+        public static string SplitWords(string value)
+            => string.IsNullOrWhiteSpace(value)
+                ? string.Empty
+                : value
+                    .Replace(((char)39).ToString(), "").Replace(((char)8206).ToString(), "")
+                    .Replace("'", "").Replace("\"", "")
+                    .Replace("..", "-").Replace(".", "-")
+                    .Replace(" ", "-").Replace("_", "-");
+
         public static string DistinctWords(IEnumerable<string> values, string delimiter = ",")
         {
             if (values?.Any() == true)
@@ -36,7 +45,7 @@ namespace Vinyl.Common
         {
             if (!string.IsNullOrEmpty(@value))
             {
-                @value = @value.Replace("LP 2", string.Empty).Replace("2 LP", string.Empty);
+                @value = @value.Replace("LP 2", string.Empty).Replace("2 LP", string.Empty).Replace("ё", "е");
                 @value = RemovePartFromString(@value, '(', ')', 3);
                 @value = RemovePartFromString(@value, '[', ']', 1);
                 @value = RemovePartFromString(@value, '=');

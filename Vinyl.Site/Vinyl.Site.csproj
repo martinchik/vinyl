@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+    <UserSecretsId>1c824c2a-064d-471b-8d2c-8e2afa6c1750</UserSecretsId>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Logs\**" />
@@ -12,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.3" />
     <PackageReference Include="Serilog.Extensions.Logging.File" Version="2.0.0-dev-00023" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.1" />
@@ -22,6 +24,8 @@
     <ProjectReference Include="..\Vinyl.Metadata\Vinyl.Metadata.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <Content Update="wwwroot\google951a2aa5a27d7410.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

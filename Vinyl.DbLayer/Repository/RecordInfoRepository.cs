@@ -57,5 +57,13 @@ namespace Vinyl.DbLayer.Repository
                 .Include(_ => _.RecordLinks)
                 .FirstOrDefault(_ => _.RecordUrl == url);
         }
+
+        public IEnumerable<string> GetAllUrls()
+        {
+            return Set
+                .Where(_ =>!string.IsNullOrEmpty(_.RecordUrl))
+                .Select(_ => _.RecordUrl)
+                .AsEnumerable();
+        }
     }
 }

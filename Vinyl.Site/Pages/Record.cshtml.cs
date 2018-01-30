@@ -53,7 +53,7 @@ namespace Vinyl.Site.Pages
 
         public IEnumerable<(string title, string url)> GetDiscogsVideos()
           => Record?.RecordLinks?.FirstOrDefault(_ => _.ToType == (int)Vinyl.Metadata.RecordLinkType.Discogs)
-               .Videos?.Split("|").Select(line => 
+               .Videos?.Split("|").Where(_ => !string.IsNullOrEmpty(_)).Select(line => 
                {
                    var videoItem = line.Split("$");
                    return videoItem.Length > 1 ? (videoItem[0], videoItem[1]) : (string.Empty, string.Empty);

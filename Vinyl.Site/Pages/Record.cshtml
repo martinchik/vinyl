@@ -1,28 +1,29 @@
 ﻿@page "{name}"
 @model Vinyl.Site.Pages.RecordModel
 @{
-    ViewData["Title"] = $"{Model.Record.Album} / {Model.Record.Artist}";
-    ViewData["PageClass"] = "landing-page";
+    ViewData["Title"] = $"Пластинка {Model.Record.Album} / {Model.Record.Artist}";
+    ViewData["PageClass"] = "landing-page main-page";
+    ViewData["PageKeywords"] = $"{Model.Record.Album},{Model.Record.Artist},{Model.Record.Year}";
 }
 
-<div class="main main-raised">
+<div class="main main-raised" style="margin-top:80px;">
     <div class="section section-basic">
         <div class="container tim-row">
 
             <div class="record-info-block">
-                <h1>@Model.Record.Album / @Model.Record.Artist  / @Model.Record.Year</h1>
+                <h1>@Html.Raw(Model.Record.Album + " / " + Model.Record.Artist + " / " + Model.Record.Year)</h1>
                 <input type="hidden" value="@Model.Record.Id" name="recordId">
                 <div class="row">
                     <div class="col-sm-6 record-info">
-                        <strong>Альбом: </strong>@Model.Record.Album<br />
-                        <strong>Артист: </strong>@Model.Record.Artist<br />
-                        <strong>Год: </strong>@Model.Record.Year<br />
+                        <strong>Альбом: </strong>@Html.Raw(Model.Record.Album)<br />
+                        <strong>Артист: </strong>@Html.Raw(Model.Record.Artist)<br />
+                        <strong>Год: </strong>@Html.Raw(Model.Record.Year)<br />
 
                         @if (!string.IsNullOrEmpty(Model.Record.Info))
                         {
-                            <strong>Дополнительно: </strong>@Model.Record.Info<br />
+                        <strong>Дополнительно: </strong>@Html.Raw(Model.Record.Info)<br />
                         }
-                        <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink()">YouTube</a></p>
+                        <p class="youtube-info"><strong>Поиск на:</strong> <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink()" rel="nofollow">YouTube</a></p>
                     </div>
                     <div class="col-sm-6 record-links">
 
@@ -34,33 +35,33 @@
             {
                 <hr />
                 <div class="record-links-block">
-                    <h3>Информация из других источников</h3>
+                    <h2>Информация из других источников</h2>
                     @{
                         var discogsLink = Model.GetDiscogsLink();
                     }
                     <div class="row">
                         <div class="col-sm-6 record-info">
-                            <h4 class="text-success"><strong>Discogs <a target="_blank" class="label label-success" href="@discogsLink.link">@discogsLink.text</a> </strong></h4>
+                            <h3 class="text-success"><strong>Discogs <a target="_blank" class="label label-success" href="@discogsLink.link">@Html.Raw(discogsLink.text)</a> </strong></h3>
                             <div>
                                 <div>
-                                    <p><strong>Список композиций</strong></p>
+                                    <p><strong>Список композиций:</strong></p>
                                     @foreach (var track in Model.GetDiscogsTracks())
                                     {
-                                        <p>- @track <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink(track)">YouTube</a></p>
+                                    <p>- @Html.Raw(track) <a target="_blank" class="label label-info" href="@Model.ToYouTubeLink(track)" rel="nofollow">YouTube</a></p>
                                     }
                                 </div>
                                 <br />
                                 <div>
-                                    <p><strong>Список ссылок на видео</strong></p>
+                                    <p><strong>Список ссылок на видео:</strong></p>
                                     @foreach (var videoLink in Model.GetDiscogsVideos())
                                     {
-                                        <text>- </text><a target="_blank" href="@videoLink.url">@videoLink.title</a><br />
+                                        <text>- </text><a target="_blank" href="@videoLink.url" rel="nofollow">@Html.Raw(videoLink.title)</a><br />
                                     }
                                 </div>
                             </div>
                         </div>
                         <div class="col-sm-6 record-links">
-                            <img onload="" src="./Index?id=@Model.Record.Id&handler=RecordImage" height="200" />
+                            <img alt="@Model.Record.RecordUrl" src="./Index?id=@Model.Record.Id&handler=RecordImage" height="200" />
                         </div>
                     </div>
                 </div>
@@ -93,18 +94,18 @@
                                                 }
                                             </div>
                                             <div class="col-lg-9">
-                                                <a target="_blank" class="btn btn-success btn-round btn-sm" href="@shopItem.Url">@shopItem.Title</a> <br />
+                                                <a target="_blank" class="btn btn-success btn-round btn-sm" href="@shopItem.Url">@Html.Raw(shopItem.Title)</a> <br />
                                                 @if (shopItem.ShopType == (int)ShopType.Private)
                                                 {
                                                     <strong>Частная коллекция</strong><br />
                                                 }
                                                 @if (!string.IsNullOrEmpty(shopItem.Phones))
                                                 {
-                                                    <strong>Телефон: </strong><a href="tel:@shopItem.Phones">@shopItem.Phones</a><br />
+                                                    <strong>Телефон: </strong><a href="tel:@shopItem.Phones">@Html.Raw(shopItem.Phones)</a><br />
                                                 }
                                                 @if (!string.IsNullOrEmpty(shopItem.Emails))
                                                 {
-                                                    <strong>E-mail: </strong><a href="mailto:@shopItem.Emails">@shopItem.Emails</a><br />
+                                                    <strong>E-mail: </strong><a href="mailto:@shopItem.Emails">@Html.Raw(shopItem.Emails)</a><br />
                                                 }
                                             </div>
                                         </div>
@@ -112,7 +113,7 @@
                                     </td>
                                     <td style="word-break: break-all;">
                                         <p class="ShopRecordTitle-info" style="word-break: break-all;">
-                                            <strong>@risLink.ShopRecordTitle</strong><br />
+                                            <strong>@Html.Raw(risLink.ShopRecordTitle)</strong><br />
                                             @if (!string.IsNullOrEmpty(risLink.ShopInfo))
                                             {
                                                 @Html.Raw(string.Join("<br />", risLink.ShopInfo.Split("\n")))
@@ -120,41 +121,41 @@
                                         </p>
                                         @if (!string.IsNullOrEmpty(risLink.Barcode))
                                         {
-                                            <text>Код: @risLink.Barcode</text><br />
+                                            <text>Код: @Html.Raw(risLink.Barcode)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.CountInPack))
                                         {
-                                            <text>Количество: @risLink.CountInPack</text><br />
+                                            <text>Количество: @Html.Raw(risLink.CountInPack)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.YearRecorded))
                                         {
-                                            <text>Год записи: @risLink.YearRecorded</text><br />
+                                            <text>Год записи: @Html.Raw(risLink.YearRecorded)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.Country))
                                         {
-                                            <text>Страна: @risLink.Country</text><br />
+                                            <text>Страна: @Html.Raw(risLink.Country)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.Label))
                                         {
-                                            <text>Лэйбл: @risLink.Label</text><br />
+                                            <text>Лэйбл: @Html.Raw(risLink.Label)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.State))
                                         {
-                                            <text>Состояние: @risLink.State</text><br />
+                                            <text>Состояние: @Html.Raw(risLink.State)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.Style))
                                         {
-                                            <text>Стиль: @risLink.Style</text><br />
+                                            <text>Стиль: @Html.Raw(risLink.Style)</text><br />
                                         }
                                         @if (!string.IsNullOrEmpty(risLink.ViewType))
                                         {
-                                            <text>Вид: @risLink.ViewType</text><br />
+                                            <text>Вид: @Html.Raw(risLink.ViewType)</text><br />
                                         }
                                     </td>
                                     <td>
                                         <div class="row">
                                             <div class="col-lg-3 text-center">
-                                                <div style="font-size:x-large"><strong>@risLink.PriceBy?.ToString("F2")</strong></div>
+                                                <div style="font-size:x-large"><strong>@Html.Raw(risLink.PriceBy?.ToString("F2"))</strong></div>
                                             </div>
                                             <div class="col-lg-9 text-center" style="font-size:medium;padding-top:3px">
                                                 @if (!Model.IsActive(risLink))
@@ -168,7 +169,7 @@
                                             </div>
                                         </div>
 
-                                        <p class="text-muted" style="word-break: break-all;">Информация обновлена: @risLink.UpdatedAt.ToString("dd.MM.yyyy")</p>
+                                        <p class="text-muted" style="word-break: break-all;">Информация обновлена: @Html.Raw(risLink.UpdatedAt.ToString("dd.MM.yyyy"))</p>
                                         <br />
                                         <a target="_blank" class="label label-success" href="@(!string.IsNullOrEmpty(risLink.ShopUrl) ? risLink.ShopUrl : shopItem.Url)">В магазин</a>
                                     </td>

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Vinyl.Site.SiteMapModel;
 
 namespace Vinyl.Site
 {
@@ -29,6 +30,8 @@ namespace Vinyl.Site
 
             DbLayer.DatabaseServiceRegistrator.Register(Configuration, services);
             DbLayer.DatabaseServiceRegistrator.MigrateDataBase(Configuration).GetAwaiter().GetResult();
+
+            services.AddTransient<ISitemapBuilder, SitemapBuilder>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

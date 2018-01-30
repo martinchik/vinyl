@@ -1,9 +1,8 @@
 ﻿@page
 @model IndexModel
 @{
-    Layout = "_LandingLayout";
     ViewData["Title"] = "Найти и купить винил (виниловую пластинку)";
-    ViewData["PageClass"] = "landing-page";
+    ViewData["PageClass"] = "landing-page main-page";
     var isExists = !string.IsNullOrEmpty(Model.SearchText);
 }
 
@@ -50,18 +49,18 @@
                     {
                         <tr>
                             <td width="100">
-                                <img onload="" src="./Index?id=@record.RecordId&handler=RecordImage" height="60" />
+                                <img alt="@record.RecordUrl" src="./Index?id=@record.RecordId&handler=RecordImage" height="60" />
                             </td>
                             <td>
-                                <div><a asp-page="./Record" asp-route-name="@record.RecordUrl">@record.TextLine1</a></div>
-                                <div>@Model.GetSecondLineText(record)</div>
+                                <div><a asp-page="./Record" asp-route-name="@record.RecordUrl">@Html.Raw(record.TextLine1)</a></div>
+                                <div>@Html.Raw(Model.GetSecondLineText(record))</div>
                             </td>
                             <td>
                                 @if (!record.Sell)
                                 {
                                     <p>Не продается</p>
                                 }
-                                <p>@Model.GetPriceText(record)</p>
+                                <p>@Html.Raw(Model.GetPriceText(record))</p>
                             </td>
                         </tr>
                     }
