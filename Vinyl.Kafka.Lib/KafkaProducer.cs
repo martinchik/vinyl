@@ -15,12 +15,11 @@ namespace Vinyl.Kafka.Lib
         private readonly Producer<Null, string> _producer;
         private readonly string _topic;
         private readonly IDictionary<string, object> _producerConfig;
-        
+
         public KafkaProducer(string topic, string host)
         {
             _producerConfig = new Dictionary<string, object>
             {
-                { "group.id", "vinylgroup"},
                 { "bootstrap.servers", host }
             };
 
@@ -41,7 +40,7 @@ namespace Vinyl.Kafka.Lib
         }
 
         public Task<string> SendMessage(T @object)
-        {            
+        {
             var msg = Newtonsoft.Json.JsonConvert.SerializeObject(@object);
             return _producer.ProduceAsync(_topic, null, msg).ContinueWith(_ =>
             {

@@ -11,7 +11,6 @@ using Vinyl.ParsingJob.Parsers;
 using Vinyl.ParsingJob.Parsers.ExcelParsers;
 using Vinyl.ParsingJob.Parsers.GoogleDriveParsers;
 using Vinyl.ParsingJob.Parsers.HtmlParsers;
-using Vinyl.ParsingJob.Parsers.OnlinerParsers;
 
 namespace Vinyl.ParsingJob.Data
 {
@@ -56,14 +55,10 @@ namespace Vinyl.ParsingJob.Data
                 var strategies = strategiesRepository.GetAll().ToList();
 
                 if (
-#if DEBUG
-                    ValidateAndAddShop(FirstData.GetMuzRayShop(), shops, shopsRepository)
-#else
                     ValidateAndAddShop(FirstData.GetLongPlayShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetMuzRayShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetVinylShopShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetTanyaOnlinerShop(), shops, shopsRepository)
-#endif
                     )
                 {
                     shopsRepository.Commit();
@@ -122,18 +117,24 @@ namespace Vinyl.ParsingJob.Data
         {
             switch (strategyInfo.ClassName)
             {
-                case "VinylShopExcelParserStrategy": return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
-                case "VinylShopMMExcelParserStrategy": return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
-                case "LongPlayHtmlParserStrategy": return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
-                case "VinylShopHtmlParserStrategy": return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
-                case "VinylMuzRayGoogleExcelParserStrategy": return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
-                case "TanyaOnlinerPostParserStrategy": return new TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);                    
+                case "VinylShopExcelParserStrategy":
+                    return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                case "VinylShopMMExcelParserStrategy":
+                    return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                case "LongPlayHtmlParserStrategy":
+                    return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "VinylShopHtmlParserStrategy":
+                    return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "VinylMuzRayGoogleExcelParserStrategy":
+                    return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "TanyaOnlinerPostParserStrategy":
+                    return new Parsers.OnlinerParsers.TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
                 default:
                     return null;
             }
@@ -161,12 +162,17 @@ namespace Vinyl.ParsingJob.Data
                     else if (!strategyInfo.Parameters.ContainsKey("ref-link-text")) return ValidationFailed(strategyInfo, "Key 'ref-link-text' isn't exist in parameters");
                     else return true;
                 case "LongPlayHtmlParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
                 case "VinylShopHtmlParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
                 case "VinylMuzRayGoogleExcelParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
                 case "TanyaOnlinerPostParserStrategy":
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
-
                 default:
                     return true;
             }

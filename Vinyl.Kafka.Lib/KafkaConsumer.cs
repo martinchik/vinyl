@@ -14,12 +14,12 @@ namespace Vinyl.Kafka.Lib
         private readonly Consumer<Null, string> _consumer;
         private readonly string _topic;
         private readonly IDictionary<string, object> _consumerConfig;
-        
+
         public KafkaConsumer(string topic, string host)
-        {            
+        {
             _consumerConfig = new Dictionary<string, object>
             {
-                { "group.id", "vinylgroup"},
+                { "group.id", "vinyl-group"},
                 { "bootstrap.servers", host }
             };
             _topic = topic;
@@ -36,16 +36,8 @@ namespace Vinyl.Kafka.Lib
             {
                 Console.WriteLine($"Statistics: {stat}");
             };
-            _consumer.OnConsumeError += (sender, mess) =>
-            {
-                Console.WriteLine($"Consume error: {mess}");
-            };
-            _consumer.OnMessage += (sender, mess) =>
-            {
-                Console.WriteLine($"On message: {mess}");
-            };
         }
-        
+
         public void SubscribeOnTopic(Action<T, string> action, Action keepAliveAction, CancellationToken cancellationToken)
         {
             if (_consumer.Assignment?.Count > 0)
@@ -55,15 +47,15 @@ namespace Vinyl.Kafka.Lib
 
             while (!cancellationToken.IsCancellationRequested)
             {
-                keepAliveAction();
-
                 Message<Null, string> msg;
                 if (_consumer.Consume(out msg, TimeSpan.FromMilliseconds(10)))
                 {
-                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");                    
+                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");
                 }
+
+                keepAliveAction();
             }
-        }        
+        }
 
         public void Dispose()
         {

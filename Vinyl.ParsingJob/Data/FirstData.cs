@@ -32,7 +32,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = (int)Metadata.StrategyStatus.Active
+                    Status = 0
                 }
             }
         };
@@ -60,7 +60,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = (int)Metadata.StrategyStatus.Active
+                    Status = 0
                 },
                 new ShopParseStrategyInfo()
                 {
@@ -77,7 +77,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text","СКАЧАТЬ" }
                     }.ToParametersDbString(),
-                    Status = (int)Metadata.StrategyStatus.Soon,
+                    Status = 1,
                     DefaultCurrency = "rub"
                 },
                 new ShopParseStrategyInfo()
@@ -95,7 +95,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text","СКАЧАТЬ" }
                     }.ToParametersDbString(),
-                    Status = (int)Metadata.StrategyStatus.Soon,
+                    Status = 1,
                     DefaultCurrency = "rub"
                 },
                 new ShopParseStrategyInfo()
@@ -113,7 +113,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text", "Скачать каталог" }
                     }.ToParametersDbString(),
-                    Status = (int)Metadata.StrategyStatus.Active,
+                    Status = 0,
                     DefaultCurrency = "rub"
                 }
             }
@@ -142,7 +142,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = (int)Metadata.StrategyStatus.Active
+                    Status = 0
                 }
             }
         };
@@ -158,9 +158,9 @@ namespace Vinyl.ParsingJob.Data
             UpdatedAt = DateTime.UtcNow,
             Emails = "",
             Phones = "+375445404005; 3755257604062",
-            ShopType = (int)Metadata.ShopType.Private,
+            ShopType = 1,
             ShopParseStrategyInfo = new[]
-           {
+            {
                 new ShopParseStrategyInfo()
                 {
                     Id = Guid.NewGuid(),
@@ -171,7 +171,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = (int)Metadata.StrategyStatus.Active,
+                    Status = 0,
                     DefaultCurrency = "$"
                 }
             }
