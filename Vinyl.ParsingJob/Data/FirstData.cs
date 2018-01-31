@@ -32,7 +32,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = 0
+                    Status = (int)Metadata.StrategyStatus.Active
                 }
             }
         };
@@ -60,7 +60,7 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = 0
+                    Status = (int)Metadata.StrategyStatus.Active
                 },
                 new ShopParseStrategyInfo()
                 {
@@ -77,7 +77,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text","СКАЧАТЬ" }
                     }.ToParametersDbString(),
-                    Status = 1,
+                    Status = (int)Metadata.StrategyStatus.Soon,
                     DefaultCurrency = "rub"
                 },
                 new ShopParseStrategyInfo()
@@ -95,7 +95,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text","СКАЧАТЬ" }
                     }.ToParametersDbString(),
-                    Status = 1,
+                    Status = (int)Metadata.StrategyStatus.Soon,
                     DefaultCurrency = "rub"
                 },
                 new ShopParseStrategyInfo()
@@ -113,7 +113,7 @@ namespace Vinyl.ParsingJob.Data
                         { "class-name", "post-content" },
                         { "ref-link-text", "Скачать каталог" }
                     }.ToParametersDbString(),
-                    Status = 0,
+                    Status = (int)Metadata.StrategyStatus.Active,
                     DefaultCurrency = "rub"
                 }
             }
@@ -142,7 +142,37 @@ namespace Vinyl.ParsingJob.Data
                     UpdatedAt = DateTime.UtcNow,
                     ProcessedAt = DateTime.UtcNow.AddDays(-5),
                     UpdatePeriodInHours = 12,
-                    Status = 0
+                    Status = (int)Metadata.StrategyStatus.Active
+                }
+            }
+        };
+
+        public static ShopInfo GetTanyaOnlinerShop() => new ShopInfo()
+        {
+            Id = new Guid("DA33118F-AA27-4FB1-B086-9ECEB56FD0FD"),
+            Title = "Колекционер Ta-nya",
+            Url = "https://profile.onliner.by/user/203412",
+            City = "Minsk",
+            CountryCode = "BY",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Emails = "",
+            Phones = "+375445404005; 3755257604062",
+            ShopType = (int)Metadata.ShopType.Private,
+            ShopParseStrategyInfo = new[]
+           {
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "TanyaOnlinerPostParserStrategy",
+                    StartUrl = "9460502;15404915;9448474;19745827;13887461",
+                    ShopId = new Guid("DA33118F-AA27-4FB1-B086-9ECEB56FD0FD"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTime.UtcNow.AddDays(-5),
+                    UpdatePeriodInHours = 12,
+                    Status = (int)Metadata.StrategyStatus.Active,
+                    DefaultCurrency = "$"
                 }
             }
         };

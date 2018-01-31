@@ -20,6 +20,7 @@ namespace Vinyl.Kafka.Lib
         {
             _producerConfig = new Dictionary<string, object>
             {
+                { "group.id", "vinylgroup"},
                 { "bootstrap.servers", host }
             };
 

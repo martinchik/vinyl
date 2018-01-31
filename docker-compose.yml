@@ -21,7 +21,7 @@ services:
   zookeeper:
     hostname: zookeeper
     container_name: zookeeper
-    image: wurstmeister/zookeeper
+    image: zookeeper:3.5
     restart: always
     expose:
       - 2181
@@ -41,11 +41,10 @@ services:
       ES_JAVA_OPTS: -Xms256m -Xmx256m
       KAFKA_JMX_OPTS: -Xms256m -Xmx256m
       KAFKA_HEAP_OPTS: -Xmx256M -Xms256M
-      KAFKA_CREATE_TOPICS: "dirty_records:1:1"
+      KAFKA_BROKER_ID: 0
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181    
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_LOG_RETENTION_HOURS: 6
-      KAFKA_BROKER_ID: 0
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -67,7 +66,6 @@ services:
     environment:
       DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
       PROXY_PREFIX: "parsing"
-      CLEAR_DB: "0"
       KAFKA_DIRTY_RECORDS_TOPIC: "dirty_records"
       KAFKA_CONNECT: "kafka:9092"
     networks:
@@ -109,7 +107,8 @@ services:
       context: .
       dockerfile: Vinyl.Site/Dockerfile
     environment:
-      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"   
+      DB_CONNECTION_STRING: "host=postgresdb;port=5432;database=vinylshop;username=dbuser;password=dbpwd"  
+      CLEAR_DB: "0" 
     networks:
       - vinylnetwork
 

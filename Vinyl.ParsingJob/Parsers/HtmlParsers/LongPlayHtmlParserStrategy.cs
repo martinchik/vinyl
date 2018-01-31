@@ -13,7 +13,6 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
     public class LongPlayHtmlParserStrategy : BaseParserStrategy
     {
         private readonly int _pageSize = 96;
-        private readonly int _degreeOfParalellism = 10;
         private string _urlTemplate;
 
         public LongPlayHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null) 
@@ -34,15 +33,11 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             return string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
         }
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
         {
             try
             {
-                return GetRecordNodes(pageData, "//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]")
-                    .AsParallel()
-                    .WithCancellation(token)
-                    .WithDegreeOfParallelism(_degreeOfParalellism)
-                    .Select(recordNode =>
+                return GetRecordNodes(pageData, "//div[contains(@class, 'block_all')]//div[contains(@class, 'shs-descr')]").Select(recordNode =>
                 {
                     token.ThrowIfCancellationRequested();
 
