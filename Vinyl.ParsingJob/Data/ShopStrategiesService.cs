@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using Vinyl.Common;
 using Vinyl.DbLayer;
+using Vinyl.DbLayer.Repository;
 using Vinyl.Metadata;
 using Vinyl.ParsingJob.Parsers;
 using Vinyl.ParsingJob.Parsers.ExcelParsers;
@@ -33,14 +34,32 @@ namespace Vinyl.ParsingJob.Data
 
         private List<(ShopInfo shop, ShopParseStrategyInfo strategy)> GetStrategies(CancellationToken token)
         {
+            using (var shopsRepository = _metadataFactory.CreateShopInfoRepository())
             using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
             {
-                return strategiesRepository
+                var results = strategiesRepository
                     .GetAllWithShops()
                     .AsEnumerable()
                     .Select(_ => (shop: _.Shop.ToMetaData(), strategy: _.ToMetaData()))
                     .ToList();
+
+                if (ValidateAndAddShop(FirstData.GetLongPlayShop(), results, shopsRepository) ||
+                    ValidateAndAddShop(FirstData.GetMuzRayShop(), results, shopsRepository) ||
+                    ValidateAndAddShop(FirstData.GetVinylShopShop(), results, shopsRepository) 
+                    )
+                    shopsRepository.Commit();
+
+                return results;
             }
+        }
+
+        private bool ValidateAndAddShop(DbLayer.Models.ShopInfo shopInfo, List<(ShopInfo shop, ShopParseStrategyInfo strategy)> list, ShopInfoRepository repository)
+        {
+            if (list.Any(_ => _.shop.Id == shopInfo.Id))
+                return false;
+
+            repository.Add(shopInfo);
+            return true;
         }
 
         public void UpdateStartegyStatus(ShopParseStrategyInfo strategyInfo, int count)
