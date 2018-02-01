@@ -34,10 +34,21 @@
                 <li>Разрабатывается отдельный "плагин" для данного продавца, для "извлечения" информации с его источника</li>
                 <li>Плагин добавляется на сайт</li>
                 <li>Извлеченная информация приводится к стандартному виду, общему для всех</li>
+                <li>Если цена указана не в валюте страны, то происходит автоматическая конвертация по текущему курсус сайта <a href="http://www.nbrb.by/statistics/rates/ratesDaily.asp">www.nbrb.by</a></li>
                 <li>Информация о новых исполнителях и альбомах ищется на сайтах <a href="https://www.discogs.com">www.discogs.com</a> и <a href="https://www.youtube.com/">www.youtube.com</a></li>
                 <li>Результат добавляется или обновляется в общем каталоге</li>
                 <li>Обновление информации от продавцов происходит 1-2 раза в день</li>
                 <li>Если в течении 5 дней от продавца нет обновления по одной из пластинок, то эта пластинка удаляется из продающихся</li>
+            </ul>
+            <br />
+            <div class="title">
+                <h6><strong>Хотелось бы сделать</strong></h6>
+            </div>
+            <ul>
+                <li>Авторизацию через Google, Facebook, VK для регистрации себя как частного продавца</li>
+                <li>Добавление списка своих платинок для продажи. Как частная колекция.</li>
+                <li>Добавить возможность работы в других странах</li>
+                <li>Подписка на "Изменение цены", "Новые пластинки"</li>
             </ul>
 
             <br />
@@ -47,7 +58,7 @@
             <div class="row text-center tim-row statistics-group">
                 <div class="col-lg-3 text-center">
                     <div class="text-success"><strong>@Model.Statistic?.CountStrategies</strong></div>
-                <p>Источников</p>
+                    <p>Источников</p>
                 </div>
                 <div class="col-lg-3 text-center">
                     <div class="text-success"><strong>@Model.Statistic.CountParsedRecords</strong></div>

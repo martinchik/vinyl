@@ -23,6 +23,16 @@ namespace Vinyl.ParsingJob.Processor
                 string.IsNullOrEmpty(record.Artist))
                 return false;
 
+            record.Album = record.Album.Replace("  ", " ").Trim();
+            record.Artist = record.Artist.Replace("  ", " ").Trim();
+
+            if (string.IsNullOrEmpty(record.Album) || record.Album.Length < 2 ||
+                string.IsNullOrEmpty(record.Artist) || record.Artist.Length < 2)
+            {
+                _logger.LogTrace($"Record with artist:{record.Artist} and Album:{record.Album} was skipped");
+                return false;
+            }
+
             record.ShopId = strategy.ShopId;
             record.ShopParseStrategyId = strategy.Id;
 

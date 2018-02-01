@@ -34,7 +34,6 @@ namespace Vinyl.DbLayer
         {
             foreach (var it in context.ShopParseStrategyInfo.ToArray())
             {
-                it.LastProcessedCount = 0;
                 it.ProcessedAt = DateTime.UtcNow.AddDays(-1);
                 context.ShopParseStrategyInfo.Update(it);
             }
