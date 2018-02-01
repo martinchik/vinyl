@@ -30,7 +30,7 @@ namespace Vinyl.ParsingJob.Parsers
 
         protected abstract string GetNextPageUrl(int pageIndex);
 
-        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token);
+        protected abstract IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token);
 
         protected virtual async Task<string> DownloadPageHtml(int pageIndex, CancellationToken token)
         {
@@ -53,7 +53,7 @@ namespace Vinyl.ParsingJob.Parsers
 
                     if (!string.IsNullOrEmpty(pageData))
                     {
-                        foreach (var record in ParseRecordsFromPage(pageData, token))
+                        foreach (var record in ParseRecordsFromPage(pageIndex, pageData, token))
                         {
                             if (_dataLimit <= (readedAllCount + readedPageCount))
                             {

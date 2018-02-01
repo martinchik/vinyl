@@ -146,5 +146,35 @@ namespace Vinyl.ParsingJob.Data
                 }
             }
         };
+
+        public static ShopInfo GetTanyaOnlinerShop() => new ShopInfo()
+        {
+            Id = new Guid("DA33118F-AA27-4FB1-B086-9ECEB56FD0FD"),
+            Title = "Колекционер Ta-nya",
+            Url = "https://profile.onliner.by/user/203412",
+            City = "Minsk",
+            CountryCode = "BY",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Emails = "",
+            Phones = "+375445404005; 3755257604062",
+            ShopType = 1,
+            ShopParseStrategyInfo = new[]
+            {
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "TanyaOnlinerPostParserStrategy",
+                    StartUrl = "9460502;15404915;9448474;19745827;13887461",
+                    ShopId = new Guid("DA33118F-AA27-4FB1-B086-9ECEB56FD0FD"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTime.UtcNow.AddDays(-5),
+                    UpdatePeriodInHours = 12,
+                    Status = 0,
+                    DefaultCurrency = "$"
+                }
+            }
+        };
     }
 }

@@ -46,7 +46,7 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
             return await DownloadLastFileFromGoogleFolder(GetNextPageUrl(pageIndex), token);
         }
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
         {
             var fileName = pageData;
             try

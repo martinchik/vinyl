@@ -34,28 +34,41 @@ namespace Vinyl.ParsingJob.Data
 
         private List<(ShopInfo shop, ShopParseStrategyInfo strategy)> GetStrategies(CancellationToken token)
         {
-            using (var shopsRepository = _metadataFactory.CreateShopInfoRepository())
+            ValidateStrategies(token);
+
             using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
             {
-                var results = strategiesRepository
+                return strategiesRepository
                     .GetAllWithShops()
                     .AsEnumerable()
                     .Select(_ => (shop: _.Shop.ToMetaData(), strategy: _.ToMetaData()))
                     .ToList();
-
-                if (ValidateAndAddShop(FirstData.GetLongPlayShop(), results, shopsRepository) ||
-                    ValidateAndAddShop(FirstData.GetMuzRayShop(), results, shopsRepository) ||
-                    ValidateAndAddShop(FirstData.GetVinylShopShop(), results, shopsRepository) 
-                    )
-                    shopsRepository.Commit();
-
-                return results;
             }
         }
 
-        private bool ValidateAndAddShop(DbLayer.Models.ShopInfo shopInfo, List<(ShopInfo shop, ShopParseStrategyInfo strategy)> list, ShopInfoRepository repository)
+        private void ValidateStrategies(CancellationToken token)
         {
-            if (list.Any(_ => _.shop.Id == shopInfo.Id))
+            using (var shopsRepository = _metadataFactory.CreateShopInfoRepository())
+            using (var strategiesRepository = _metadataFactory.CreateShopParseStrategyInfoRepository())
+            {
+                var shops = shopsRepository.GetAll().ToList();
+                var strategies = strategiesRepository.GetAll().ToList();
+
+                if (
+                    ValidateAndAddShop(FirstData.GetLongPlayShop(), shops, shopsRepository) ||
+                    ValidateAndAddShop(FirstData.GetMuzRayShop(), shops, shopsRepository) ||
+                    ValidateAndAddShop(FirstData.GetVinylShopShop(), shops, shopsRepository) ||
+                    ValidateAndAddShop(FirstData.GetTanyaOnlinerShop(), shops, shopsRepository)
+                    )
+                {
+                    shopsRepository.Commit();
+                }
+            }
+        }
+
+        private bool ValidateAndAddShop(DbLayer.Models.ShopInfo shopInfo, List<DbLayer.Models.ShopInfo> list, ShopInfoRepository repository)
+        {
+            if (list.Any(_ => _.Id == shopInfo.Id))
                 return false;
 
             repository.Add(shopInfo);
@@ -104,16 +117,24 @@ namespace Vinyl.ParsingJob.Data
         {
             switch (strategyInfo.ClassName)
             {
-                case "VinylShopExcelParserStrategy": return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
-                case "VinylShopMMExcelParserStrategy": return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
-                case "LongPlayHtmlParserStrategy": return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
-                case "VinylShopHtmlParserStrategy": return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
-                case "VinylMuzRayGoogleExcelParserStrategy": return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-                        .Initialize(strategyInfo.Url);
+                case "VinylShopExcelParserStrategy":
+                    return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                case "VinylShopMMExcelParserStrategy":
+                    return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                case "LongPlayHtmlParserStrategy":
+                    return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "VinylShopHtmlParserStrategy":
+                    return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "VinylMuzRayGoogleExcelParserStrategy":
+                    return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
+                case "TanyaOnlinerPostParserStrategy":
+                    return new Parsers.OnlinerParsers.TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
+.Initialize(strategyInfo.Url);
                 default:
                     return null;
             }
@@ -147,6 +168,9 @@ namespace Vinyl.ParsingJob.Data
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 case "VinylMuzRayGoogleExcelParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
+                case "TanyaOnlinerPostParserStrategy":
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 default:

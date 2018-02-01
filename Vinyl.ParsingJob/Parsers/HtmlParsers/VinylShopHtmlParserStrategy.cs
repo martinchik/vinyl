@@ -31,7 +31,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             return string.Format(_urlTemplate, pageIndex);
         }
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
         {            
             var doc = new HtmlDocument();
             doc.LoadHtml(pageData);

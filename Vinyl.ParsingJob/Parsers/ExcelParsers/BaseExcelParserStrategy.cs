@@ -33,7 +33,7 @@ namespace Vinyl.ParsingJob.Parsers.ExcelParsers
         protected override string GetNextPageUrl(int pageIndex)
             => pageIndex == 1 ? _urlTemplate : string.Empty;        
 
-        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(string pageData, CancellationToken token)
+        protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
         {
             var fileUrl = GetFileUrl(pageData);
             if (string.IsNullOrEmpty(fileUrl))
@@ -47,7 +47,7 @@ namespace Vinyl.ParsingJob.Parsers.ExcelParsers
                 {
                     return ParseDataFromDataSet(ReadExcelFile(fileName)).Select(_ => 
                     {
-                        _.Url = fileUrl;
+                        _.Url = _urlTemplate;
                         return _;
                     });
                 }

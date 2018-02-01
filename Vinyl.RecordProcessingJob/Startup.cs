@@ -85,7 +85,7 @@ namespace Vinyl.RecordProcessingJob
                 aliveJob.Stop();
             });
 
-            Task.Delay(TimeSpan.FromMinutes(1)).Wait(); // wait while database will be loaded
+            Task.Delay(TimeSpan.FromSeconds(20)).Wait(); // wait while database will be loaded
 
             job.Start();
             searchJob.Start();

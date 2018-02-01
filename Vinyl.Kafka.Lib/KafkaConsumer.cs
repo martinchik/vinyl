@@ -14,9 +14,9 @@ namespace Vinyl.Kafka.Lib
         private readonly Consumer<Null, string> _consumer;
         private readonly string _topic;
         private readonly IDictionary<string, object> _consumerConfig;
-        
+
         public KafkaConsumer(string topic, string host)
-        {            
+        {
             _consumerConfig = new Dictionary<string, object>
             {
                 { "group.id", "vinyl-group"},
@@ -37,7 +37,7 @@ namespace Vinyl.Kafka.Lib
                 Console.WriteLine($"Statistics: {stat}");
             };
         }
-        
+
         public void SubscribeOnTopic(Action<T, string> action, Action keepAliveAction, CancellationToken cancellationToken)
         {
             if (_consumer.Assignment?.Count > 0)
@@ -50,12 +50,12 @@ namespace Vinyl.Kafka.Lib
                 Message<Null, string> msg;
                 if (_consumer.Consume(out msg, TimeSpan.FromMilliseconds(10)))
                 {
-                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");                    
+                    action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");
                 }
 
                 keepAliveAction();
             }
-        }        
+        }
 
         public void Dispose()
         {
