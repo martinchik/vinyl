@@ -16,6 +16,7 @@ namespace Vinyl.Common
                 ? string.Empty
                 : value
                     .Replace(((char)39).ToString(), "").Replace(((char)8206).ToString(), "")
+                    .Replace("ъ", "").Replace("ь", "")
                     .Replace("'", "").Replace("\"", "")
                     .Replace("..", "-").Replace(".", "-")
                     .Replace(" ", "-").Replace("_", "-");
@@ -102,18 +103,44 @@ namespace Vinyl.Common
             return @value;
         }
 
-        public static int? ParseYear(string @value)
+        public static string ExtractPartBetweenString(string @value, char started, char? ended = null, bool isLast = false)
+        {
+            if (!string.IsNullOrEmpty(@value))
+            {
+                var sind = isLast ? @value.LastIndexOf(started) : @value.IndexOf(started);
+                if (sind >= 0)
+                {
+                    var send = ended == null ? -1 : @value.IndexOf(ended.Value, sind + 1);
+                    if (send > 0)
+                        return @value.Substring(sind + 1, send - sind - 1);
+
+                    return @value.Substring(sind + 1, @value.Length - sind - 1);
+                }
+            }
+            return string.Empty;
+        }
+
+        public static int? ParseNumber(string @value)
         {
             if (!string.IsNullOrEmpty(@value))
             {
                 var nambersOnly = _regexForNumbers.Match(@value).Value;
                 if (!string.IsNullOrEmpty(nambersOnly))
                 {
-                    int year;
-                    if (int.TryParse(nambersOnly, out year) && year > 1000 && year < 9000)
-                        return year;
+                    int val;
+                    if (int.TryParse(nambersOnly, out val))
+                        return val;
                 }
             }
+            return (int?)null;
+        }
+
+        public static int? ParseYear(string @value)
+        {
+            var namber = ParseNumber(@value);
+            if (namber != null && namber > 1000 && namber < 9000)
+                return namber.Value;            
+            
             return (int?)null;
         }
 

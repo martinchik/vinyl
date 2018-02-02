@@ -30,3 +30,6 @@
 /Vinyl.Site/obj
 /Vinyl.Site/Logs
 *.cmd
+/Vinyl.Tests/bin/Debug/netcoreapp2.0
+/Vinyl.Tests/obj
+/_Vinyl.Tests

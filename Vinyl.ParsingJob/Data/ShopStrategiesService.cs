@@ -55,6 +55,7 @@ namespace Vinyl.ParsingJob.Data
                 var strategies = strategiesRepository.GetAll().ToList();
 
                 if (
+                    ValidateAndAddShop(FirstData.GetVinPlazaShop(), shops, shopsRepository) ||                    
                     ValidateAndAddShop(FirstData.GetLongPlayShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetMuzRayShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetVinylShopShop(), shops, shopsRepository) ||
@@ -98,6 +99,8 @@ namespace Vinyl.ParsingJob.Data
                 if (strategy == null)
                     continue;
 
+                //if (!(strategy is VinplazaShopHtmlParserStrategy)) continue;
+
                 yield return (strategyInfo.strategy, strategy);
             }
         }
@@ -118,23 +121,19 @@ namespace Vinyl.ParsingJob.Data
             switch (strategyInfo.ClassName)
             {
                 case "VinylShopExcelParserStrategy":
-                    return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                    return new VinylShopExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
                 case "VinylShopMMExcelParserStrategy":
-                    return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
+                    return new VinylShopMMExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url, strategyInfo.Parameters["class-name"], strategyInfo.Parameters["ref-link-text"]);
                 case "LongPlayHtmlParserStrategy":
-                    return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url);
+                    return new LongPlayHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
                 case "VinylShopHtmlParserStrategy":
-                    return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url);
+                    return new VinylShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
                 case "VinylMuzRayGoogleExcelParserStrategy":
-                    return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url);
+                    return new VinylMuzRayGoogleExcelParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
                 case "TanyaOnlinerPostParserStrategy":
-                    return new Parsers.OnlinerParsers.TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit)
-.Initialize(strategyInfo.Url);
+                    return new Parsers.OnlinerParsers.TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
+                case "VinplazaShopHtmlParserStrategy":
+                    return new VinplazaShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
                 default:
                     return null;
             }
@@ -171,6 +170,9 @@ namespace Vinyl.ParsingJob.Data
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 case "TanyaOnlinerPostParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;
+                case "VinplazaShopHtmlParserStrategy":
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
                 default:

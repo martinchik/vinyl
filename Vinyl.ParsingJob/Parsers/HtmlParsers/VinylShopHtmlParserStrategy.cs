@@ -9,7 +9,7 @@ using Vinyl.Metadata;
 
 namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {
-    public class VinylShopHtmlParserStrategy : BaseParserStrategy
+    public class VinylShopHtmlParserStrategy : BaseHtmlParserStrategy
     {
         private string _urlTemplate;
 
@@ -27,17 +27,12 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         protected override string Name => "VinylShopHtml";
 
         protected override string GetNextPageUrl(int pageIndex)
-        {
-            return string.Format(_urlTemplate, pageIndex);
-        }
+            =>string.Format(_urlTemplate, pageIndex);        
 
         protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
-        {            
-            var doc = new HtmlDocument();
-            doc.LoadHtml(pageData);
-
+        {
             List<DirtyRecord> records = new List<DirtyRecord>();
-            GetRecordNodes(doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'archive-listing list')]"), records);
+            GetRecordNodes(LoadDocumentFromHtml(pageData).SelectSingleNode("//div[contains(@class, 'archive-listing list')]"), records);
             return records;
         }
 

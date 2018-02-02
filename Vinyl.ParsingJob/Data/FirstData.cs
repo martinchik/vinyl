@@ -176,5 +176,35 @@ namespace Vinyl.ParsingJob.Data
                 }
             }
         };
+
+        public static ShopInfo GetVinPlazaShop() => new ShopInfo()
+        {
+            Id = new Guid("99F3417C-23D5-4928-BE3F-15F0814AAF07"),
+            Title = "VinPlaza",
+            Url = "http://www.vinplaza.ru/p/blog-page_4797.html",
+            City = "Minsk",
+            CountryCode = "BY",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Emails = "market@vinplaza.ru",
+            Phones = "+37525755З711",
+            ShopType = 0,
+            ShopParseStrategyInfo = new[]
+           {
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "VinplazaShopHtmlParserStrategy",
+                    StartUrl = "http://www.vinplaza.ru/sitemap.xml?page={0}",
+                    ShopId = new Guid("99F3417C-23D5-4928-BE3F-15F0814AAF07"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTime.UtcNow.AddDays(-5),
+                    UpdatePeriodInHours = 12,
+                    Status = 0,
+                    DefaultCurrency = "$"
+                }
+            }
+        };
     }
 }

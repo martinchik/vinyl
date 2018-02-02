@@ -28,9 +28,13 @@ namespace Vinyl.RecordProcessingJob.Data
                 var artist = ParseSpecialFields.ParseRecordName(dirtyRecord.Artist).Trim();
                 var album = ParseSpecialFields.ParseRecordName(dirtyRecord.Album).Trim();
                 var year = ParseSpecialFields.ParseYear(dirtyRecord.Year);
-                var url = ParseSpecialFields.SplitWords($"{artist}-{album}").Unidecode();
 
                 var record = repository.FindBy(artist, album);
+                if (record == null)
+                    record = repository.FindBy(album, artist);
+
+                var url = ParseSpecialFields.SplitWords($"{artist}-{album}").Unidecode().Replace("'", "");
+
                 if (record == null)
                 {
                     record = new RecordInfo()

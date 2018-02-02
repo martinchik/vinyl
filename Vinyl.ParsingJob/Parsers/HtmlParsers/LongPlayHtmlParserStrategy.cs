@@ -10,7 +10,7 @@ using Vinyl.Metadata;
 
 namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {
-    public class LongPlayHtmlParserStrategy : BaseParserStrategy
+    public class LongPlayHtmlParserStrategy : BaseHtmlParserStrategy
     {
         private readonly int _pageSize = 96;
         private string _urlTemplate;
@@ -29,10 +29,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         protected override string Name => "LongPlayHtml";
 
         protected override string GetNextPageUrl(int pageIndex)
-        {
-            return string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
-        }
-
+            => string.Format(_urlTemplate, _pageSize, pageIndex * _pageSize);
+        
         protected override IEnumerable<DirtyRecord> ParseRecordsFromPage(int pageIndex, string pageData, CancellationToken token)
         {
             try
@@ -57,22 +55,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                 _logger.LogWarning(parseExc, "Parsing record from page has errors");
             }
             return Enumerable.Empty<DirtyRecord>();
-        }
-                
-        private IEnumerable<HtmlNode> GetRecordNodes(string html, string searchPattern)
-        {
-            if (!string.IsNullOrWhiteSpace(html))
-            {
-                var rootNode = LoadDocumentFromHtml(html);
-                if (rootNode?.HasChildNodes == true)
-                {
-                    foreach (var node in rootNode.SelectNodes(searchPattern))
-                    {
-                        yield return node;
-                    }
-                }
-            }
-        }
+        }                
 
         private Task<DirtyRecord> GetDataFromRecordNode(HtmlNode node, CancellationToken token)
         {
@@ -95,12 +78,6 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             }
 
             return ParseAdditionalData(record, token);
-        }
-
-        private string ParseNodeValue(HtmlNode node)
-        {
-            var items = node.InnerText.Split(':');
-            return (items.Length > 0 ? items[1] : node.InnerText).ToNormalValue();
         }
 
         private async Task<DirtyRecord> ParseAdditionalData(DirtyRecord record, CancellationToken token)
@@ -149,47 +126,6 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
         {
             foreach (var imgItem in GetRecordNodes(html, "//article//a[contains(@class, 'fancybox')]//img"))
                 yield return "http://longplay.by/" + imgItem.GetAttributeValue("src", "");
-        }
-
-        private string ParseNodeTableValue(HtmlNode node)
-            => node.InnerText.ToNormalValue().Replace(":", string.Empty);
-
-        private HtmlNode LoadDocumentFromHtml(string html)
-        {
-            var doc = new HtmlDocument();
-            try
-            {
-                doc.LoadHtml(html);
-                return doc.DocumentNode;
-            }
-            catch (Exception exc)
-            {
-                var reasons = TryGetErrors(doc);
-                if (string.IsNullOrEmpty(reasons))
-                    _logger.LogWarning(exc, "Error loading html");
-                else
-                    _logger.LogWarning("Error loading html. Reasons:" + reasons);
-            }
-
-            return null;
-        }
-
-        private string TryGetErrors(HtmlDocument doc)
-        {
-            try
-            {
-                if (doc?.ParseErrors?.Any() == true)
-                {
-                    return string.Join(";", doc.ParseErrors.Select(_ =>
-                        $"{_.Reason} in code:{_.Code} and Line:{_.Line}"
-                    ));
-                }
-            }
-            catch (Exception exc)
-            {
-                _logger.LogWarning(exc, "Error in getting errors from parse html results");
-            }
-            return string.Empty;
         }
     }
 }

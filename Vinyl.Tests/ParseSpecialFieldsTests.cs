@@ -1,23 +1,18 @@
 using FluentAssertions;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
+using NUnit.Framework;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Vinyl.Kafka;
-using Vinyl.ParsingJob.Data;
-using Vinyl.ParsingJob.Parsers;
-using Vinyl.ParsingJob.Parsers.HtmlParsers;
-using Vinyl.ParsingJob.Processor;
-using Vinyl.RecordProcessingJob.Data;
+using Vinyl.Common;
 
 namespace Vinyl.ParsingJob.Tests
 {
-    [TestClass]
+    [TestFixture]
     public class ParseSpecialFieldsTests
-    {        
-        [TestMethod()]
+    {
+        [TestCase("Ravi Shankar", "Ravi Shankar")]
         public void ParseRecordName_Test(string recordFrom, string recordTo)
         {
             var res = ParseSpecialFields.ParseRecordName(recordFrom);
