@@ -76,7 +76,7 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
                     record.ImageUrl = imgNode.GetAttributeValue("src", "");
                 }
 
-                var allText = blogNode.InnerHtml.Replace("&#13;", Environment.NewLine).Replace("&#10;", Environment.NewLine).Replace("<br", Environment.NewLine).Replace("/>", string.Empty).Replace(">", string.Empty);
+                var allText = blogNode.InnerHtml.WrapHtmlLines();
                 var allLowwerText = allText.ToLower();
 
                 record.Label = ExtractValueBy("label:", allLowwerText, allText);
@@ -95,30 +95,6 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             return null;
         }
 
-        private string ExtractValueBy(string name, string allLowwerText, string allText, bool toNewLine = true)
-        {
-            var valueIndex = allLowwerText.IndexOf(name);
-            if (valueIndex > 0)
-            {
-                var valueText = allText.Substring(valueIndex + name.Length, allText.Length - valueIndex - name.Length);
-                if (!string.IsNullOrEmpty(valueText) && valueText.Length > 3)
-                {
-                    if (toNewLine)
-                    {
-                        var valueIndexTo = valueText.IndexOf(Environment.NewLine);
-                        if (valueIndexTo > 0)
-                        {
-                            valueText = valueText.Substring(0, valueIndexTo);
-                            if (string.IsNullOrEmpty(valueText) || valueText.Length < 3)
-                                return string.Empty;
-                        }
-                    }
-                    return valueText.ToNormalValue();
-                }
-            }
-
-            return string.Empty;
-        }
 
         private (string title, string album, string artist, string year, string price, string state) ParseTitle(string line)
         {

@@ -206,5 +206,36 @@ namespace Vinyl.ParsingJob.Data
                 }
             }
         };
+
+
+        public static ShopInfo GetDiscolandShop() => new ShopInfo()
+        {
+            Id = new Guid("9A11C3EA-11B9-47C0-AC01-8E77E778FB1A"),
+            Title = "Discoland",
+            Url = "https://discoland.by",
+            City = "Minsk",
+            CountryCode = "BY",
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow,
+            Emails = " info@discoland.by",
+            Phones = "+375296519149",
+            ShopType = 0,
+            ShopParseStrategyInfo = new[]
+           {
+                new ShopParseStrategyInfo()
+                {
+                    Id = Guid.NewGuid(),
+                    ClassName = "DiscolandShopHtmlParserStrategy",
+                    StartUrl = "https://discoland.by/index.php?categoryID=92&show_all=yes&inst=no;https://discoland.by/index.php?categoryID=91&show_all=yes&inst=no",
+                    ShopId = new Guid("9A11C3EA-11B9-47C0-AC01-8E77E778FB1A"),
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow,
+                    ProcessedAt = DateTime.UtcNow.AddDays(-5),
+                    UpdatePeriodInHours = 12,
+                    Status = 0,
+                    DefaultCurrency = "бел"
+                }
+            }
+        };
     }
 }

@@ -15,13 +15,15 @@ namespace Vinyl.ParsingJob.Parsers
         protected readonly IHtmlDataGetter _htmlDataGetter;
         protected readonly ILogger _logger;
         protected readonly int? _dataLimit;
+        protected readonly bool _useEncoding;
 
-        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null)
+        public BaseParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null, bool useEncoding = false)
         {
             _htmlDataGetter = htmlDataGetter ?? throw new ArgumentNullException(nameof(htmlDataGetter));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
             _dataLimit = dataLimit;
+            _useEncoding = useEncoding;
         }
 
         protected virtual bool IsFileType { get => false; }
@@ -34,7 +36,7 @@ namespace Vinyl.ParsingJob.Parsers
 
         protected virtual async Task<string> DownloadPageHtml(int pageIndex, CancellationToken token)
         {
-            return await _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token);
+            return await _htmlDataGetter.GetPage(GetNextPageUrl(pageIndex), token, _useEncoding);
         }
 
         public IEnumerable<DirtyRecord> Parse(CancellationToken token)

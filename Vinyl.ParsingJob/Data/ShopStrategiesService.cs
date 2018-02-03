@@ -55,6 +55,7 @@ namespace Vinyl.ParsingJob.Data
                 var strategies = strategiesRepository.GetAll().ToList();
 
                 if (
+                    ValidateAndAddShop(FirstData.GetDiscolandShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetVinPlazaShop(), shops, shopsRepository) ||                    
                     ValidateAndAddShop(FirstData.GetLongPlayShop(), shops, shopsRepository) ||
                     ValidateAndAddShop(FirstData.GetMuzRayShop(), shops, shopsRepository) ||
@@ -99,7 +100,7 @@ namespace Vinyl.ParsingJob.Data
                 if (strategy == null)
                     continue;
 
-                //if (!(strategy is VinplazaShopHtmlParserStrategy)) continue;
+                //if (!(strategy is DiscolandShopHtmlParserStrategy)) continue;
 
                 yield return (strategyInfo.strategy, strategy);
             }
@@ -134,6 +135,8 @@ namespace Vinyl.ParsingJob.Data
                     return new Parsers.OnlinerParsers.TanyaOnlinerPostParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
                 case "VinplazaShopHtmlParserStrategy":
                     return new VinplazaShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);
+                case "DiscolandShopHtmlParserStrategy":
+                    return new DiscolandShopHtmlParserStrategy(_logger, _htmlDataGetter, strategyInfo.DataLimit).Initialize(strategyInfo.Url);                    
                 default:
                     return null;
             }
@@ -175,6 +178,9 @@ namespace Vinyl.ParsingJob.Data
                 case "VinplazaShopHtmlParserStrategy":
                     if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
                     else return true;
+                case "DiscolandShopHtmlParserStrategy":
+                    if (string.IsNullOrWhiteSpace(strategyInfo.Url)) return ValidationFailed(strategyInfo, "Url isn't exist");
+                    else return true;                    
                 default:
                     return true;
             }

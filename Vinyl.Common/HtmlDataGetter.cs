@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace Vinyl.Common
             
         }
 
-        public async Task<string> GetPage(string url, CancellationToken token = default(CancellationToken))
+        public async Task<string> GetPage(string url, CancellationToken token = default(CancellationToken), bool useEncoding = false)
         {
             if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
@@ -48,7 +49,16 @@ namespace Vinyl.Common
                 
                 response = await _httpClient.GetAsync(url, token);
 
-                var responseContent = await response.Content.ReadAsStringAsync();
+                string responseContent;
+                if (!useEncoding)
+                    responseContent = await response.Content.ReadAsStringAsync();
+                else
+                {
+                    byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+
+                    Encoding encoding = Encoding.GetEncoding("windows-1251");
+                    responseContent = encoding.GetString(bytes, 0, bytes.Length);
+                }
 
                 if (response.StatusCode != HttpStatusCode.OK)
                 {

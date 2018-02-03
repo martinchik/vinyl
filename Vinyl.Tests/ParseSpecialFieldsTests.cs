@@ -18,6 +18,15 @@ namespace Vinyl.ParsingJob.Tests
             var res = ParseSpecialFields.ParseRecordName(recordFrom);
 
             res.Should().Be(recordTo);
-        }        
+        }
+
+        [TestCase("78.00", 78.0)]
+        [TestCase("78.01", 78.01)]
+        public void ParseRecordName_Test(string valueFrom, decimal? valueTo)
+        {
+            var res = ParseSpecialFields.ParsePrice(valueFrom, "byn");
+
+            res.price.Should().Be(valueTo);
+        }
     }
 }

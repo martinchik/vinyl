@@ -155,7 +155,7 @@ namespace Vinyl.Common
                 if (!string.IsNullOrEmpty(nambersOnly))
                 {
                     decimal price;
-                    if (decimal.TryParse(nambersOnly, out price) && price > 0 && price < 100_000)
+                    if (decimal.TryParse(nambersOnly, System.Globalization.NumberStyles.AllowDecimalPoint, System.Globalization.CultureInfo.InvariantCulture, out price) && price > 0 && price < 100_000)
                         priceValue = price;
                 }
 

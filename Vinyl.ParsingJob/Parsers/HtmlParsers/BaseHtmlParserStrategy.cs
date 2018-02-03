@@ -10,8 +10,8 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
 {
     public abstract class BaseHtmlParserStrategy : BaseParserStrategy
     {
-        public BaseHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null)
-            : base(logger, htmlDataGetter, dataLimit)
+        public BaseHtmlParserStrategy(ILogger logger, IHtmlDataGetter htmlDataGetter, int? dataLimit = null, bool useEncoding = false)
+            : base(logger, htmlDataGetter, dataLimit, useEncoding)
         {
         }
 
@@ -30,14 +30,14 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             }
         }
 
-        protected IEnumerable<HtmlNode> LoadAndGetRecordNodes(string url, string searchPattern, CancellationToken token)
+        protected IEnumerable<HtmlNode> LoadAndGetRecordNodes(string url, string searchPattern, CancellationToken token, bool useEncoding = false)
         {
             if (!string.IsNullOrWhiteSpace(url))
             {
                 string html = string.Empty;
                 try
                 {
-                    html = _htmlDataGetter.GetPage(url, token).GetAwaiter().GetResult();
+                    html = _htmlDataGetter.GetPage(url, token, useEncoding).GetAwaiter().GetResult();
                 }
                 catch (Exception exc)
                 {
@@ -102,6 +102,33 @@ namespace Vinyl.ParsingJob.Parsers.HtmlParsers
             {
                 _logger.LogWarning(exc, "Error in getting errors from parse html results");
             }
+            return string.Empty;
+        }
+
+        protected string ExtractValueBy(string name, string allLowwerText, string allText, bool toNewLine = true)
+        {
+            var valueIndex = allLowwerText.IndexOf(name);
+            if (valueIndex >= 0)
+            {
+                var valueText = allText.Substring(valueIndex + name.Length, allText.Length - valueIndex - name.Length);
+                if (!string.IsNullOrEmpty(valueText) && valueText.Length > 3)
+                {
+                    if (toNewLine)
+                    {
+                        var valueIndexTo = valueText.IndexOf("\n");
+                        if (valueIndexTo < 0)
+                            valueIndexTo = valueText.IndexOf(Environment.NewLine);
+                        if (valueIndexTo > 0)
+                        {
+                            valueText = valueText.Substring(0, valueIndexTo);
+                            if (string.IsNullOrEmpty(valueText) || valueText.Length < 3)
+                                return string.Empty;
+                        }
+                    }
+                    return valueText.ToNormalValue();
+                }
+            }
+
             return string.Empty;
         }
     }

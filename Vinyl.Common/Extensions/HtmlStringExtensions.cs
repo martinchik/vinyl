@@ -17,9 +17,12 @@ namespace Vinyl
                 .Trim());
         }
 
-        public static string ToCsvValue(this string val)
+        public static string WrapHtmlLines(this string htmlValue)
         {
-            return (val == null ? "" : string.Concat("\"", val, "\"")) + ";";
+            return htmlValue.Replace("&#13;", Environment.NewLine).Replace("&#10;", Environment.NewLine).Replace("<br", Environment.NewLine)
+                .Replace("/>", string.Empty).Replace(">", string.Empty)
+                .Replace("\r\n", Environment.NewLine).Replace("\n", Environment.NewLine)
+                .Trim();
         }
     }
 }
