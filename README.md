@@ -35,7 +35,8 @@ The site are only simplify search process linking individual stores, sellers, co
 
 ### Components:
 Each component is a separate docker container. All component configuration is described in the docker-compose file.
-And each project has a docker file for creating docker image.
+And each project has a docker file for creating docker image.<br />
+All services (jobs) works on two websites and have API and auto-generated documentation based on Swagger UI.<br />
 
 -	<b>ParsingJob</b> (Getting data). Every 3 hours service gets a list of parsers for work. All records that could be recognized are sent to a Kafka Topic - "dirty_records".
 -	<b>ProcessingJob</b> (Update data in DB). Service works all time. Listens the topic "dirty_records" and checks all entries from it in the database and adds or updates them. For each record, it generates transliterated url names, which contains musicant and album names. New records and records with <b>important</b> changes (for example, price) are saved (or updated) in a separate table "SearchItems" in the database.
