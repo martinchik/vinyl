@@ -27,8 +27,7 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
                 if (table?.Rows?.Count > 6)
                 {
                     for (int i = 6; i < table.Rows.Count; i++)
-                    {
-                        var row = table.Rows[i].ItemArray;
+                    {var row = table.Rows[i].ItemArray;
                         StringBuilder sb = new StringBuilder();
                         DirtyRecord record = new DirtyRecord();
                         record.Title = row[1].ToString();
@@ -38,22 +37,23 @@ namespace Vinyl.ParsingJob.Parsers.GoogleDriveParsers
                         record.Album = artAndalb.album;
                         record.YearRecorded = row[2].ToString();
                         record.Year = row[3].ToString();
-                        record.Label = row[10].ToString();
-                        record.Country = row[11].ToString();
-                        record.Style = row[18].ToString();
-                        record.CountInPack = row[15].ToString();
-                        record.View = row[16].ToString();
+                        record.Barcode = row[5].ToString();
+                        record.Label = row[11].ToString();
+                        record.Country = row[12].ToString();
+                        record.Style = row[19].ToString();
+                        record.CountInPack = row[16].ToString();
+                        record.View = row[17].ToString();
 
                         AddLineIfExist(sb, "Новинка", row[0].ToString());
-                        AddLineIfExist(sb, "Формат", row[5].ToString());
-                        AddLineIfExist(sb, "Издание", row[12].ToString());
-                        AddLineIfExist(sb, "Мастеринг", row[13].ToString());
-                        AddLineIfExist(sb, "Серия", row[14].ToString());
-                        AddLineIfExist(sb, "Жанр", row[17].ToString());
+                        AddLineIfExist(sb, "Формат", row[6].ToString());
+                        AddLineIfExist(sb, "Издание", row[13].ToString());
+                        AddLineIfExist(sb, "Мастеринг", row[14].ToString());
+                        AddLineIfExist(sb, "Серия", row[15].ToString());
+                        AddLineIfExist(sb, "Жанр", row[18].ToString());
 
                         record.Info = sb.ToString();
 
-                        record.Price = row[19].ToString() + " бр";
+                        record.Price = row[20].ToString() + " бр";
 
                         yield return record;
                     }

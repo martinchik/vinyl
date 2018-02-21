@@ -42,7 +42,7 @@ namespace Vinyl.ParsingJob.Job
                 foreach(var strategyInfo in _strategiesService.GetStrategiesForRun())
                 {
                     var count = RunStrategy(strategyInfo, token);
-                    Interlocked.Add(ref countRecords, count);
+                    countRecords += count;
 
                     _strategiesService.UpdateStartegyStatus(strategyInfo.info, count);
                 };

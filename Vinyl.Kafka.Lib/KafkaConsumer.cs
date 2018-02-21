@@ -47,13 +47,13 @@ namespace Vinyl.Kafka.Lib
 
             while (!cancellationToken.IsCancellationRequested)
             {
+                keepAliveAction();
+
                 Message<Null, string> msg;
                 if (_consumer.Consume(out msg, TimeSpan.FromMilliseconds(10)))
                 {
                     action(Newtonsoft.Json.JsonConvert.DeserializeObject<T>(msg.Value), $"Recieved message on Partition: {msg.Partition} with Offset: {msg.Offset}. Content:{msg.Value}");
                 }
-
-                keepAliveAction();
             }
         }
 
