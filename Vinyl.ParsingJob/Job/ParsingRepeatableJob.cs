@@ -30,7 +30,9 @@ namespace Vinyl.ParsingJob.Job
         }
 
         protected override async Task ExecuteAsync(CancellationToken token)
-        {            
+        {
+            System.Text.Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
+
             var shops = await _shopInfoService.GetShops(token);
 
             Logger.LogInformation($"Get {shops?.Count} shops from storage");

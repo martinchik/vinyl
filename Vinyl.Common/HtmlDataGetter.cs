@@ -51,13 +51,29 @@ namespace Vinyl.Common
 
                 string responseContent;
                 if (!useEncoding)
-                    responseContent = await response.Content.ReadAsStringAsync();
+                {
+                    try
+                    {
+                        responseContent = await response.Content.ReadAsStringAsync();
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        byte[] bytes = await response.Content.ReadAsByteArrayAsync();
+
+                        Encoding encoding = Encoding.UTF8;
+                        responseContent = encoding.GetString(bytes, 0, bytes.Length);
+
+                        _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). (Encoding: UTF8) Page was encoded {url}.");
+                    }
+                }
                 else
                 {
                     byte[] bytes = await response.Content.ReadAsByteArrayAsync();
 
                     Encoding encoding = Encoding.GetEncoding("windows-1251");
                     responseContent = encoding.GetString(bytes, 0, bytes.Length);
+
+                    _logger.LogInformation($"(ThreadId:{Thread.CurrentThread.ManagedThreadId}). (Encoding: windows-1251) Page was encoded {url}.");
                 }
 
                 if (response.StatusCode != HttpStatusCode.OK)
